@@ -1,4 +1,5 @@
 #include "pa_macros.h"
+#include "pa_datetime.h"
 #include "pa_util.h"
 #include <math.h>
 #include <stdlib.h>
@@ -13,10 +14,10 @@
  *
  * \return Decimal representation of time.
  */
-double hms_dh(double hours, double minutes, double seconds) {
-  double f_hours = hours;
-  double f_minutes = minutes;
-  double f_seconds = seconds;
+double hms_dh(TFullTime civil_time) {
+  double f_hours = civil_time.hours;
+  double f_minutes = civil_time.minutes;
+  double f_seconds = civil_time.seconds;
 
   double a = fabs(f_seconds) / 60.0;
   double b = (fabs(f_minutes) + a) / 60.0;

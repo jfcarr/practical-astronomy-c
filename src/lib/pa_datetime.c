@@ -37,25 +37,28 @@ TFullDate get_date_of_easter(int input_year) {
  * Convert a civil date (month, day, and year) to a day number (the number of
  * days from the beginning of the year upon which the civil date falls)
  */
-int civil_date_to_day_number(int month, int day, int year) {
-  if (month <= 2) {
-    month--;
-    month = (is_leap_year(year) == T) ? month * 62 : month * 63;
-    month = (int)floor((double)month / 2.0);
+int civil_date_to_day_number(TFullDate input_date) {
+  if (input_date.month <= 2) {
+    input_date.month = input_date.month - 1;
+    input_date.month = (is_leap_year(input_date.year) == T)
+                           ? input_date.month * 62
+                           : input_date.month * 63;
+    input_date.month = (int)floor((double)input_date.month / 2.0);
   } else {
-    month = (int)floor(((double)month + 1.0) * 30.6);
-    month = (is_leap_year(year) == T) ? month - 62 : month - 63;
+    input_date.month = (int)floor(((double)input_date.month + 1.0) * 30.6);
+    input_date.month = (is_leap_year(input_date.year) == T)
+                           ? input_date.month - 62
+                           : input_date.month - 63;
   }
 
-  return month + day;
+  return input_date.month + input_date.day;
 }
 
 /**
  * Convert civil time (HH:MM:SS) to decimal hours (HH.########)
  */
-double civil_time_to_decimal_hours(double hours, double minutes,
-                                   double seconds) {
-  return hms_dh(hours, minutes, seconds);
+double civil_time_to_decimal_hours(TFullTime civil_time) {
+  return hms_dh(civil_time);
 }
 
 /**
