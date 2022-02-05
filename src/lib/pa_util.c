@@ -1,19 +1,20 @@
 #include "pa_util.h"
+#include <stdbool.h>
 
 /**
  * Determine if the specified year is a leap year.
  */
-boolean is_leap_year(int input_year) {
+bool is_leap_year(int input_year) {
   double year = (double)input_year;
 
   if ((int)year % 4 == 0) {
     if ((int)year % 100 == 0) {
-      return ((int)year % 400 == 0) ? T : F;
+      return ((int)year % 400 == 0) ? true : false;
     } else {
-      return T;
+      return true;
     }
   } else {
-    return F;
+    return false;
   }
 }
 
@@ -21,7 +22,7 @@ boolean is_leap_year(int input_year) {
  * Round the double value to specified number of decimal places.
  */
 double dround(double input, int places) {
-  boolean isNegative = (input < 0) ? T : F;
+  bool isNegative = (input < 0) ? true : false;
 
   long double multiplier = pow(10, places);
 

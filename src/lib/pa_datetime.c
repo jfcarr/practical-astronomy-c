@@ -37,28 +37,25 @@ TFullDate get_date_of_easter(int input_year) {
  * Convert a civil date (month, day, and year) to a day number (the number of
  * days from the beginning of the year upon which the civil date falls)
  */
-int civil_date_to_day_number(TFullDate input_date) {
-  if (input_date.month <= 2) {
-    input_date.month = input_date.month - 1;
-    input_date.month = (is_leap_year(input_date.year) == T)
-                           ? input_date.month * 62
-                           : input_date.month * 63;
-    input_date.month = (int)floor((double)input_date.month / 2.0);
+int civil_date_to_day_number(int month, int day, int year) {
+  if (month <= 2) {
+    month = month - 1;
+    month = (is_leap_year(year)) ? month * 62 : month * 63;
+    month = (int)floor((double)month / 2.0);
   } else {
-    input_date.month = (int)floor(((double)input_date.month + 1.0) * 30.6);
-    input_date.month = (is_leap_year(input_date.year) == T)
-                           ? input_date.month - 62
-                           : input_date.month - 63;
+    month = (int)floor(((double)month + 1.0) * 30.6);
+    month = (is_leap_year(year)) ? month - 62 : month - 63;
   }
 
-  return input_date.month + input_date.day;
+  return month + day;
 }
 
 /**
  * Convert civil time (HH:MM:SS) to decimal hours (HH.########)
  */
-double civil_time_to_decimal_hours(TFullTime civil_time) {
-  return hms_dh(civil_time);
+double civil_time_to_decimal_hours(double hours, double minutes,
+                                   double seconds) {
+  return hms_dh(hours, minutes, seconds);
 }
 
 /**
@@ -72,4 +69,64 @@ TFullTime decimal_hours_to_civil_time(double decimal_hours) {
   TFullTime return_value = {hours, minutes, seconds};
 
   return return_value;
+}
+
+/**
+ * Convert local civil time to universal time.
+ */
+TFullDateTime
+local_civil_time_to_universal_time(double lct_hours, double lct_minutes,
+                                   double lct_seconds, bool is_daylight_savings,
+                                   int zone_correction, double local_day,
+                                   int local_month, int local_year) {
+  double lct = civil_time_to_decimal_hours(lct_hours, lct_minutes, lct_seconds);
+
+  int daylight_savings_offset = (is_daylight_savings) ? 1 : 0;
+
+  double ut_interim = lct - daylight_savings_offset - zone_correction;
+  double g_day_interim = local_day + (ut_interim / 24);
+
+  double jd = civil_date_to_julian_date(g_day_interim, local_month, local_year);
+
+  double g_day = julian_date_day(jd);
+  int g_month = julian_date_month(jd);
+  int g_year = julian_date_year(jd);
+
+  double ut = 24 * (g_day - floor(g_day));
+
+  return (TFullDateTime){g_month,
+                         (int)floor(g_day),
+                         g_year,
+                         decimal_hours_hour(ut),
+                         decimal_hours_minute(ut),
+                         (int)decimal_hours_second(ut)};
+}
+
+/**
+ * Convert universal time to local civil time.
+ */
+TFullDateTime
+universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
+                                   double ut_seconds, bool is_daylight_savings,
+                                   int zone_correction, int gw_day,
+                                   int gw_month, int gw_year) {
+  int dst_value = (is_daylight_savings) ? 1 : 0;
+  double ut = hms_dh(ut_hours, ut_minutes, ut_seconds);
+  double zone_time = ut + zone_correction;
+  double local_time = zone_time + dst_value;
+  double local_jd_plus_local_time =
+      civil_date_to_julian_date(gw_day, gw_month, gw_year) + (local_time / 24);
+  double local_day = julian_date_day(local_jd_plus_local_time);
+  double integer_day = floor(local_day);
+  int local_month = julian_date_month(local_jd_plus_local_time);
+  int local_year = julian_date_year(local_jd_plus_local_time);
+
+  double lct = 24 * (local_day - integer_day);
+
+  return (TFullDateTime){local_month,
+                         (int)integer_day,
+                         local_year,
+                         decimal_hours_hour(lct),
+                         decimal_hours_minute(lct),
+                         decimal_hours_second(lct)};
 }

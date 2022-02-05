@@ -1,25 +1,28 @@
+#include "pa_types.h"
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #ifndef _pa_lib_datetime
 #define _pa_lib_datetime
-typedef struct pa_full_date {
-  int month;
-  int day;
-  int year;
-} TFullDate;
-
-typedef struct pa_full_time {
-  int hours;
-  int minutes;
-  double seconds;
-} TFullTime;
-
 TFullDate get_date_of_easter(int input_year);
 
-int civil_date_to_day_number(TFullDate input_date);
+int civil_date_to_day_number(int month, int day, int year);
 
-double civil_time_to_decimal_hours(TFullTime civil_time);
+double civil_time_to_decimal_hours(double hours, double minutes,
+                                   double seconds);
 
 TFullTime decimal_hours_to_civil_time(double decimal_hours);
+
+TFullDateTime
+local_civil_time_to_universal_time(double lct_hours, double lct_minutes,
+                                   double lct_seconds, bool is_daylight_savings,
+                                   int zone_correction, double local_day,
+                                   int local_month, int local_year);
+
+TFullDateTime
+universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
+                                   double ut_seconds, bool is_daylight_savings,
+                                   int zone_correction, int gw_day,
+                                   int gw_month, int gw_year);
 #endif
