@@ -1,6 +1,14 @@
 #ifndef _pa_lib_types
 #define _pa_lib_types
 /**
+ * Warning flags for calculation results.
+ */
+enum WarningFlags {
+  WarningFlag_OK,     /**< Calculation result is OK. */
+  WarningFlag_Warning /**< Calculation result is invalid/inaccurate. */
+};
+
+/**
  * Structure to hold a Date value:
  *
  * int month
@@ -25,6 +33,21 @@ typedef struct pa_full_time {
   int minutes;
   double seconds;
 } TFullTime;
+
+/**
+ * Structure to hold a Time value, along with a calculation warning:
+ *
+ * int hours
+ * int minutes
+ * double seconds
+ * WarningFlags warning_flag
+ */
+typedef struct pa_full_time_warning {
+  int hours;
+  int minutes;
+  double seconds;
+  enum WarningFlags warning_flag;
+} TFullTimeWarning;
 
 /**
  * Structure to hold a DateTime value:

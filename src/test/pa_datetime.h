@@ -27,4 +27,12 @@ void test_universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
                                              int zone_correction, int gw_day,
                                              int gw_month, int gw_year,
                                              TFullDateTime expected_result);
+
+void test_universal_time_to_greenwich_sidereal_time(
+    double ut_hours, double ut_minutes, double ut_seconds, double gw_day,
+    int gw_month, int gw_year, TFullTime expected_result);
+
+void test_greenwich_sidereal_time_to_universal_time(
+    double gst_hours, double gst_minutes, double gst_seconds, double gw_day,
+    int gw_month, int gw_year, TFullTimeWarning expected_result);
 #endif

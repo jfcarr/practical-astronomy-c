@@ -24,6 +24,13 @@ void test_datetime() {
 
   test_universal_time_to_local_civil_time(
       22, 37, 0, true, 4, 30, 6, 2013, (TFullDateTime){7, 1, 2013, 3, 37, 0});
+
+  test_universal_time_to_greenwich_sidereal_time(14, 36, 51.67, 22, 4, 1980,
+                                                 (TFullTime){4, 40, 5.23});
+
+  test_greenwich_sidereal_time_to_universal_time(
+      4, 40, 5.23, 22, 4, 1980,
+      (TFullTimeWarning){14, 36, 51.67, WarningFlag_OK});
 }
 
 int main() {
