@@ -108,3 +108,40 @@ void test_universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
          actual_result.hours, actual_result.minutes,
          (int)actual_result.seconds);
 }
+
+void test_universal_time_to_greenwich_sidereal_time(
+    double ut_hours, double ut_minutes, double ut_seconds, double gw_day,
+    int gw_month, int gw_year, TFullTime expected_result) {
+  TFullTime actual_result = universal_time_to_greenwich_sidereal_time(
+      ut_hours, ut_minutes, ut_seconds, gw_day, gw_month, gw_year);
+
+  assert(actual_result.hours == expected_result.hours);
+  assert(actual_result.minutes == expected_result.minutes);
+  assert(actual_result.seconds == expected_result.seconds);
+
+  printf("Greenwich Sidereal Time for Universal Time of %d/%d/%d "
+         "%d:%d:%0.2f:\n\tExpected: %d:%d:%0.2f\n\tGot:      %d:%d:%0.2f\n",
+         gw_month, (int)gw_day, gw_year, (int)ut_hours, (int)ut_minutes,
+         ut_seconds, expected_result.hours, expected_result.minutes,
+         expected_result.seconds, actual_result.hours, actual_result.minutes,
+         actual_result.seconds);
+}
+
+void test_greenwich_sidereal_time_to_universal_time(
+    double gst_hours, double gst_minutes, double gst_seconds, double gw_day,
+    int gw_month, int gw_year, TFullTimeWarning expected_result) {
+  TFullTimeWarning actual_result = greenwich_sidereal_time_to_universal_time(
+      gst_hours, gst_minutes, gst_seconds, gw_day, gw_month, gw_year);
+
+  assert(actual_result.hours == expected_result.hours);
+  assert(actual_result.minutes == expected_result.minutes);
+  assert(actual_result.seconds == expected_result.seconds);
+  assert(actual_result.warning_flag == expected_result.warning_flag);
+
+  printf("Universal Time for Greenwich Sidereal Time of %d/%d/%d "
+         "%d:%d:%0.2f:\n\tExpected: %d:%d:%0.2f\n\tGot:      %d:%d:%0.2f\n",
+         gw_month, (int)gw_day, gw_year, (int)gst_hours, (int)gst_minutes,
+         gst_seconds, expected_result.hours, expected_result.minutes,
+         expected_result.seconds, actual_result.hours, actual_result.minutes,
+         actual_result.seconds);
+}

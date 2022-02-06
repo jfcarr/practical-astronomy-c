@@ -1,5 +1,6 @@
 #include "pa_datetime.h"
 #include "pa_macros.h"
+#include "pa_types.h"
 #include "pa_util.h"
 #include <math.h>
 #include <stdio.h>
@@ -129,4 +130,56 @@ universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
                          decimal_hours_hour(lct),
                          decimal_hours_minute(lct),
                          decimal_hours_second(lct)};
+}
+
+/**
+ * Convert Universal Time to Greenwich Sidereal Time
+ */
+TFullTime universal_time_to_greenwich_sidereal_time(double ut_hours,
+                                                    double ut_minutes,
+                                                    double ut_seconds,
+                                                    double gw_day, int gw_month,
+                                                    int gw_year) {
+  double jd = civil_date_to_julian_date(gw_day, gw_month, gw_year);
+  double s = jd - 2451545.0;
+  double t = s / 36525.0;
+  double t01 = 6.697374558 + (2400.051336 * t) + (0.000025862 * t * t);
+  double t02 = t01 - (24.0 * floor(t01 / 24.0));
+  double ut = hms_dh(ut_hours, ut_minutes, ut_seconds);
+  double a = ut * 1.002737909;
+  double gst1 = t02 + a;
+  double gst2 = gst1 - (24.0 * floor(gst1 / 24.0));
+
+  int gst_hours = decimal_hours_hour(gst2);
+  int gst_minutes = decimal_hours_minute(gst2);
+  double gst_seconds = decimal_hours_second(gst2);
+
+  return (TFullTime){gst_hours, gst_minutes, gst_seconds};
+}
+
+/**
+ * Convert Greenwich Sidereal Time to Universal Time
+ */
+TFullTimeWarning
+greenwich_sidereal_time_to_universal_time(double gst_hours, double gst_minutes,
+                                          double gst_seconds, double gw_day,
+                                          int gw_month, int gw_year) {
+  double jd = civil_date_to_julian_date(gw_day, gw_month, gw_year);
+  double s = jd - 2451545;
+  double t = s / 36525;
+  double t01 = 6.697374558 + (2400.051336 * t) + (0.000025862 * t * t);
+  double t02 = t01 - (24 * floor(t01 / 24));
+  double gst_hours1 = hms_dh(gst_hours, gst_minutes, gst_seconds);
+
+  double a = gst_hours1 - t02;
+  double b = a - (24 * floor(a / 24));
+  double ut = b * 0.9972695663;
+  int ut_hours = decimal_hours_hour(ut);
+  int ut_minutes = decimal_hours_minute(ut);
+  double ut_seconds = decimal_hours_second(ut);
+
+  enum WarningFlags warning_flag =
+      (ut < 0.065574) ? WarningFlag_Warning : WarningFlag_OK;
+
+  return (TFullTimeWarning){ut_hours, ut_minutes, ut_seconds, warning_flag};
 }
