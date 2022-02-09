@@ -145,3 +145,37 @@ void test_greenwich_sidereal_time_to_universal_time(
          expected_result.seconds, actual_result.hours, actual_result.minutes,
          actual_result.seconds);
 }
+
+void test_greenwich_sidereal_time_to_local_sidereal_time(
+    double gst_hours, double gst_minutes, double gst_seconds,
+    double geographical_longitude, TFullTime expected_result) {
+  TFullTime actual_result = greenwich_sidereal_time_to_local_sidereal_time(
+      gst_hours, gst_minutes, gst_seconds, geographical_longitude);
+
+  assert(actual_result.hours == expected_result.hours);
+  assert(actual_result.minutes == expected_result.minutes);
+  assert(actual_result.seconds == expected_result.seconds);
+
+  printf("Local Sidereal Time for Greenwich Sidereal Time of "
+         "%d:%d:%0.2f:\n\tExpected: %d:%d:%0.2f\n\tGot:      %d:%d:%0.2f\n",
+         (int)gst_hours, (int)gst_minutes, gst_seconds, expected_result.hours,
+         expected_result.minutes, expected_result.seconds, actual_result.hours,
+         actual_result.minutes, actual_result.seconds);
+}
+
+void test_local_sidereal_time_to_greenwich_sidereal_time(
+    double lst_hours, double lst_minutes, double lst_seconds,
+    double geographical_longitude, TFullTime expected_result) {
+  TFullTime actual_result = local_sidereal_time_to_greenwich_sidereal_time(
+      lst_hours, lst_minutes, lst_seconds, geographical_longitude);
+
+  assert(actual_result.hours == expected_result.hours);
+  assert(actual_result.minutes == expected_result.minutes);
+  assert(actual_result.seconds == expected_result.seconds);
+
+  printf("Greenwich Sidereal Time for Local Sidereal Time of "
+         "%d:%d:%0.2f:\n\tExpected: %d:%d:%0.2f\n\tGot:      %d:%d:%0.2f\n",
+         (int)lst_hours, (int)lst_minutes, lst_seconds, expected_result.hours,
+         expected_result.minutes, expected_result.seconds, actual_result.hours,
+         actual_result.minutes, actual_result.seconds);
+}

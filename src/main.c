@@ -31,6 +31,12 @@ void test_datetime() {
   test_greenwich_sidereal_time_to_universal_time(
       4, 40, 5.23, 22, 4, 1980,
       (TFullTimeWarning){14, 36, 51.67, WarningFlag_OK});
+
+  test_greenwich_sidereal_time_to_local_sidereal_time(4, 40, 5.23, -64,
+                                                      (TFullTime){0, 24, 5.23});
+
+  test_local_sidereal_time_to_greenwich_sidereal_time(0, 24, 5.23, -64,
+                                                      (TFullTime){4, 40, 5.23});
 }
 
 int main() {
