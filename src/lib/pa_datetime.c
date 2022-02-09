@@ -183,3 +183,39 @@ greenwich_sidereal_time_to_universal_time(double gst_hours, double gst_minutes,
 
   return (TFullTimeWarning){ut_hours, ut_minutes, ut_seconds, warning_flag};
 }
+
+/**
+ * Convert Greenwich Sidereal Time to Local Sidereal Time
+ */
+TFullTime greenwich_sidereal_time_to_local_sidereal_time(
+    double gst_hours, double gst_minutes, double gst_seconds,
+    double geographical_longitude) {
+  double gst = hms_dh(gst_hours, gst_minutes, gst_seconds);
+  double offset = geographical_longitude / 15;
+  double lst_hours1 = gst + offset;
+  double lst_hours2 = lst_hours1 - (24 * floor(lst_hours1 / 24));
+
+  int lst_hours = decimal_hours_hour(lst_hours2);
+  int lst_minutes = decimal_hours_minute(lst_hours2);
+  double lst_seconds = decimal_hours_second(lst_hours2);
+
+  return (TFullTime){lst_hours, lst_minutes, lst_seconds};
+}
+
+/**
+ * Convert Local Sidereal Time to Greenwich Sidereal Time
+ */
+TFullTime local_sidereal_time_to_greenwich_sidereal_time(
+    double lst_hours, double lst_minutes, double lst_seconds,
+    double geographical_longitude) {
+  double gst = hms_dh(lst_hours, lst_minutes, lst_seconds);
+  double long_hours = geographical_longitude / 15;
+  double gst1 = gst - long_hours;
+  double gst2 = gst1 - (24 * floor(gst1 / 24));
+
+  int gst_hours = decimal_hours_hour(gst2);
+  int gst_minutes = decimal_hours_minute(gst2);
+  double gst_seconds = decimal_hours_second(gst2);
+
+  return (TFullTime){gst_hours, gst_minutes, gst_seconds};
+}
