@@ -67,4 +67,18 @@ typedef struct pa_full_datetime {
   int minutes;
   double seconds;
 } TFullDateTime;
+
+/**
+ * Structure to hold an Angle value:
+ *
+ * double degrees
+ * double minutes
+ * double seconds
+ */
+typedef struct pa_angle {
+  double degrees;
+  double minutes;
+  double seconds;
+} TAngle;
+
 #endif

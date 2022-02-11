@@ -1,4 +1,5 @@
 #include "lib/pa_datetime.h"
+#include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
 #include <math.h>
 #include <stdbool.h>
@@ -39,8 +40,15 @@ void test_datetime() {
                                                       (TFullTime){4, 40, 5.23});
 }
 
+void test_coordinates() {
+  test_angle_to_decimal_degrees(182, 31, 27, 182.524167);
+
+  test_decimal_degrees_to_angle(182.524167, (TAngle){182, 31, 27});
+}
+
 int main() {
   test_datetime();
+  test_coordinates();
 
   return (0);
 }
