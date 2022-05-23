@@ -44,6 +44,13 @@ void test_coordinates() {
   test_angle_to_decimal_degrees(182, 31, 27, 182.524167);
 
   test_decimal_degrees_to_angle(182.524167, (TAngle){182, 31, 27});
+
+  test_right_ascension_to_hour_angle(18, 32, 21, 14, 36, 51.67, false, -4, 22,
+                                     4, 1980, -64, (THourAngle){9, 52, 23.66});
+
+  test_hour_angle_to_right_ascension(9, 52, 23.66, 14, 36, 51.67, false, -4, 22,
+                                     4, 1980, -64,
+                                     (TRightAscension){18, 32, 21});
 }
 
 int main() {

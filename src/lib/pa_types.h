@@ -81,4 +81,29 @@ typedef struct pa_angle {
   double seconds;
 } TAngle;
 
+/**
+ * Structure to hold an Hour Angle value:
+ *
+ * double hours
+ * double minutes
+ * double seconds
+ */
+typedef struct pa_hour_angle {
+  double hours;
+  double minutes;
+  double seconds;
+} THourAngle;
+
+/**
+ * Structure to hold a Right Ascension value:
+ *
+ * double hours
+ * double minutes
+ * double seconds
+ */
+typedef struct pa_right_ascension {
+  double hours;
+  double minutes;
+  double seconds;
+} TRightAscension;
 #endif

@@ -46,9 +46,9 @@ void test_decimal_hours_to_civil_time(double decimal_hours,
                                       TFullTime expected_civil_time) {
   TFullTime actual_civil_time = decimal_hours_to_civil_time(decimal_hours);
 
-  assert(actual_civil_time.hours = expected_civil_time.hours);
-  assert(actual_civil_time.minutes = expected_civil_time.minutes);
-  assert(actual_civil_time.seconds = expected_civil_time.seconds);
+  assert(actual_civil_time.hours == expected_civil_time.hours);
+  assert(actual_civil_time.minutes == expected_civil_time.minutes);
+  assert(actual_civil_time.seconds == expected_civil_time.seconds);
 
   printf("Civil time for decimal hours of %0.8f: expected %d:%d:%d, got "
          "%d:%d:%d\n",
@@ -65,7 +65,7 @@ void test_local_civil_time_to_universal_time(
       lct_hours, lct_minutes, lct_seconds, is_daylight_savings, zone_correction,
       local_day, local_month, local_year);
 
-  assert(actual_result.day = expected_result.day);
+  assert(actual_result.day == expected_result.day);
   assert(actual_result.hours == expected_result.hours);
   assert(actual_result.minutes == expected_result.minutes);
   assert(actual_result.month == expected_result.month);
