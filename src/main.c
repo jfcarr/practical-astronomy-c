@@ -51,6 +51,14 @@ void test_coordinates() {
   test_hour_angle_to_right_ascension(9, 52, 23.66, 14, 36, 51.67, false, -4, 22,
                                      4, 1980, -64,
                                      (TRightAscension){18, 32, 21});
+
+  test_equatorial_coordinates_to_horizon_coordinates(
+      5, 51, 44, 23, 13, 10, 52,
+      (THorizonCoordinates){283, 16, 15.7, 19, 20, 3.64});
+
+  test_horizon_coordinates_to_equatorial_coordinates(
+      283, 16, 15.7, 19, 20, 3.64, 52,
+      (TEquatorialCoordinates){5, 51, 44, 23, 13, 10});
 }
 
 int main() {
