@@ -106,4 +106,34 @@ typedef struct pa_right_ascension {
   double minutes;
   double seconds;
 } TRightAscension;
+
+/**
+ * Structure to hold a Horizon Coordinate value:
+ *
+ * Azimuth: degrees, minutes, and seconds
+ * Altitude: degrees, minutes, and seconds
+ */
+typedef struct pa_horizon_coordinates {
+  double azimuth_degrees;
+  double azimuth_minutes;
+  double azimuth_seconds;
+  double altitude_degrees;
+  double altitude_minutes;
+  double altitude_seconds;
+} THorizonCoordinates;
+
+/**
+ * Structure to hold a Equatorial Coordinate value:
+ *
+ * Hour Angle: hours, minutes, and seconds
+ * Declination: degrees, minutes, and seconds
+ */
+typedef struct pa_equatorial_coordinates {
+  double hour_angle_hours;
+  double hour_angle_minutes;
+  double hour_angle_seconds;
+  double declination_degrees;
+  double declination_minutes;
+  double declination_seconds;
+} TEquatorialCoordinates;
 #endif

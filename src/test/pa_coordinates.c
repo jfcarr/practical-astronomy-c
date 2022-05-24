@@ -78,3 +78,80 @@ void test_hour_angle_to_right_ascension(
          (int)expected_result.seconds, (int)actual_result.hours,
          (int)actual_result.minutes, (int)actual_result.seconds);
 }
+
+void test_equatorial_coordinates_to_horizon_coordinates(
+    double hour_angle_hours, double hour_angle_minutes,
+    double hour_angle_seconds, double declination_degrees,
+    double declination_minutes, double declination_seconds,
+    double geographical_latitude, THorizonCoordinates expected_result) {
+  THorizonCoordinates actual_result =
+      equatorial_coordinates_to_horizon_coordinates(
+          hour_angle_hours, hour_angle_minutes, hour_angle_seconds,
+          declination_degrees, declination_minutes, declination_seconds,
+          geographical_latitude);
+
+  assert(actual_result.azimuth_degrees == expected_result.azimuth_degrees);
+  assert(actual_result.azimuth_minutes == expected_result.azimuth_minutes);
+  assert(actual_result.azimuth_seconds == expected_result.azimuth_seconds);
+  assert(actual_result.altitude_degrees == expected_result.altitude_degrees);
+  assert(actual_result.altitude_minutes == expected_result.altitude_minutes);
+  assert(actual_result.altitude_seconds == expected_result.altitude_seconds);
+
+  printf(
+      "Horizon Coordinates for Equatorial Coordinates of %0.0f hours, %0.0f "
+      "minutes, %0.0f seconds/%0.0f degrees, %0.0f minutes, %0.0f "
+      "seconds:\n\tExpected: %dd %dm %ds/%dd %dm %ds\n\tGot:      %dd %dm "
+      "%ds/%dd %dm %ds\n",
+      hour_angle_hours, hour_angle_minutes, hour_angle_seconds,
+      declination_degrees, declination_minutes, declination_seconds,
+      (int)expected_result.azimuth_degrees,
+      (int)expected_result.azimuth_minutes,
+      (int)expected_result.azimuth_seconds,
+      (int)expected_result.altitude_degrees,
+      (int)expected_result.altitude_minutes,
+      (int)expected_result.altitude_seconds, (int)actual_result.azimuth_degrees,
+      (int)actual_result.azimuth_minutes, (int)actual_result.azimuth_seconds,
+      (int)actual_result.altitude_degrees, (int)actual_result.altitude_minutes,
+      (int)actual_result.altitude_seconds);
+}
+
+void test_horizon_coordinates_to_equatorial_coordinates(
+    double azimuth_degrees, double azimuth_minutes, double azimuth_seconds,
+    double altitude_degrees, double altitude_minutes, double altitude_seconds,
+    double geographical_latitude, TEquatorialCoordinates expected_result) {
+  TEquatorialCoordinates actual_result =
+      horizon_coordinates_to_equatorial_coordinates(
+          azimuth_degrees, azimuth_minutes, azimuth_seconds, altitude_degrees,
+          altitude_minutes, altitude_seconds, geographical_latitude);
+
+  assert(actual_result.hour_angle_hours == expected_result.hour_angle_hours);
+  assert(actual_result.hour_angle_minutes ==
+         expected_result.hour_angle_minutes);
+  assert(actual_result.hour_angle_seconds ==
+         expected_result.hour_angle_seconds);
+  assert(actual_result.declination_degrees ==
+         expected_result.declination_degrees);
+  assert(actual_result.declination_minutes ==
+         expected_result.declination_minutes);
+  assert(actual_result.declination_seconds ==
+         expected_result.declination_seconds);
+
+  printf(
+      "Equatorial Coordinates for Horizon Coordinates of %0.0f degrees, %0.0f "
+      "minutes, %0.0f seconds/%0.0f degrees, %0.0f minutes, %0.0f "
+      "seconds:\n\tExpected: %dh %dm %ds/%dh %dm %ds\n\tGot:      %dh %dm "
+      "%ds/%dh %dm %ds\n",
+      azimuth_degrees, azimuth_minutes, azimuth_seconds, altitude_degrees,
+      altitude_minutes, altitude_seconds, (int)expected_result.hour_angle_hours,
+      (int)expected_result.hour_angle_minutes,
+      (int)expected_result.hour_angle_seconds,
+      (int)expected_result.declination_degrees,
+      (int)expected_result.declination_minutes,
+      (int)expected_result.declination_seconds,
+      (int)actual_result.hour_angle_hours,
+      (int)actual_result.hour_angle_minutes,
+      (int)actual_result.hour_angle_seconds,
+      (int)actual_result.declination_degrees,
+      (int)actual_result.declination_minutes,
+      (int)actual_result.declination_seconds);
+}

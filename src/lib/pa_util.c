@@ -37,3 +37,13 @@ double dround(double input, int places) {
 
   return (isNegative) ? -(returnValue) : returnValue;
 }
+
+/**
+ * Convert degrees to radians
+ */
+double degrees_to_radians(double degrees) { return (degrees * M_PI) / 180; }
+
+/**
+ * Convert radians to degrees
+ */
+double radians_to_degrees(double radians) { return (radians * 180) / M_PI; }
