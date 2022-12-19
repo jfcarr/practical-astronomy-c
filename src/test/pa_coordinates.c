@@ -155,3 +155,18 @@ void test_horizon_coordinates_to_equatorial_coordinates(
       (int)actual_result.declination_minutes,
       (int)actual_result.declination_seconds);
 }
+
+void test_mean_obliquity_of_the_ecliptic(double greenwich_day,
+                                         int greenwich_month,
+                                         int greenwich_year,
+                                         double expected_result) {
+  double actual_result = mean_obliquity_of_the_ecliptic(
+      greenwich_day, greenwich_month, greenwich_year);
+
+  assert(actual_result = expected_result);
+
+  printf("Mean Obliquity for Greenwich Date of %d/%d/%d:\n\tExpected: "
+         "%f\n\tGot: %f\n",
+         (int)greenwich_month, (int)greenwich_day, (int)greenwich_year,
+         expected_result, actual_result);
+}
