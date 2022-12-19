@@ -163,3 +163,20 @@ TEquatorialCoordinates horizon_coordinates_to_equatorial_coordinates(
                                   hour_angle_seconds,  declination_degrees,
                                   declination_minutes, declination_seconds};
 }
+
+/**
+ * Calculate Mean Obliquity of the Ecliptic for a Greenwich Date
+ *
+ * @return double mean_obliquity
+ */
+double mean_obliquity_of_the_ecliptic(double greenwich_day, int greenwich_month,
+                                      int greenwich_year) {
+  double jd =
+      civil_date_to_julian_date(greenwich_day, greenwich_month, greenwich_year);
+  double mjd = jd - 2451545;
+  double t = mjd / 36525;
+  double de1 = t * (46.815 + t * (0.0006 - (t * 0.00181)));
+  double de2 = de1 / 3600;
+
+  return 23.439292 - de2;
+}

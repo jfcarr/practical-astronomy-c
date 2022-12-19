@@ -34,4 +34,9 @@ void test_horizon_coordinates_to_equatorial_coordinates(
     double azimuth_degrees, double azimuth_minutes, double azimuth_seconds,
     double altitude_degrees, double altitude_minutes, double altitude_seconds,
     double geographical_latitude, TEquatorialCoordinates expected_result);
+
+void test_mean_obliquity_of_the_ecliptic(double greenwich_day,
+                                         int greenwich_month,
+                                         int greenwich_year,
+                                         double expected_result);
 #endif
