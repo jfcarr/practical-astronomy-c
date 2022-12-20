@@ -36,4 +36,15 @@ TEquatorialCoordinates horizon_coordinates_to_equatorial_coordinates(
 
 double mean_obliquity_of_the_ecliptic(double greenwich_day, int greenwich_month,
                                       int greenwich_year);
+
+TEquatorialCoordinates2 ecliptic_coordinates_to_equatorial_coordinates(
+    double ecliptic_longitude_degrees, double ecliptic_longitude_minutes,
+    double ecliptic_longitude_seconds, double ecliptic_latitude_degrees,
+    double ecliptic_latitude_minutes, double ecliptic_latitude_seconds,
+    double greenwich_day, int greenwich_month, int greenwich_year);
+
+TEclipticCoordinates equatorial_coordinate_to_ecliptic_coordinate(
+    double ra_hours, double ra_minutes, double ra_seconds, double dec_degrees,
+    double dec_minutes, double dec_seconds, double gw_day, int gw_month,
+    int gw_year);
 #endif

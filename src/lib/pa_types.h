@@ -136,4 +136,28 @@ typedef struct pa_equatorial_coordinates {
   double declination_minutes;
   double declination_seconds;
 } TEquatorialCoordinates;
+
+/**
+ * Structure to hold a Equatorial Coordinate value:
+ *
+ * Right Ascension: hours, minutes, and seconds
+ * Declination: degrees, minutes, and seconds
+ */
+typedef struct pa_equatorial_coordinates_2 {
+  double right_ascension_hours;
+  double right_ascension_minutes;
+  double right_ascension_seconds;
+  double declination_degrees;
+  double declination_minutes;
+  double declination_seconds;
+} TEquatorialCoordinates2;
+
+typedef struct pa_ecliptic_coordinates {
+  double longitude_degrees;
+  double longitude_minutes;
+  double longitude_seconds;
+  double latitude_degrees;
+  double latitude_minutes;
+  double latitude_seconds;
+} TEclipticCoordinates;
 #endif
