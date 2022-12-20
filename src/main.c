@@ -77,6 +77,10 @@ void test_coordinates() {
   test_galactic_coordinates_to_equatorial_coordinates(
       232, 14, 52.38, 51, 7, 20.16,
       (TEquatorialCoordinates2){10, 21, 0, 10, 3, 11});
+
+  test_angle_between_two_objects(5, 13, 31.7, -8, 13, 30, 6, 44, 13.4, -16, 41,
+                                 11, AngleMeasurement_Hours,
+                                 (TAngle){23, 40, 25.86});
 }
 
 int main() {

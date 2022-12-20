@@ -55,4 +55,12 @@ TGalacticCoordinates equatorial_coordinate_to_galactic_coordinate(
 TEquatorialCoordinates2 galactic_coordinates_to_equatorial_coordinates(
     double gal_long_deg, double gal_long_min, double gal_long_sec,
     double gal_lat_deg, double gal_lat_min, double gal_lat_sec);
+
+TAngle angle_between_two_objects(double ra_long1_hour_deg, double ra_long1_min,
+                                 double ra_long1_sec, double dec_lat1_deg,
+                                 double dec_lat1_min, double dec_lat1_sec,
+                                 double ra_long2_hour_deg, double ra_long2_min,
+                                 double ra_long2_sec, double dec_lat2_deg,
+                                 double dec_lat2_min, double dec_lat2_sec,
+                                 TAngleMeasurementUnits hour_or_degree);
 #endif
