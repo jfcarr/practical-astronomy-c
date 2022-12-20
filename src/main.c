@@ -61,6 +61,14 @@ void test_coordinates() {
       (TEquatorialCoordinates){5, 51, 44, 23, 13, 10});
 
   test_mean_obliquity_of_the_ecliptic(6, 7, 2009, 23.43805531);
+
+  test_ecliptic_coordinates_to_equatorial_coordinates(
+      139, 41, 10, 4, 52, 31, 6, 7, 2009,
+      (TEquatorialCoordinates2){9, 34, 53.4, 19, 32, 8.52});
+
+  test_equatorial_coordinate_to_ecliptic_coordinate(
+      9, 34, 53.4, 19, 32, 8.52, 6, 7, 2009,
+      (TEclipticCoordinates){139, 41, 9.97, 4, 52, 30.99});
 }
 
 int main() {

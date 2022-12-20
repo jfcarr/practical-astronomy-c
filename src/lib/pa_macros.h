@@ -100,4 +100,10 @@ double horizon_coordinates_to_hour_angle(
     double azimuth_degrees, double azimuth_minutes, double azimuth_seconds,
     double altitude_degrees, double altitude_minutes, double altitude_seconds,
     double geographical_latitude);
+
+double obliq(double greenwich_day, int greenwich_month, int greenwich_year);
+
+double nutat_long(double gd, int gm, int gy);
+
+double nutat_obl(double greenwich_day, int greenwich_month, int greenwich_year);
 #endif
