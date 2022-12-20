@@ -329,3 +329,30 @@ void test_galactic_coordinates_to_equatorial_coordinates(
       (int)actual_result.declination_minutes,
       (int)actual_result.declination_seconds);
 }
+
+void test_angle_between_two_objects(
+    double ra_long1_hour_deg, double ra_long1_min, double ra_long1_sec,
+    double dec_lat1_deg, double dec_lat1_min, double dec_lat1_sec,
+    double ra_long2_hour_deg, double ra_long2_min, double ra_long2_sec,
+    double dec_lat2_deg, double dec_lat2_min, double dec_lat2_sec,
+    TAngleMeasurementUnits hour_or_degree, TAngle expected_result) {
+  TAngle actual_result = angle_between_two_objects(
+      ra_long1_hour_deg, ra_long1_min, ra_long1_sec, dec_lat1_deg, dec_lat1_min,
+      dec_lat1_sec, ra_long2_hour_deg, ra_long2_min, ra_long2_sec, dec_lat2_deg,
+      dec_lat2_min, dec_lat2_sec, hour_or_degree);
+
+  assert(actual_result.degrees == expected_result.degrees);
+  assert(actual_result.minutes == expected_result.minutes);
+  assert(actual_result.seconds == expected_result.seconds);
+
+  printf("Angle between:\n\tObject 1, with RA %0.0f %0.0fm %0.0fs Dec %0.0fd "
+         "%0.0fm %0.0fs\n\tObject 2, with RA %0.0f %0.0fm %0.0fs Dec %0.0fd "
+         "%0.0fm %0.0fs\n\t\tExpected: %0.0fd %0.0fm %0.0fs\n\t\tGot:      "
+         "%0.0fd %0.0fm %0.0fs\n",
+         ra_long1_hour_deg, ra_long1_min, ra_long1_sec, dec_lat1_deg,
+         dec_lat1_min, dec_lat1_sec, ra_long2_hour_deg, ra_long2_min,
+         ra_long2_sec, dec_lat2_deg, dec_lat2_min, dec_lat2_sec,
+         expected_result.degrees, expected_result.minutes,
+         expected_result.seconds, actual_result.degrees, actual_result.minutes,
+         actual_result.seconds);
+}

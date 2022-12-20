@@ -9,6 +9,14 @@ enum WarningFlags {
 };
 
 /**
+ * Angle measurement units.
+ */
+typedef enum pa_angle_measurement_units {
+  AngleMeasurement_Hours,
+  AngleMeasurement_Degrees
+} TAngleMeasurementUnits;
+
+/**
  * Structure to hold a Date value:
  *
  * int month

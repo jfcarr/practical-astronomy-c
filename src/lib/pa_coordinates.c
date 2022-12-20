@@ -346,3 +346,55 @@ TEquatorialCoordinates2 galactic_coordinates_to_equatorial_coordinates(
   return (TEquatorialCoordinates2){ra_hours,    ra_minutes,  ra_seconds,
                                    dec_degrees, dec_minutes, dec_seconds};
 }
+
+/**
+ * Calculate the angle between two celestial objects
+ *
+ * @return TAngle <double degrees, double minutes, double seconds>
+ */
+TAngle angle_between_two_objects(double ra_long1_hour_deg, double ra_long1_min,
+                                 double ra_long1_sec, double dec_lat1_deg,
+                                 double dec_lat1_min, double dec_lat1_sec,
+                                 double ra_long2_hour_deg, double ra_long2_min,
+                                 double ra_long2_sec, double dec_lat2_deg,
+                                 double dec_lat2_min, double dec_lat2_sec,
+                                 TAngleMeasurementUnits hour_or_degree) {
+  double ra_long1_decimal =
+      (hour_or_degree == AngleMeasurement_Hours)
+          ? hms_dh(ra_long1_hour_deg, ra_long1_min, ra_long1_sec)
+          : degrees_minutes_seconds_to_decimal_degrees(
+                ra_long1_hour_deg, ra_long1_min, ra_long1_sec);
+  double ra_long1_deg = (hour_or_degree == AngleMeasurement_Hours)
+                            ? degree_hours_to_decimal_degrees(ra_long1_decimal)
+                            : ra_long1_decimal;
+
+  double ra_long1_rad = degrees_to_radians(ra_long1_deg);
+  double dec_lat1_deg1 = degrees_minutes_seconds_to_decimal_degrees(
+      dec_lat1_deg, dec_lat1_min, dec_lat1_sec);
+  double dec_lat1_rad = degrees_to_radians(dec_lat1_deg1);
+
+  double ra_long2_decimal =
+      (hour_or_degree == AngleMeasurement_Hours)
+          ? hms_dh(ra_long2_hour_deg, ra_long2_min, ra_long2_sec)
+          : degrees_minutes_seconds_to_decimal_degrees(
+                ra_long2_hour_deg, ra_long2_min, ra_long2_sec);
+  double ra_long2_deg = (hour_or_degree == AngleMeasurement_Hours)
+                            ? degree_hours_to_decimal_degrees(ra_long2_decimal)
+                            : ra_long2_decimal;
+  double ra_long2_rad = degrees_to_radians(ra_long2_deg);
+  double dec_lat2_deg1 = degrees_minutes_seconds_to_decimal_degrees(
+      dec_lat2_deg, dec_lat2_min, dec_lat2_sec);
+  double dec_lat2_rad = degrees_to_radians(dec_lat2_deg1);
+
+  double cos_d =
+      sin(dec_lat1_rad) * sin(dec_lat2_rad) +
+      cos(dec_lat1_rad) * cos(dec_lat2_rad) * cos(ra_long1_rad - ra_long2_rad);
+  double d_rad = acos(cos_d);
+  double d_deg = w_to_degrees(d_rad);
+
+  double angle_deg = decimal_degrees_degrees(d_deg);
+  double angle_min = decimal_degrees_minutes(d_deg);
+  double angle_sec = decimal_degrees_seconds(d_deg);
+
+  return (TAngle){angle_deg, angle_min, angle_sec};
+}
