@@ -51,4 +51,14 @@ void test_equatorial_coordinate_to_ecliptic_coordinate(
     double ra_hours, double ra_minutes, double ra_seconds, double dec_degrees,
     double dec_minutes, double dec_seconds, double gw_day, int gw_month,
     int gw_year, TEclipticCoordinates expected_result);
+
+void test_equatorial_coordinate_to_galactic_coordinate(
+    double ra_hours, double ra_minutes, double ra_seconds, double dec_degrees,
+    double dec_minutes, double dec_seconds,
+    TGalacticCoordinates expected_result);
+
+void test_galactic_coordinates_to_equatorial_coordinates(
+    double gal_long_deg, double gal_long_min, double gal_long_sec,
+    double gal_lat_deg, double gal_lat_min, double gal_lat_sec,
+    TEquatorialCoordinates2 expected_result);
 #endif

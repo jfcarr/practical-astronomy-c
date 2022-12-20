@@ -152,12 +152,12 @@ typedef struct pa_equatorial_coordinates_2 {
   double declination_seconds;
 } TEquatorialCoordinates2;
 
-typedef struct pa_ecliptic_coordinates {
+typedef struct pa_ecliptic_galactic_coordinates {
   double longitude_degrees;
   double longitude_minutes;
   double longitude_seconds;
   double latitude_degrees;
   double latitude_minutes;
   double latitude_seconds;
-} TEclipticCoordinates;
+} TEclipticCoordinates, TGalacticCoordinates;
 #endif
