@@ -69,6 +69,14 @@ void test_coordinates() {
   test_equatorial_coordinate_to_ecliptic_coordinate(
       9, 34, 53.4, 19, 32, 8.52, 6, 7, 2009,
       (TEclipticCoordinates){139, 41, 9.97, 4, 52, 30.99});
+
+  test_equatorial_coordinate_to_galactic_coordinate(
+      10, 21, 0, 10, 3, 11,
+      (TGalacticCoordinates){232, 14, 52.38, 51, 7, 20.16});
+
+  test_galactic_coordinates_to_equatorial_coordinates(
+      232, 14, 52.38, 51, 7, 20.16,
+      (TEquatorialCoordinates2){10, 21, 0, 10, 3, 11});
 }
 
 int main() {

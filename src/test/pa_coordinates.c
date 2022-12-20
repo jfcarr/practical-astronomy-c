@@ -252,3 +252,80 @@ void test_equatorial_coordinate_to_ecliptic_coordinate(
       (int)actual_result.longitude_minutes,
       (int)actual_result.longitude_seconds);
 }
+
+void test_equatorial_coordinate_to_galactic_coordinate(
+    double ra_hours, double ra_minutes, double ra_seconds, double dec_degrees,
+    double dec_minutes, double dec_seconds,
+    TGalacticCoordinates expected_result) {
+
+  TGalacticCoordinates actual_result =
+      equatorial_coordinate_to_galactic_coordinate(ra_hours, ra_minutes,
+                                                   ra_seconds, dec_degrees,
+                                                   dec_minutes, dec_seconds);
+
+  assert(actual_result.latitude_degrees == expected_result.latitude_degrees);
+  assert(actual_result.latitude_minutes == expected_result.latitude_minutes);
+  assert(actual_result.latitude_seconds == expected_result.latitude_seconds);
+  assert(actual_result.longitude_degrees == expected_result.longitude_degrees);
+  assert(actual_result.longitude_minutes == expected_result.longitude_minutes);
+  assert(actual_result.longitude_seconds == expected_result.longitude_seconds);
+
+  printf(
+      "Galactic Coordinates for Equatorial Coordinates of %0.0f hours, %0.0f "
+      "minutes, %0.0f seconds/%0.0f degrees, %0.0f minutes, %0.0f "
+      "seconds:\n\tExpected: %dd %dm %ds/%dd %dm %ds\n\tGot:      %dd %dm "
+      "%ds/%dd %dm %ds\n",
+      ra_hours, ra_minutes, ra_seconds, dec_degrees, dec_minutes, dec_seconds,
+      (int)expected_result.latitude_degrees,
+      (int)expected_result.latitude_minutes,
+      (int)expected_result.latitude_seconds,
+      (int)expected_result.longitude_degrees,
+      (int)expected_result.longitude_minutes,
+      (int)expected_result.longitude_seconds,
+      (int)actual_result.latitude_degrees, (int)actual_result.latitude_minutes,
+      (int)actual_result.latitude_seconds, (int)actual_result.longitude_degrees,
+      (int)actual_result.longitude_minutes,
+      (int)actual_result.longitude_seconds);
+}
+
+void test_galactic_coordinates_to_equatorial_coordinates(
+    double gal_long_deg, double gal_long_min, double gal_long_sec,
+    double gal_lat_deg, double gal_lat_min, double gal_lat_sec,
+    TEquatorialCoordinates2 expected_result) {
+  TEquatorialCoordinates2 actual_result =
+      galactic_coordinates_to_equatorial_coordinates(gal_long_deg, gal_long_min,
+                                                     gal_long_sec, gal_lat_deg,
+                                                     gal_lat_min, gal_lat_sec);
+
+  assert(actual_result.declination_degrees ==
+         expected_result.declination_degrees);
+  assert(actual_result.declination_minutes ==
+         expected_result.declination_minutes);
+  assert(actual_result.declination_seconds ==
+         expected_result.declination_seconds);
+  assert(actual_result.right_ascension_hours ==
+         expected_result.right_ascension_hours);
+  assert(actual_result.right_ascension_minutes ==
+         expected_result.right_ascension_minutes);
+  assert(actual_result.right_ascension_seconds ==
+         expected_result.right_ascension_seconds);
+
+  printf(
+      "Equatorial Coordinates for Galactic Coordinates of %0.0f degrees, %0.0f "
+      "minutes, %0.0f seconds/%0.0f degrees, %0.0f minutes, %0.0f "
+      "seconds:\n\tExpected: %dh %dm %ds/%dh %dm %ds\n\tGot:      %dh %dm "
+      "%ds/%dh %dm %ds\n",
+      gal_long_deg, gal_long_min, gal_long_sec, gal_lat_deg, gal_lat_min,
+      gal_lat_sec, (int)expected_result.right_ascension_hours,
+      (int)expected_result.right_ascension_minutes,
+      (int)expected_result.right_ascension_seconds,
+      (int)expected_result.declination_degrees,
+      (int)expected_result.declination_minutes,
+      (int)expected_result.declination_seconds,
+      (int)actual_result.right_ascension_hours,
+      (int)actual_result.right_ascension_minutes,
+      (int)actual_result.right_ascension_seconds,
+      (int)actual_result.declination_degrees,
+      (int)actual_result.declination_minutes,
+      (int)actual_result.declination_seconds);
+}
