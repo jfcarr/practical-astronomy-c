@@ -456,3 +456,30 @@ void test_correct_for_precession(double ra_hour, double ra_minutes,
          actual_result.declination_degrees, actual_result.declination_minutes,
          actual_result.declination_seconds);
 }
+
+void test_nutation_in_ecliptic_longitude_and_obliquity(
+    double greenwich_day, int greenwich_month, int greenwich_year,
+    TNutation expected_result) {
+  TNutation actual_result = nutation_in_ecliptic_longitude_and_obliquity(
+      greenwich_day, greenwich_month, greenwich_year);
+
+  assert(dround(actual_result.nutation_in_ecliption_longitude, 9) ==
+         expected_result.nutation_in_ecliption_longitude);
+  assert(dround(actual_result.nutation_in_obliquity, 7) ==
+         expected_result.nutation_in_obliquity);
+
+  printf("(Nutation) WHEN\n");
+  printf("\tGreenwich Date is %d/%0.0f/%d\n", greenwich_month, greenwich_day,
+         greenwich_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tNutation in Ecliptic Longitude is %0.9f AND\n",
+         expected_result.nutation_in_ecliption_longitude);
+  printf("\t\t\tNutation in Obliquity is %0.7f\n",
+         expected_result.nutation_in_obliquity);
+  printf("\t\tActual:\n");
+  printf("\t\t\tNutation in Ecliptic Longitude is %0.9f AND\n",
+         actual_result.nutation_in_ecliption_longitude);
+  printf("\t\t\tNutation in Obliquity is %0.7f\n",
+         actual_result.nutation_in_obliquity);
+}

@@ -89,6 +89,9 @@ void test_coordinates() {
   test_correct_for_precession(
       9, 10, 43, 14, 23, 25, 0.923, 1, 1950, 1, 6, 1979,
       (TCorrectedPrecession){9, 12, 20.18, 14, 16, 9.12});
+
+  test_nutation_in_ecliptic_longitude_and_obliquity(
+      1, 9, 1988, (TNutation){.001525808, .0025671});
 }
 
 int main() {
