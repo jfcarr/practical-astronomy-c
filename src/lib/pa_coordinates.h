@@ -70,4 +70,10 @@ TRiseSet rising_and_setting(double ra_hours, double ra_minutes,
                             int gw_date_month, int gw_date_year,
                             double geog_long_deg, double geog_lat_deg,
                             double vert_shift_deg);
+
+TCorrectedPrecession
+correct_for_precession(double ra_hour, double ra_minutes, double ra_seconds,
+                       double dec_deg, double dec_minutes, double dec_seconds,
+                       double epoch1_day, int epoch1_month, int epoch1_year,
+                       double epoch2_day, int epoch2_month, int epoch2_year);
 #endif

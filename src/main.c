@@ -85,6 +85,10 @@ void test_coordinates() {
   test_rising_and_setting(
       23, 39, 20, 21, 42, 0, 24, 8, 2010, 64, 30, 0.5667,
       (TRiseSet){RiseSetStatus_Ok, 14, 16, 4, 10, 64.36, 295.64});
+
+  test_correct_for_precession(
+      9, 10, 43, 14, 23, 25, 0.923, 1, 1950, 1, 6, 1979,
+      (TCorrectedPrecession){9, 12, 20.18, 14, 16, 9.12});
 }
 
 int main() {

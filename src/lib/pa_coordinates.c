@@ -464,3 +464,51 @@ TRiseSet rising_and_setting(double ra_hours, double ra_minutes,
   return (TRiseSet){rs_status,  ut_rise_hour, ut_rise_min, ut_set_hour,
                     ut_set_min, az_rise,      az_set};
 }
+
+/**
+ * Calculate precession (corrected coordinates between two epochs)
+ *
+ * @return TCorrectedPrecession<double corrected_ra_hour, double
+ * corrected_ra_minutes, double corrected_ra_seconds, double corrected_dec_deg,
+ * double corrected_dec_minutes, double corrected_dec_seconds>
+ */
+TCorrectedPrecession
+correct_for_precession(double ra_hour, double ra_minutes, double ra_seconds,
+                       double dec_deg, double dec_minutes, double dec_seconds,
+                       double epoch1_day, int epoch1_month, int epoch1_year,
+                       double epoch2_day, int epoch2_month, int epoch2_year) {
+  double ra1_rad = degrees_to_radians(
+      degree_hours_to_decimal_degrees(hms_dh(ra_hour, ra_minutes, ra_seconds)));
+  double dec1_rad =
+      degrees_to_radians(degrees_minutes_seconds_to_decimal_degrees(
+          dec_deg, dec_minutes, dec_seconds));
+  double t_centuries =
+      (civil_date_to_julian_date(epoch1_day, epoch1_month, epoch1_year) -
+       2415020) /
+      36525;
+  double m_sec = 3.07234 + (0.00186 * t_centuries);
+  double n_arcsec = 20.0468 - (0.0085 * t_centuries);
+  double n_years =
+      (civil_date_to_julian_date(epoch2_day, epoch2_month, epoch2_year) -
+       civil_date_to_julian_date(epoch1_day, epoch1_month, epoch1_year)) /
+      365.25;
+  double s1_hours =
+      ((m_sec + (n_arcsec * sin(ra1_rad) * tan(dec1_rad) / 15)) * n_years) /
+      3600;
+  double ra2_hours = hms_dh(ra_hour, ra_minutes, ra_seconds) + s1_hours;
+  double s2_deg = (n_arcsec * cos(ra1_rad) * n_years) / 3600;
+  double dec2_deg = degrees_minutes_seconds_to_decimal_degrees(
+                        dec_deg, dec_minutes, dec_seconds) +
+                    s2_deg;
+
+  int corrected_ra_hour = decimal_hours_hour(ra2_hours);
+  int corrected_ra_minutes = decimal_hours_minute(ra2_hours);
+  double corrected_ra_seconds = decimal_hours_second(ra2_hours);
+  double corrected_dec_deg = decimal_degrees_degrees(dec2_deg);
+  double corrected_dec_minutes = decimal_degrees_minutes(dec2_deg);
+  double corrected_dec_seconds = decimal_degrees_seconds(dec2_deg);
+
+  return (TCorrectedPrecession){corrected_ra_hour,     corrected_ra_minutes,
+                                corrected_ra_seconds,  corrected_dec_deg,
+                                corrected_dec_minutes, corrected_dec_seconds};
+}
