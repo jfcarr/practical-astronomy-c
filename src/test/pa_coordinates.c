@@ -356,3 +356,49 @@ void test_angle_between_two_objects(
          expected_result.seconds, actual_result.degrees, actual_result.minutes,
          actual_result.seconds);
 }
+
+void test_rising_and_setting(double ra_hours, double ra_minutes,
+                             double ra_seconds, double dec_deg, double dec_min,
+                             double dec_sec, double gw_date_day,
+                             int gw_date_month, int gw_date_year,
+                             double geog_long_deg, double geog_lat_deg,
+                             double vert_shift_deg, TRiseSet expected_result) {
+  TRiseSet actual_result = rising_and_setting(
+      ra_hours, ra_minutes, ra_seconds, dec_deg, dec_min, dec_sec, gw_date_day,
+      gw_date_month, gw_date_year, geog_long_deg, geog_lat_deg, vert_shift_deg);
+
+  assert(actual_result.az_rise == expected_result.az_rise);
+  assert(actual_result.az_set == expected_result.az_set);
+  assert(actual_result.rise_set_status == expected_result.rise_set_status);
+  assert(actual_result.ut_rise_hour == expected_result.ut_rise_hour);
+  assert(actual_result.ut_rise_minute == expected_result.ut_rise_minute);
+  assert(actual_result.ut_set_hour == expected_result.ut_set_hour);
+  assert(actual_result.ut_set_minute == expected_result.ut_set_minute);
+
+  printf("WHEN\n");
+  printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", ra_hours,
+         ra_minutes, ra_seconds);
+  printf("\tDeclination is %0.0fd %0.0fm %0.0fs AND\n", dec_deg, dec_min,
+         dec_sec);
+  printf("\tGreenwich Date is %d/%0.0f/%d AND\n", gw_date_month, gw_date_day,
+         gw_date_year);
+  printf("\tGeographical Long/Lat is %0.1f/%0.1f\n", geog_long_deg,
+         geog_lat_deg);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\trise/set status is %d AND\n", expected_result.rise_set_status);
+  printf("\t\t\trise time is %0.0f:%0.0f AND\n", expected_result.ut_rise_hour,
+         expected_result.ut_rise_minute);
+  printf("\t\t\tset time is %0.0f:%0.0f AND\n", expected_result.ut_set_hour,
+         expected_result.ut_set_minute);
+  printf("\t\t\tazimuth rise/set is %0.2f/%0.2f\n", expected_result.az_rise,
+         expected_result.az_set);
+  printf("\t\tActual:\n");
+  printf("\t\t\trise/set status is %d AND\n", actual_result.rise_set_status);
+  printf("\t\t\trise time is %0.0f:%0.0f AND\n", actual_result.ut_rise_hour,
+         actual_result.ut_rise_minute);
+  printf("\t\t\tset time is %0.0f:%0.0f AND\n", actual_result.ut_set_hour,
+         actual_result.ut_set_minute);
+  printf("\t\t\tazimuth rise/set is %0.2f/%0.2f\n", actual_result.az_rise,
+         actual_result.az_set);
+}

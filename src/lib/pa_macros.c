@@ -312,6 +312,29 @@ double universal_time_to_greenwich_sidereal_time_macro(
 }
 
 /**
+ * Convert Greenwich Sidereal Time to Universal Time
+ *
+ * Original macro name: GSTUT
+ */
+double greenwich_sidereal_time_to_universal_time_macro(
+    double greenwich_sidereal_hours, double greenwich_sidereal_minutes,
+    double greenwich_sidereal_seconds, double greenwich_day,
+    int greenwich_month, int greenwich_year) {
+  double a =
+      civil_date_to_julian_date(greenwich_day, greenwich_month, greenwich_year);
+  double b = a - 2451545;
+  double c = b / 36525;
+  double d = 6.697374558 + (2400.051336 * c) + (0.000025862 * c * c);
+  double e = d - (24 * floor(d / 24));
+  double f = hms_dh(greenwich_sidereal_hours, greenwich_sidereal_minutes,
+                    greenwich_sidereal_seconds);
+  double g = f - e;
+  double h = g - (24 * floor(g / 24));
+
+  return h * 0.9972695663;
+}
+
+/**
  * Convert Greenwich Sidereal Time to Local Sidereal Time
  *
  * Original macro name: GSTLST
@@ -322,6 +345,21 @@ double greenwich_sidereal_time_to_local_sidereal_time_macro(
   double a = hms_dh(greenwich_hours, greenwich_minutes, greenwich_seconds);
   double b = geographical_longitude / 15;
   double c = a + b;
+
+  return c - (24 * floor(c / 24));
+}
+
+/**
+ * Convert Local Sidereal Time to Greenwich Sidereal Time
+ *
+ * Original macro name: LSTGST
+ */
+double local_sidereal_time_to_greenwich_sidereal_time_macro(
+    double local_hours, double local_minutes, double local_seconds,
+    double longitude) {
+  double a = hms_dh(local_hours, local_minutes, local_seconds);
+  double b = longitude / 15;
+  double c = a - b;
 
   return c - (24 * floor(c / 24));
 }

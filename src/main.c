@@ -81,6 +81,10 @@ void test_coordinates() {
   test_angle_between_two_objects(5, 13, 31.7, -8, 13, 30, 6, 44, 13.4, -16, 41,
                                  11, AngleMeasurement_Hours,
                                  (TAngle){23, 40, 25.86});
+
+  test_rising_and_setting(
+      23, 39, 20, 21, 42, 0, 24, 8, 2010, 64, 30, 0.5667,
+      (TRiseSet){RiseSetStatus_Ok, 14, 16, 4, 10, 64.36, 295.64});
 }
 
 int main() {

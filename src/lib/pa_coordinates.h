@@ -63,4 +63,11 @@ TAngle angle_between_two_objects(double ra_long1_hour_deg, double ra_long1_min,
                                  double ra_long2_sec, double dec_lat2_deg,
                                  double dec_lat2_min, double dec_lat2_sec,
                                  TAngleMeasurementUnits hour_or_degree);
+
+TRiseSet rising_and_setting(double ra_hours, double ra_minutes,
+                            double ra_seconds, double dec_deg, double dec_min,
+                            double dec_sec, double gw_date_day,
+                            int gw_date_month, int gw_date_year,
+                            double geog_long_deg, double geog_lat_deg,
+                            double vert_shift_deg);
 #endif
