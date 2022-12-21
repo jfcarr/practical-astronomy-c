@@ -76,4 +76,8 @@ correct_for_precession(double ra_hour, double ra_minutes, double ra_seconds,
                        double dec_deg, double dec_minutes, double dec_seconds,
                        double epoch1_day, int epoch1_month, int epoch1_year,
                        double epoch2_day, int epoch2_month, int epoch2_year);
+
+TNutation nutation_in_ecliptic_longitude_and_obliquity(double greenwich_day,
+                                                       int greenwich_month,
+                                                       int greenwich_year);
 #endif

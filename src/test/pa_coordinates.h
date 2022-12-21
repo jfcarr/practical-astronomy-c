@@ -83,4 +83,8 @@ void test_correct_for_precession(double ra_hour, double ra_minutes,
                                  int epoch1_year, double epoch2_day,
                                  int epoch2_month, int epoch2_year,
                                  TCorrectedPrecession expected_result);
+
+void test_nutation_in_ecliptic_longitude_and_obliquity(
+    double greenwich_day, int greenwich_month, int greenwich_year,
+    TNutation expected_result);
 #endif

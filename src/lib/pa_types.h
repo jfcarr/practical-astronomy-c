@@ -185,4 +185,9 @@ typedef struct pa_rise_set {
   double az_rise;
   double az_set;
 } TRiseSet;
+
+typedef struct pa_nutation {
+  double nutation_in_ecliption_longitude;
+  double nutation_in_obliquity;
+} TNutation;
 #endif
