@@ -16,6 +16,13 @@ typedef enum pa_angle_measurement_units {
   AngleMeasurement_Degrees
 } TAngleMeasurementUnits;
 
+typedef enum pa_rise_set_status {
+  RiseSetStatus_Ok,          /**< Object rises and sets */
+  RiseSetStatus_NeverRises,  /**< Object is never visible above the horizon. */
+  RiseSetStatus_Circumpolar, /**< Object never sets. */
+  RiseSetStatus_GstToUtConversionWarning /**< Error in conversion. */
+} TRiseSetStatus;
+
 /**
  * Structure to hold a Date value:
  *
@@ -168,4 +175,14 @@ typedef struct pa_ecliptic_galactic_coordinates {
   double latitude_minutes;
   double latitude_seconds;
 } TEclipticCoordinates, TGalacticCoordinates;
+
+typedef struct pa_rise_set {
+  TRiseSetStatus rise_set_status;
+  double ut_rise_hour;
+  double ut_rise_minute;
+  double ut_set_hour;
+  double ut_set_minute;
+  double az_rise;
+  double az_set;
+} TRiseSet;
 #endif

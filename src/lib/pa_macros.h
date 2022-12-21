@@ -48,9 +48,18 @@ double universal_time_to_greenwich_sidereal_time_macro(
     double u_hours, double u_minutes, double u_seconds, double greenwich_day,
     int greenwich_month, int greenwich_year);
 
+double greenwich_sidereal_time_to_universal_time_macro(
+    double greenwich_sidereal_hours, double greenwich_sidereal_minutes,
+    double greenwich_sidereal_seconds, double greenwich_day,
+    int greenwich_month, int greenwich_year);
+
 double greenwich_sidereal_time_to_local_sidereal_time_macro(
     double greenwich_hours, double greenwich_minutes, double greenwich_seconds,
     double geographical_longitude);
+
+double local_sidereal_time_to_greenwich_sidereal_time_macro(
+    double local_hours, double local_minutes, double local_seconds,
+    double longitude);
 
 double hour_angle_to_right_ascension_macro(
     double hour_angle_hours, double hour_angle_minutes,
