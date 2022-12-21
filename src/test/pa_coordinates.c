@@ -375,7 +375,7 @@ void test_rising_and_setting(double ra_hours, double ra_minutes,
   assert(actual_result.ut_set_hour == expected_result.ut_set_hour);
   assert(actual_result.ut_set_minute == expected_result.ut_set_minute);
 
-  printf("WHEN\n");
+  printf("(Rising and Setting) WHEN\n");
   printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", ra_hours,
          ra_minutes, ra_seconds);
   printf("\tDeclination is %0.0fd %0.0fm %0.0fs AND\n", dec_deg, dec_min,
@@ -401,4 +401,58 @@ void test_rising_and_setting(double ra_hours, double ra_minutes,
          actual_result.ut_set_minute);
   printf("\t\t\tazimuth rise/set is %0.2f/%0.2f\n", actual_result.az_rise,
          actual_result.az_set);
+}
+
+void test_correct_for_precession(double ra_hour, double ra_minutes,
+                                 double ra_seconds, double dec_deg,
+                                 double dec_minutes, double dec_seconds,
+                                 double epoch1_day, int epoch1_month,
+                                 int epoch1_year, double epoch2_day,
+                                 int epoch2_month, int epoch2_year,
+                                 TCorrectedPrecession expected_result) {
+  TCorrectedPrecession actual_result = correct_for_precession(
+      ra_hour, ra_minutes, ra_seconds, dec_deg, dec_minutes, dec_seconds,
+      epoch1_day, epoch1_month, epoch1_year, epoch2_day, epoch2_month,
+      epoch2_year);
+
+  assert(actual_result.declination_degrees ==
+         expected_result.declination_degrees);
+  assert(actual_result.declination_minutes ==
+         expected_result.declination_minutes);
+  assert(actual_result.declination_seconds ==
+         expected_result.declination_seconds);
+  assert(actual_result.right_ascension_hours ==
+         expected_result.right_ascension_hours);
+  assert(actual_result.right_ascension_minutes ==
+         expected_result.right_ascension_minutes);
+  assert(actual_result.right_ascension_seconds ==
+         expected_result.right_ascension_seconds);
+
+  printf("(Corrected for Precession) WHEN\n");
+  printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", ra_hour, ra_minutes,
+         ra_seconds);
+  printf("\tDeclination is %0.0fd %0.0fm %0.0fs AND\n", dec_deg, dec_minutes,
+         dec_seconds);
+  printf("\tEpoch 1 date is %d/%0.3f/%d AND\n", epoch1_month, epoch1_day,
+         epoch1_year);
+  printf("\tEpoch 2 date is %d/%0.3f/%d\n", epoch2_month, epoch2_day,
+         epoch2_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n",
+         expected_result.right_ascension_hours,
+         expected_result.right_ascension_minutes,
+         expected_result.right_ascension_seconds);
+  printf("\t\t\tDeclination is %0.0fd %0.0fm %0.0fs\n",
+         expected_result.declination_degrees,
+         expected_result.declination_minutes,
+         expected_result.declination_seconds);
+  printf("\t\tActual:\n");
+  printf("\t\t\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n",
+         actual_result.right_ascension_hours,
+         actual_result.right_ascension_minutes,
+         actual_result.right_ascension_seconds);
+  printf("\t\t\tDeclination is %0.0fd %0.0fm %0.0fs\n",
+         actual_result.declination_degrees, actual_result.declination_minutes,
+         actual_result.declination_seconds);
 }

@@ -165,7 +165,7 @@ typedef struct pa_equatorial_coordinates_2 {
   double declination_degrees;
   double declination_minutes;
   double declination_seconds;
-} TEquatorialCoordinates2;
+} TEquatorialCoordinates2, TCorrectedPrecession;
 
 typedef struct pa_ecliptic_galactic_coordinates {
   double longitude_degrees;
