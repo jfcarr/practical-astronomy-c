@@ -115,4 +115,9 @@ double obliq(double greenwich_day, int greenwich_month, int greenwich_year);
 double nutat_long(double gd, int gm, int gy);
 
 double nutat_obl(double greenwich_day, int greenwich_month, int greenwich_year);
+
+double sun_long(double lch, double lcm, double lcs, int ds, int zc, double ld,
+                int lm, int ly);
+
+double true_anomaly(double am, double ec);
 #endif
