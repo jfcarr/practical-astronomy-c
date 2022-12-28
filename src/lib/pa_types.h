@@ -174,7 +174,7 @@ typedef struct pa_ecliptic_galactic_coordinates {
   double latitude_degrees;
   double latitude_minutes;
   double latitude_seconds;
-} TEclipticCoordinates, TGalacticCoordinates;
+} TEclipticCoordinates, TCorrectedEclipticCoordinates, TGalacticCoordinates;
 
 typedef struct pa_rise_set {
   TRiseSetStatus rise_set_status;

@@ -92,6 +92,10 @@ void test_coordinates() {
 
   test_nutation_in_ecliptic_longitude_and_obliquity(
       1, 9, 1988, (TNutation){.001525808, .0025671});
+
+  test_correct_for_aberration(
+      0, 0, 0, 8, 9, 1988, 352, 37, 10.1, -1, 32, 56.4,
+      (TCorrectedEclipticCoordinates){352, 37, 30.45, -1, 32, 56.33});
 }
 
 int main() {

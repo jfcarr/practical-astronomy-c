@@ -483,3 +483,47 @@ void test_nutation_in_ecliptic_longitude_and_obliquity(
   printf("\t\t\tNutation in Obliquity is %0.7f\n",
          actual_result.nutation_in_obliquity);
 }
+
+void test_correct_for_aberration(
+    double ut_hour, double ut_minutes, double ut_seconds, double gw_day,
+    int gw_month, int gw_year, double true_ecl_long_deg,
+    double true_ecl_long_min, double true_ecl_long_sec, double true_ecl_lat_deg,
+    double true_ecl_lat_min, double true_ecl_lat_sec,
+    TCorrectedEclipticCoordinates expected_result) {
+
+  TCorrectedEclipticCoordinates actual_result = correct_for_aberration(
+      ut_hour, ut_minutes, ut_seconds, gw_day, gw_month, gw_year,
+      true_ecl_long_deg, true_ecl_long_min, true_ecl_long_sec, true_ecl_lat_deg,
+      true_ecl_lat_min, true_ecl_lat_sec);
+
+  assert(actual_result.latitude_degrees = expected_result.latitude_degrees);
+  assert(actual_result.latitude_minutes = expected_result.latitude_minutes);
+  assert(actual_result.latitude_seconds = expected_result.latitude_seconds);
+  assert(actual_result.longitude_degrees = expected_result.longitude_degrees);
+  assert(actual_result.longitude_minutes = expected_result.longitude_minutes);
+  assert(actual_result.longitude_seconds = expected_result.longitude_seconds);
+
+  printf("(Corrected For Aberration) WHEN\n");
+  printf("\tUniversal Time is %0.0f:%0.0f:%0.0f AND\n", ut_hour, ut_minutes,
+         ut_seconds);
+  printf("\tGreenwich Date is %d/%0.0f/%d AND\n", gw_month, gw_day, gw_year);
+  printf("\tTrue Ecliptic Longitude is %0.0fd %0.0fm %0.2fs AND\n",
+         true_ecl_long_deg, true_ecl_long_min, true_ecl_long_sec);
+  printf("\tTrue Ecliptic Latitude is %0.0fd %0.0fm %0.2fs\n", true_ecl_lat_deg,
+         true_ecl_lat_min, true_ecl_lat_sec);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tCorrected Ecliptic Longitude is %0.0fd %0.0fm %0.2fs AND\n",
+         expected_result.longitude_degrees, expected_result.longitude_minutes,
+         expected_result.longitude_seconds);
+  printf("\t\t\tCorrected Ecliptic Latitude is %0.0fd %0.0fm %0.2fs\n",
+         expected_result.latitude_degrees, expected_result.latitude_minutes,
+         expected_result.latitude_seconds);
+  printf("\t\tActual:\n");
+  printf("\t\t\tCorrected Ecliptic Longitude is %0.0fd %0.0fm %0.2fs AND\n",
+         actual_result.longitude_degrees, actual_result.longitude_minutes,
+         actual_result.longitude_seconds);
+  printf("\t\t\tCorrected Ecliptic Latitude is %0.0fd %0.0fm %0.2fs\n",
+         actual_result.latitude_degrees, actual_result.latitude_minutes,
+         actual_result.latitude_seconds);
+}
