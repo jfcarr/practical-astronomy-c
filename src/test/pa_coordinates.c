@@ -527,3 +527,60 @@ void test_correct_for_aberration(
          actual_result.latitude_degrees, actual_result.latitude_minutes,
          actual_result.latitude_seconds);
 }
+
+void test_atmospheric_refraction(
+    double true_ra_hour, double true_ra_min, double true_ra_sec,
+    double true_dec_deg, double true_dec_min, double true_dec_sec,
+    TCoordinateType coordinate_type1, double geog_long_deg, double geog_lat_deg,
+    int daylight_saving_hours, int timezone_hours, double lcd_day,
+    int lcd_month, int lcd_year, double lct_hour, double lct_min,
+    double lct_sec, double atmospheric_pressure_mbar,
+    double atmospheric_temperature_celsius,
+    TCorrectedRefraction expected_result) {
+  TCorrectedRefraction actual_result = atmospheric_refraction(
+      true_ra_hour, true_ra_min, true_ra_sec, true_dec_deg, true_dec_min,
+      true_dec_sec, coordinate_type1, geog_long_deg, geog_lat_deg,
+      daylight_saving_hours, timezone_hours, lcd_day, lcd_month, lcd_year,
+      lct_hour, lct_min, lct_sec, atmospheric_pressure_mbar,
+      atmospheric_temperature_celsius);
+
+  assert(actual_result.declination_degrees ==
+         expected_result.declination_degrees);
+
+  printf("(Corrected For Refraction) WHEN\n");
+  printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", true_ra_hour,
+         true_ra_min, true_ra_sec);
+  printf("\tDeclination is %0.0fd %0.0fm %0.0fs AND\n", true_dec_deg,
+         true_dec_min, true_dec_sec);
+  printf("\tCoordinate Type is %d AND\n", coordinate_type1);
+  printf("\tGeographical Long/Lat is %0.2f/%0.6f AND\n", geog_long_deg,
+         geog_lat_deg);
+  printf("\tDaylight Saving Hours is %d AND\n", daylight_saving_hours);
+  printf("\tTimezone Hours is %d AND\n", timezone_hours);
+  printf("\tLocal Civil Date is %d/%0.0f/%d AND\n", lcd_month, lcd_day,
+         lcd_year);
+  printf("\tLocal Civil Time is %0.0f:%0.0f:%0.0f AND\n", lct_hour, lct_min,
+         lct_sec);
+  printf("\tAtmospheric Pressure is %0.0f mbar AND\n",
+         atmospheric_pressure_mbar);
+  printf("\tAtmospheric Temperature is %0.1f celsius\n",
+         atmospheric_temperature_celsius);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tCorrected Right Ascension is %0.0fh %0.0fm %0.2fs AND\n",
+         expected_result.right_ascension_hours,
+         expected_result.right_ascension_minutes,
+         expected_result.right_ascension_seconds);
+  printf("\t\t\tCorrected Declination is %0.0fd %0.0fm %0.2fs\n",
+         expected_result.declination_degrees,
+         expected_result.declination_minutes,
+         expected_result.declination_seconds);
+  printf("\t\tActual:\n");
+  printf("\t\t\tCorrected Right Ascension is %0.0fh %0.0fm %0.2fs AND\n",
+         actual_result.right_ascension_hours,
+         actual_result.right_ascension_minutes,
+         actual_result.right_ascension_seconds);
+  printf("\t\t\tCorrected Declination is %0.0fd %0.0fm %0.2fs\n",
+         actual_result.declination_degrees, actual_result.declination_minutes,
+         actual_result.declination_seconds);
+}

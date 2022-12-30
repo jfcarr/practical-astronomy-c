@@ -24,6 +24,14 @@ typedef enum pa_rise_set_status {
 } TRiseSetStatus;
 
 /**
+ * Coordinate types
+ */
+typedef enum pa_coordinate_type {
+  CoordinateType_Actual,  /**< actual/real */
+  CoordinateType_Apparent /**< apparent (observer) */
+} TCoordinateType;
+
+/**
  * Structure to hold a Date value:
  *
  * int month
@@ -165,7 +173,7 @@ typedef struct pa_equatorial_coordinates_2 {
   double declination_degrees;
   double declination_minutes;
   double declination_seconds;
-} TEquatorialCoordinates2, TCorrectedPrecession;
+} TEquatorialCoordinates2, TCorrectedPrecession, TCorrectedRefraction;
 
 typedef struct pa_ecliptic_galactic_coordinates {
   double longitude_degrees;
