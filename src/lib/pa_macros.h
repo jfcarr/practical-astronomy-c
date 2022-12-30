@@ -120,4 +120,8 @@ double sun_long(double lch, double lcm, double lcs, int ds, int zc, double ld,
                 int lm, int ly);
 
 double true_anomaly(double am, double ec);
+
+double refract(double y2, TCoordinateType sw, double pr, double tr);
+
+double refract_l3035(double pr, double tr, double y, double d);
 #endif

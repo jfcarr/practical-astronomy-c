@@ -94,4 +94,14 @@ void test_correct_for_aberration(
     double true_ecl_long_min, double true_ecl_long_sec, double true_ecl_lat_deg,
     double true_ecl_lat_min, double true_ecl_lat_sec,
     TCorrectedEclipticCoordinates expected_result);
+
+void test_atmospheric_refraction(
+    double true_ra_hour, double true_ra_min, double true_ra_sec,
+    double true_dec_deg, double true_dec_min, double true_dec_sec,
+    TCoordinateType coordinate_type1, double geog_long_deg, double geog_lat_deg,
+    int daylight_saving_hours, int timezone_hours, double lcd_day,
+    int lcd_month, int lcd_year, double lct_hour, double lct_min,
+    double lct_sec, double atmospheric_pressure_mbar,
+    double atmospheric_temperature_celsius,
+    TCorrectedRefraction expected_result);
 #endif

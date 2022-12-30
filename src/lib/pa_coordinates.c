@@ -582,3 +582,52 @@ correct_for_aberration(double ut_hour, double ut_minutes, double ut_seconds,
       apparent_ecl_long_deg, apparent_ecl_long_min, apparent_ecl_long_sec,
       apparent_ecl_lat_deg,  apparent_ecl_lat_min,  apparent_ecl_lat_sec};
 }
+
+/**
+ * Calculate corrected RA/Dec, accounting for atmospheric refraction.
+ *
+ * NOTE: Valid values for coordinate_type are "TRUE" and "APPARENT".
+ *
+ * @return TCorrectedRefraction <corrected RA hours,minutes,seconds and
+ * corrected Declination degrees,minutes,seconds>
+ */
+TCorrectedRefraction atmospheric_refraction(
+    double true_ra_hour, double true_ra_min, double true_ra_sec,
+    double true_dec_deg, double true_dec_min, double true_dec_sec,
+    TCoordinateType coordinate_type1, double geog_long_deg, double geog_lat_deg,
+    int daylight_saving_hours, int timezone_hours, double lcd_day,
+    int lcd_month, int lcd_year, double lct_hour, double lct_min,
+    double lct_sec, double atmospheric_pressure_mbar,
+    double atmospheric_temperature_celsius) {
+  double ha_hour = right_ascension_to_hour_angle_macro(
+      true_ra_hour, true_ra_min, true_ra_sec, lct_hour, lct_min, lct_sec,
+      daylight_saving_hours, timezone_hours, lcd_day, lcd_month, lcd_year,
+      geog_long_deg);
+  double azimuth_deg = equatorial_coordinates_to_azimuth(
+      ha_hour, 0, 0, true_dec_deg, true_dec_min, true_dec_sec, geog_lat_deg);
+  double altitude_deg = equatorial_coordinates_to_altitude(
+      ha_hour, 0, 0, true_dec_deg, true_dec_min, true_dec_sec, geog_lat_deg);
+  double corrected_altitude_deg =
+      refract(altitude_deg, coordinate_type1, atmospheric_pressure_mbar,
+              atmospheric_temperature_celsius);
+
+  double corrected_ha_hour = horizon_coordinates_to_hour_angle(
+      azimuth_deg, 0, 0, corrected_altitude_deg, 0, 0, geog_lat_deg);
+  double corrected_ra_hour1 = hour_angle_to_right_ascension_macro(
+      corrected_ha_hour, 0, 0, lct_hour, lct_min, lct_sec,
+      daylight_saving_hours, timezone_hours, lcd_day, lcd_month, lcd_year,
+      geog_long_deg);
+  double corrected_dec_deg1 = horizon_coordinates_to_declination(
+      azimuth_deg, 0, 0, corrected_altitude_deg, 0, 0, geog_lat_deg);
+
+  int corrected_ra_hour = decimal_hours_hour(corrected_ra_hour1);
+  int corrected_ra_min = decimal_hours_minute(corrected_ra_hour1);
+  double corrected_ra_sec = decimal_hours_second(corrected_ra_hour1);
+  double corrected_dec_deg = decimal_degrees_degrees(corrected_dec_deg1);
+  double corrected_dec_min = decimal_degrees_minutes(corrected_dec_deg1);
+  double corrected_dec_sec = decimal_degrees_seconds(corrected_dec_deg1);
+
+  return (TCorrectedRefraction){corrected_ra_hour, corrected_ra_min,
+                                corrected_ra_sec,  corrected_dec_deg,
+                                corrected_dec_min, corrected_dec_sec};
+}
