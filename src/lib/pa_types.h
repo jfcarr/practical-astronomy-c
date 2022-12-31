@@ -173,7 +173,8 @@ typedef struct pa_equatorial_coordinates_2 {
   double declination_degrees;
   double declination_minutes;
   double declination_seconds;
-} TEquatorialCoordinates2, TCorrectedPrecession, TCorrectedRefraction;
+} TEquatorialCoordinates2, TCorrectedPrecession, TCorrectedRefraction,
+    TCorrectedParallax;
 
 typedef struct pa_ecliptic_galactic_coordinates {
   double longitude_degrees;
@@ -198,4 +199,9 @@ typedef struct pa_nutation {
   double nutation_in_ecliption_longitude;
   double nutation_in_obliquity;
 } TNutation;
+
+typedef struct pa_parallax_helper {
+  double p;
+  double q;
+} TParallaxHelper;
 #endif

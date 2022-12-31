@@ -101,6 +101,11 @@ void test_coordinates() {
       23, 14, 0, 40, 10, 0, CoordinateType_Actual, 0.17, 51.2036110, 0, 0, 23,
       3, 1987, 1, 1, 24, 1012, 21.7,
       (TCorrectedRefraction){23, 13, 44.74, 40, 19, 45.76});
+
+  test_corrections_for_geocentric_parallax(
+      22, 35, 19, -7, 41, 13, CoordinateType_Actual, 1.019167, -100, 50, 60, 0,
+      -6, 26, 2, 1979, 10, 45, 0,
+      (TCorrectedParallax){22, 36, 43.22, -8, 32, 17.4});
 }
 
 int main() {

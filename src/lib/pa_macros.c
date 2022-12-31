@@ -810,3 +810,178 @@ double refract_l3035(double pr, double tr, double y, double d) {
 
   return -d * 0.00007888888 * pr / ((273.0 + tr) * tan(y));
 }
+
+/**
+ * Calculate corrected hour angle in decimal hours
+ *
+ * Original macro name: ParallaxHA
+ */
+double parallax_ha(double hh, double hm, double hs, double dd, double dm,
+                   double ds, TCoordinateType sw, double gp, double ht,
+                   double hp) {
+  double a = degrees_to_radians(gp);
+  double c1 = cos(a);
+  double s1 = sin(a);
+
+  double u = atan(0.996647 * s1 / c1);
+  double c2 = cos(u);
+  double s2 = sin(u);
+  double b = ht / 6378160;
+
+  double rs = (0.996647 * s2) + (b * s1);
+
+  double rc = c2 + (b * c1);
+  double tp = 6.283185308;
+
+  double rp = 1.0 / sin(degrees_to_radians(hp));
+
+  double x =
+      degrees_to_radians(degree_hours_to_decimal_degrees(hms_dh(hh, hm, hs)));
+  double x1 = x;
+  double y = degrees_to_radians(
+      degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double y1 = y;
+
+  double d = (sw == CoordinateType_Actual) ? 1.0 : -1.0;
+
+  if (d == 1) {
+    TParallaxHelper result = parallax_ha_l2870(x, y, rc, rp, rs, tp);
+
+    return decimal_degrees_to_degree_hours(w_to_degrees(result.p));
+  }
+
+  double p1 = 0.0;
+  double q1 = 0.0;
+  double x_loop = x;
+  double y_loop = y;
+
+  while (1 == 1) {
+    TParallaxHelper result = parallax_ha_l2870(x_loop, y_loop, rc, rp, rs, tp);
+
+    double p2 = result.p - x_loop;
+    double q2 = result.q - y_loop;
+
+    double aa = fabs(p2 - p1);
+    double bb = fabs(q2 - q1);
+
+    if ((aa < 0.000001) && (bb < 0.000001)) {
+      double p = x1 - p2;
+
+      return decimal_degrees_to_degree_hours(w_to_degrees(p));
+    }
+
+    x_loop = x1 - p2;
+    y_loop = y1 - q2;
+    p1 = p2;
+    q1 = q2;
+  }
+}
+
+/**
+ * Helper function for parallax_ha
+ *
+ * @return TParallaxHelper<double p, double q>
+ */
+TParallaxHelper parallax_ha_l2870(double x, double y, double rc, double rp,
+                                  double rs, double tp) {
+  double cx = cos(x);
+  double sy = sin(y);
+  double cy = cos(y);
+
+  double aa = (rc * sin(x)) / ((rp * cy) - (rc * cx));
+
+  double dx = atan(aa);
+  double p = x + dx;
+  double cp = cos(p);
+
+  p = p - tp * floor(p / tp);
+  double q = atan(cp * (rp * sy - rs) / (rp * cy * cx - rc));
+
+  return (TParallaxHelper){p, q};
+}
+
+/**
+ * Calculate corrected declination in decimal degrees
+ *
+ * Original macro name: ParallaxDec
+ */
+double parallax_dec(double hh, double hm, double hs, double dd, double dm,
+                    double ds, TCoordinateType sw, double gp, double ht,
+                    double hp) {
+  double a = degrees_to_radians(gp);
+  double c1 = cos(a);
+  double s1 = sin(a);
+
+  double u = atan(0.996647 * s1 / c1);
+
+  double c2 = cos(u);
+  double s2 = sin(u);
+  double b = ht / 6378160;
+  double rs = (0.996647 * s2) + (b * s1);
+
+  double rc = c2 + (b * c1);
+  double tp = 6.283185308;
+
+  double rp = 1.0 / sin(degrees_to_radians(hp));
+
+  double x =
+      degrees_to_radians(degree_hours_to_decimal_degrees(hms_dh(hh, hm, hs)));
+  double x1 = x;
+
+  double y = degrees_to_radians(
+      degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double y1 = y;
+
+  double d = (sw == CoordinateType_Actual) ? 1.0 : -1.0;
+
+  if (d == 1) {
+    TParallaxHelper result = parallax_dec_l2870(x, y, rc, rp, rs, tp);
+
+    return w_to_degrees(result.q);
+  }
+
+  double p1 = 0.0;
+  double q1 = 0.0;
+
+  double x_loop = x;
+  double y_loop = y;
+
+  while (1 == 1) {
+    TParallaxHelper result = parallax_dec_l2870(x_loop, y_loop, rc, rp, rs, tp);
+    double p2 = result.p - x_loop;
+    double q2 = result.q - y_loop;
+    double aa = fabs(p2 - p1);
+
+    if ((aa < 0.000001) && (b < 0.000001)) {
+      double q = y1 - q2;
+
+      return w_to_degrees(q);
+    }
+    x_loop = x1 - p2;
+    y_loop = y1 - q2;
+    p1 = p2;
+    q1 = q2;
+  }
+}
+
+/**
+ * Helper function for parallax_dec
+ *
+ * @return TParallaxHelper<double p, double q>
+ */
+TParallaxHelper parallax_dec_l2870(double x, double y, double rc, double rp,
+                                   double rs, double tp) {
+  double cx = cos(x);
+  double sy = sin(y);
+  double cy = cos(y);
+
+  double aa = (rc * sin(x)) / ((rp * cy) - (rc * cx));
+  double dx = atan(aa);
+  double p = x + dx;
+  double cp = cos(p);
+
+  p = p - tp * floor(p / tp);
+  double q = atan(cp * (rp * sy - rs) / (rp * cy * cx - rc));
+
+  return (TParallaxHelper){p, q};
+}

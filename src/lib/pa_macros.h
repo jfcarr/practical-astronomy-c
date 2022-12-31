@@ -124,4 +124,18 @@ double true_anomaly(double am, double ec);
 double refract(double y2, TCoordinateType sw, double pr, double tr);
 
 double refract_l3035(double pr, double tr, double y, double d);
+
+double parallax_ha(double hh, double hm, double hs, double dd, double dm,
+                   double ds, TCoordinateType sw, double gp, double ht,
+                   double hp);
+
+TParallaxHelper parallax_ha_l2870(double x, double y, double rc, double rp,
+                                  double rs, double tp);
+
+double parallax_dec(double hh, double hm, double hs, double dd, double dm,
+                    double ds, TCoordinateType sw, double gp, double ht,
+                    double hp);
+
+TParallaxHelper parallax_dec_l2870(double x, double y, double rc, double rp,
+                                   double rs, double tp);
 #endif
