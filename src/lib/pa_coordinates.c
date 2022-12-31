@@ -631,3 +631,43 @@ TCorrectedRefraction atmospheric_refraction(
                                 corrected_ra_sec,  corrected_dec_deg,
                                 corrected_dec_min, corrected_dec_sec};
 }
+
+/**
+ * \brief Calculate corrected RA/Dec, accounting for geocentric parallax.
+ *
+ * @return TCorrectedParallax<corrected RA hours,minutes,seconds and corrected
+ * Declination degrees,minutes,seconds>
+ */
+TCorrectedParallax corrections_for_geocentric_parallax(
+    double ra_hour, double ra_min, double ra_sec, double dec_deg,
+    double dec_min, double dec_sec, TCoordinateType coordinate_type,
+    double equatorial_hor_parallax_deg, double geog_long_deg,
+    double geog_lat_deg, double height_m, int daylight_saving,
+    int timezone_hours, double lcd_day, int lcd_month, int lcd_year,
+    double lct_hour, double lct_min, double lct_sec) {
+  double ha_hours = right_ascension_to_hour_angle_macro(
+      ra_hour, ra_min, ra_sec, lct_hour, lct_min, lct_sec, daylight_saving,
+      timezone_hours, lcd_day, lcd_month, lcd_year, geog_long_deg);
+
+  double corrected_ha_hours =
+      parallax_ha(ha_hours, 0, 0, dec_deg, dec_min, dec_sec, coordinate_type,
+                  geog_lat_deg, height_m, equatorial_hor_parallax_deg);
+
+  double corrected_ra_hours = hour_angle_to_right_ascension_macro(
+      corrected_ha_hours, 0, 0, lct_hour, lct_min, lct_sec, daylight_saving,
+      timezone_hours, lcd_day, lcd_month, lcd_year, geog_long_deg);
+
+  double corrected_dec_deg1 =
+      parallax_dec(ha_hours, 0, 0, dec_deg, dec_min, dec_sec, coordinate_type,
+                   geog_lat_deg, height_m, equatorial_hor_parallax_deg);
+
+  int c_ra_hour = decimal_hours_hour(corrected_ra_hours);
+  int c_ra_min = decimal_hours_minute(corrected_ra_hours);
+  double c_ra_sec = decimal_hours_second(corrected_ra_hours);
+  double c_dec_deg = decimal_degrees_degrees(corrected_dec_deg1);
+  double c_dec_min = decimal_degrees_minutes(corrected_dec_deg1);
+  double c_dec_sec = decimal_degrees_seconds(corrected_dec_deg1);
+
+  return (TCorrectedParallax){c_ra_hour, c_ra_min,  c_ra_sec,
+                              c_dec_deg, c_dec_min, c_dec_sec};
+}

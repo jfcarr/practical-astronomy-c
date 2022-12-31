@@ -546,6 +546,16 @@ void test_atmospheric_refraction(
 
   assert(actual_result.declination_degrees ==
          expected_result.declination_degrees);
+  assert(actual_result.declination_minutes ==
+         expected_result.declination_minutes);
+  assert(actual_result.declination_seconds ==
+         expected_result.declination_seconds);
+  assert(actual_result.right_ascension_hours ==
+         expected_result.right_ascension_hours);
+  assert(actual_result.right_ascension_minutes ==
+         expected_result.right_ascension_minutes);
+  assert(actual_result.right_ascension_seconds ==
+         expected_result.right_ascension_seconds);
 
   printf("(Corrected For Refraction) WHEN\n");
   printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", true_ra_hour,
@@ -565,6 +575,70 @@ void test_atmospheric_refraction(
          atmospheric_pressure_mbar);
   printf("\tAtmospheric Temperature is %0.1f celsius\n",
          atmospheric_temperature_celsius);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tCorrected Right Ascension is %0.0fh %0.0fm %0.2fs AND\n",
+         expected_result.right_ascension_hours,
+         expected_result.right_ascension_minutes,
+         expected_result.right_ascension_seconds);
+  printf("\t\t\tCorrected Declination is %0.0fd %0.0fm %0.2fs\n",
+         expected_result.declination_degrees,
+         expected_result.declination_minutes,
+         expected_result.declination_seconds);
+  printf("\t\tActual:\n");
+  printf("\t\t\tCorrected Right Ascension is %0.0fh %0.0fm %0.2fs AND\n",
+         actual_result.right_ascension_hours,
+         actual_result.right_ascension_minutes,
+         actual_result.right_ascension_seconds);
+  printf("\t\t\tCorrected Declination is %0.0fd %0.0fm %0.2fs\n",
+         actual_result.declination_degrees, actual_result.declination_minutes,
+         actual_result.declination_seconds);
+}
+
+void test_corrections_for_geocentric_parallax(
+    double ra_hour, double ra_min, double ra_sec, double dec_deg,
+    double dec_min, double dec_sec, TCoordinateType coordinate_type,
+    double equatorial_hor_parallax_deg, double geog_long_deg,
+    double geog_lat_deg, double height_m, int daylight_saving,
+    int timezone_hours, double lcd_day, int lcd_month, int lcd_year,
+    double lct_hour, double lct_min, double lct_sec,
+    TCorrectedParallax expected_result) {
+  TCorrectedParallax actual_result = corrections_for_geocentric_parallax(
+      ra_hour, ra_min, ra_sec, dec_deg, dec_min, dec_sec, coordinate_type,
+      equatorial_hor_parallax_deg, geog_long_deg, geog_lat_deg, height_m,
+      daylight_saving, timezone_hours, lcd_day, lcd_month, lcd_year, lct_hour,
+      lct_min, lct_sec);
+
+  assert(actual_result.declination_degrees ==
+         expected_result.declination_degrees);
+  assert(actual_result.declination_minutes ==
+         expected_result.declination_minutes);
+  assert(actual_result.declination_seconds ==
+         expected_result.declination_seconds);
+  assert(actual_result.right_ascension_hours ==
+         expected_result.right_ascension_hours);
+  assert(actual_result.right_ascension_minutes ==
+         expected_result.right_ascension_minutes);
+  assert(actual_result.right_ascension_seconds ==
+         expected_result.right_ascension_seconds);
+
+  printf("(Corrected For Parallax) WHEN\n");
+  printf("\tRight Ascension is %0.0fh %0.0fm %0.0fs AND\n", ra_hour, ra_min,
+         ra_sec);
+  printf("\tDeclination is %0.0fd %0.0fm %0.0fs AND\n", dec_deg, dec_min,
+         dec_sec);
+  printf("\tCoordinate Type is %d AND\n", coordinate_type);
+  printf("\tEquatorial Horizon Parallax is %0.6fd AND\n",
+         equatorial_hor_parallax_deg);
+  printf("\tGeographical Long/Lat is %0.0f/%0.0f AND\n", geog_long_deg,
+         geog_lat_deg);
+  printf("\tHeight is %0.0f meters AND\n", height_m);
+  printf("\tDaylight Saving Hours is %d AND\n", daylight_saving);
+  printf("\tTimezone Hours is %d AND\n", timezone_hours);
+  printf("\tLocal Civil Date is %d/%0.0f/%d AND\n", lcd_month, lcd_day,
+         lcd_year);
+  printf("\tLocal Civil Time is %0.0f:%0.0f:%0.0f AND\n", lct_hour, lct_min,
+         lct_sec);
   printf("\tTHEN\n");
   printf("\t\tExpected:\n");
   printf("\t\t\tCorrected Right Ascension is %0.0fh %0.0fm %0.2fs AND\n",
