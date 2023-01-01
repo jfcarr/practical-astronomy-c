@@ -658,3 +658,35 @@ void test_corrections_for_geocentric_parallax(
          actual_result.declination_degrees, actual_result.declination_minutes,
          actual_result.declination_seconds);
 }
+
+void test_heliographic_coordinates(double helio_position_angle_deg,
+                                   double helio_displacement_arcmin,
+                                   double gwdate_day, int gwdate_month,
+                                   int gwdate_year,
+                                   THeliographicCoordinates expected_result) {
+  THeliographicCoordinates actual_result = heliographic_coordinates(
+      helio_position_angle_deg, helio_displacement_arcmin, gwdate_day,
+      gwdate_month, gwdate_year);
+
+  assert(actual_result.latitude_degrees == expected_result.latitude_degrees);
+  assert(actual_result.longitude_degrees == expected_result.longitude_degrees);
+
+  printf("(Heliographic Coordinates) WHEN\n");
+  printf("\tHeliographic Position Angle is %0.0f degrees AND\n",
+         helio_position_angle_deg);
+  printf("\tHeliographic Displacement is %0.1f arc minutes AND\n",
+         helio_displacement_arcmin);
+  printf("\tGreenwich Date is %d/%0.0f/%d\n", gwdate_month, gwdate_day,
+         gwdate_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tHeliographic Longitude is %0.2f degrees AND\n",
+         expected_result.longitude_degrees);
+  printf("\t\t\tHeliographic Latitude is %0.2f degrees\n",
+         expected_result.latitude_degrees);
+  printf("\t\tActual:\n");
+  printf("\t\t\tHeliographic Longitude is %0.2f degrees AND\n",
+         actual_result.longitude_degrees);
+  printf("\t\t\tHeliographic Latitude is %0.2f degrees\n",
+         actual_result.latitude_degrees);
+}

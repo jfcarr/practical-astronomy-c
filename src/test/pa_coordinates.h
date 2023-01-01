@@ -113,4 +113,10 @@ void test_corrections_for_geocentric_parallax(
     int timezone_hours, double lcd_day, int lcd_month, int lcd_year,
     double lct_hour, double lct_min, double lct_sec,
     TCorrectedParallax expected_result);
+
+void test_heliographic_coordinates(double helio_position_angle_deg,
+                                   double helio_displacement_arcmin,
+                                   double gwdate_day, int gwdate_month,
+                                   int gwdate_year,
+                                   THeliographicCoordinates expected_result);
 #endif

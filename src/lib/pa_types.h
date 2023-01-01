@@ -204,4 +204,9 @@ typedef struct pa_parallax_helper {
   double p;
   double q;
 } TParallaxHelper;
+
+typedef struct pa_heliographic_coordinates {
+  double longitude_degrees;
+  double latitude_degrees;
+} THeliographicCoordinates;
 #endif

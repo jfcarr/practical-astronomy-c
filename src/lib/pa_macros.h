@@ -121,6 +121,8 @@ double sun_long(double lch, double lcm, double lcs, int ds, int zc, double ld,
 
 double true_anomaly(double am, double ec);
 
+double eccentric_anomaly(double am, double ec);
+
 double refract(double y2, TCoordinateType sw, double pr, double tr);
 
 double refract_l3035(double pr, double tr, double y, double d);
@@ -138,4 +140,10 @@ double parallax_dec(double hh, double hm, double hs, double dd, double dm,
 
 TParallaxHelper parallax_dec_l2870(double x, double y, double rc, double rp,
                                    double rs, double tp);
+
+double sun_dist(double lch, double lcm, double lcs, int ds, int zc, double ld,
+                int lm, int ly);
+
+double sun_dia(double lch, double lcm, double lcs, int ds, int zc, double ld,
+               int lm, int ly);
 #endif
