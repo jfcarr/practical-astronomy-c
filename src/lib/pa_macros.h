@@ -146,4 +146,15 @@ double sun_dist(double lch, double lcm, double lcs, int ds, int zc, double ld,
 
 double sun_dia(double lch, double lcm, double lcs, int ds, int zc, double ld,
                int lm, int ly);
+
+double moon_longitude(double lh, double lm, double ls, int ds, int zc,
+                      double dy, int mn, int yr);
+
+double moon_latitude(double lh, double lm, double ls, int ds, int zc, double dy,
+                     int mn, int yr);
+
+double moon_horizontal_parallax(double lh, double lm, double ls, int ds, int zc,
+                                double dy, int mn, int yr);
+
+double unwind(double w);
 #endif

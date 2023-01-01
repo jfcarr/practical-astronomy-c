@@ -111,6 +111,12 @@ void test_coordinates() {
                                 (THeliographicCoordinates){142.59, -19.94});
 
   test_carrington_rotation_number(27, 1, 1975, 1624);
+
+  test_selenographic_coordinates1(
+      1, 5, 1988, (TSelenographicSubEarthCoordinates){-4.88, 4.04, 19.78});
+
+  test_selenographic_coordinates2(
+      1, 5, 1988, (TSelenographicSubSolarCoordinates){6.81, 83.19, 1.19});
 }
 
 int main() {
