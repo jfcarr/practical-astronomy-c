@@ -109,6 +109,8 @@ void test_coordinates() {
 
   test_heliographic_coordinates(220, 10.5, 1, 5, 1988,
                                 (THeliographicCoordinates){142.59, -19.94});
+
+  test_carrington_rotation_number(27, 1, 1975, 1624);
 }
 
 int main() {

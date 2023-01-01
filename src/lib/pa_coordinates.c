@@ -734,3 +734,18 @@ heliographic_coordinates(double helio_position_angle_deg,
 
   return (THeliographicCoordinates){helio_long_deg, helio_lat_deg};
 }
+
+/**
+ * Calculate carrington rotation number for a Greenwich date
+ *
+ * @return carrington rotation number
+ */
+int carrington_rotation_number(double gwdate_day, int gwdate_month,
+                               int gwdate_year) {
+  double julian_date_days =
+      civil_date_to_julian_date(gwdate_day, gwdate_month, gwdate_year);
+
+  int crn = 1690 + (int)dround((julian_date_days - 2444235.34) / 27.2753, 0);
+
+  return crn;
+}
