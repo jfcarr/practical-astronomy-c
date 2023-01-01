@@ -690,3 +690,20 @@ void test_heliographic_coordinates(double helio_position_angle_deg,
   printf("\t\t\tHeliographic Latitude is %0.2f degrees\n",
          actual_result.latitude_degrees);
 }
+
+void test_carrington_rotation_number(double gwdate_day, int gwdate_month,
+                                     int gwdate_year, int expected_value) {
+  int actual_value =
+      carrington_rotation_number(gwdate_day, gwdate_month, gwdate_year);
+
+  assert(actual_value == expected_value);
+
+  printf("(Carrington Rotation Number) WHEN\n");
+  printf("\tGreenwich Date is %d/%0.0f/%d\n", gwdate_month, gwdate_day,
+         gwdate_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tCarrington Rotation Number is %d\n", expected_value);
+  printf("\t\tActual:\n");
+  printf("\t\t\tCarrington Rotation Number is %d\n", actual_value);
+}

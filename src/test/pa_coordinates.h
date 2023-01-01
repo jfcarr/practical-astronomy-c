@@ -119,4 +119,7 @@ void test_heliographic_coordinates(double helio_position_angle_deg,
                                    double gwdate_day, int gwdate_month,
                                    int gwdate_year,
                                    THeliographicCoordinates expected_result);
+
+void test_carrington_rotation_number(double gwdate_day, int gwdate_month,
+                                     int gwdate_year, int expected_value);
 #endif
