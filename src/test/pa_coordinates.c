@@ -707,3 +707,57 @@ void test_carrington_rotation_number(double gwdate_day, int gwdate_month,
   printf("\t\tActual:\n");
   printf("\t\t\tCarrington Rotation Number is %d\n", actual_value);
 }
+
+void test_selenographic_coordinates1(
+    double gwdate_day, int gwdate_month, int gwdate_year,
+    TSelenographicSubEarthCoordinates expected_result) {
+
+  TSelenographicSubEarthCoordinates actual_result =
+      selenographic_coordinates1(gwdate_day, gwdate_month, gwdate_year);
+
+  assert(actual_result.latitude == expected_result.latitude);
+  assert(actual_result.longitude == expected_result.longitude);
+  assert(actual_result.position_angle_of_pole ==
+         expected_result.position_angle_of_pole);
+
+  printf("(Selenographic Coordinates - Sub-Earth) WHEN\n");
+  printf("\tGreenwich Date is %d/%0.0f/%d\n", gwdate_month, gwdate_day,
+         gwdate_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tSub-Earth Longitude is %0.2f AND\n", expected_result.longitude);
+  printf("\t\t\tSub-Earth Latitude is %0.2f AND\n", expected_result.latitude);
+  printf("\t\t\tSub-Earth Position Angle of Pole is %0.2f\n",
+         expected_result.position_angle_of_pole);
+  printf("\t\tActual:\n");
+  printf("\t\t\tSub-Earth Longitude is %0.2f AND\n", actual_result.longitude);
+  printf("\t\t\tSub-Earth Latitude is %0.2f AND\n", actual_result.latitude);
+  printf("\t\t\tSub-Earth Position Angle of Pole is %0.2f\n",
+         actual_result.position_angle_of_pole);
+}
+
+void test_selenographic_coordinates2(
+    double gwdate_day, int gwdate_month, int gwdate_year,
+    TSelenographicSubSolarCoordinates expected_result) {
+  TSelenographicSubSolarCoordinates actual_result =
+      selenographic_coordinates2(gwdate_day, gwdate_month, gwdate_year);
+
+  assert(actual_result.co_longitude == expected_result.co_longitude);
+  assert(actual_result.latitude == expected_result.latitude);
+  assert(actual_result.longitude == expected_result.longitude);
+
+  printf("(Selenographic Coordinates - Sub-Solar) WHEN\n");
+  printf("\tGreenwich Date is %d/%0.0f/%d\n", gwdate_month, gwdate_day,
+         gwdate_year);
+  printf("\tTHEN\n");
+  printf("\t\tExpected:\n");
+  printf("\t\t\tSub-Solar Longitude is %0.2f AND\n", expected_result.longitude);
+  printf("\t\t\tSub-Solar Co-Longitude is %0.2f AND\n",
+         expected_result.co_longitude);
+  printf("\t\t\tSub-Solar Latitude is %0.2f\n", expected_result.latitude);
+  printf("\t\tActual:\n");
+  printf("\t\t\tSub-Solar Longitude is %0.2f AND\n", actual_result.longitude);
+  printf("\t\t\tSub-Solar Co-Longitude is %0.2f AND\n",
+         actual_result.co_longitude);
+  printf("\t\t\tSub-Solar Latitude is %0.2f\n", actual_result.latitude);
+}

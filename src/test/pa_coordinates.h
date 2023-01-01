@@ -122,4 +122,12 @@ void test_heliographic_coordinates(double helio_position_angle_deg,
 
 void test_carrington_rotation_number(double gwdate_day, int gwdate_month,
                                      int gwdate_year, int expected_value);
+
+void test_selenographic_coordinates1(
+    double gwdate_day, int gwdate_month, int gwdate_year,
+    TSelenographicSubEarthCoordinates expected_result);
+
+void test_selenographic_coordinates2(
+    double gwdate_day, int gwdate_month, int gwdate_year,
+    TSelenographicSubSolarCoordinates expected_result);
 #endif

@@ -209,4 +209,16 @@ typedef struct pa_heliographic_coordinates {
   double longitude_degrees;
   double latitude_degrees;
 } THeliographicCoordinates;
+
+typedef struct pa_selenographic_subearth_coordinates {
+  double longitude;
+  double latitude;
+  double position_angle_of_pole;
+} TSelenographicSubEarthCoordinates;
+
+typedef struct pa_selenographic_subsolar_coordinates {
+  double longitude;
+  double co_longitude;
+  double latitude;
+} TSelenographicSubSolarCoordinates;
 #endif

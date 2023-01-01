@@ -112,4 +112,12 @@ heliographic_coordinates(double helio_position_angle_deg,
 
 int carrington_rotation_number(double gwdate_day, int gwdate_month,
                                int gwdate_year);
+
+TSelenographicSubEarthCoordinates selenographic_coordinates1(double gwdate_day,
+                                                             int gwdate_month,
+                                                             int gwdate_year);
+
+TSelenographicSubSolarCoordinates selenographic_coordinates2(double gwdate_day,
+                                                             int gwdate_month,
+                                                             int gwdate_year);
 #endif
