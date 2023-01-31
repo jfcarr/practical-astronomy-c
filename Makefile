@@ -5,19 +5,24 @@ FORMATTER = clang-format -i
 
 default:
 	@echo 'Targets:'
-	@echo '  run'
-	@echo '  build'
-	@echo '  clean'
-	@echo '  format'
+	@echo '  run       Run the compiled binary'
+	@echo '  build     Build the library and binary'
+	@echo '  bin       Build the binary'
+	@echo '  lib       Build the library'
+	@echo '  clean     Remove all build artifacts (object files, library archives, and binaries)'
+	@echo '  format    Beautify source code'
 
 run: build
 	@echo '----------'
 	@./pa_cli
 
-build: pa_cli
+build: lib bin
 
-pa_cli: $(SRC_DIR)/main.o $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o
-	gcc -o pa_cli $(SRC_DIR)/main.o $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o -lm
+bin: lib $(SRC_DIR)/main.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o
+	gcc -L. -o pa_cli src/main.o src/test/*.o -lpa_lib -lm
+
+lib: $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o
+	ar -r libpa_lib.a src/lib/*.o
 
 src/main.o: $(SRC_DIR)/main.c $(LIB_DIR)/pa_datetime.h
 	gcc -c $(SRC_DIR)/main.c -o $(SRC_DIR)/main.o
@@ -42,6 +47,7 @@ $(TEST_DIR)/pa_coordinates.o: $(TEST_DIR)/pa_coordinates.c $(TEST_DIR)/pa_coordi
 
 clean:
 	-rm -f pa_cli
+	-rm -f libpa_lib.a
 	-rm -f $(SRC_DIR)/*.o
 	-rm -f $(SRC_DIR)/*.orig
 	-rm -f $(LIB_DIR)/*.o
