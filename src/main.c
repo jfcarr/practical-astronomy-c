@@ -1,6 +1,7 @@
 #include "lib/pa_datetime.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
+#include "test/pa_sun.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -119,9 +120,18 @@ void test_coordinates() {
       1, 5, 1988, (TSelenographicSubSolarCoordinates){6.81, 83.19, 1.19});
 }
 
+void test_sun() {
+  test_approximate_position_of_sun(0, 0, 0, 27, 7, 2003, false, 0,
+                                   (TSunPosition){8, 23, 33.73, 19, 21, 14.33});
+
+  test_precise_position_of_sun(0, 0, 0, 27, 7, 1988, false, 0,
+                               (TSunPosition){8, 26, 3.83, 19, 12, 49.72});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
+  test_sun();
 
   return (0);
 }
