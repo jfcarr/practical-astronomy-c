@@ -221,4 +221,13 @@ typedef struct pa_selenographic_subsolar_coordinates {
   double co_longitude;
   double latitude;
 } TSelenographicSubSolarCoordinates;
+
+typedef struct pa_sun_position {
+  double sun_ra_hour;
+  double sun_ra_min;
+  double sun_ra_sec;
+  double sun_dec_deg;
+  double sun_dec_min;
+  double sun_dec_sec;
+} TSunPosition;
 #endif

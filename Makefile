@@ -18,10 +18,10 @@ run: build
 
 build: lib bin
 
-bin: lib $(SRC_DIR)/main.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o
+bin: lib $(SRC_DIR)/main.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o $(TEST_DIR)/pa_sun.o
 	gcc -L. -o pa_cli src/main.o src/test/*.o -lpa_lib -lm
 
-lib: $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o
+lib: $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_sun.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o
 	ar -r libpa_lib.a src/lib/*.o
 
 src/main.o: $(SRC_DIR)/main.c $(LIB_DIR)/pa_datetime.h
@@ -32,6 +32,9 @@ $(LIB_DIR)/pa_datetime.o: $(LIB_DIR)/pa_datetime.c $(LIB_DIR)/pa_datetime.h
 
 $(LIB_DIR)/pa_coordinates.o: $(LIB_DIR)/pa_coordinates.c $(LIB_DIR)/pa_coordinates.h
 	gcc -c $(LIB_DIR)/pa_coordinates.c -o $(LIB_DIR)/pa_coordinates.o
+
+$(LIB_DIR)/pa_sun.o: $(LIB_DIR)/pa_sun.c $(LIB_DIR)/pa_sun.h
+	gcc -c $(LIB_DIR)/pa_sun.c -o $(LIB_DIR)/pa_sun.o
 
 $(LIB_DIR)/pa_macros.o: $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
 	gcc -c $(LIB_DIR)/pa_macros.c -o $(LIB_DIR)/pa_macros.o
@@ -44,6 +47,9 @@ $(TEST_DIR)/pa_datetime.o: $(TEST_DIR)/pa_datetime.c $(TEST_DIR)/pa_datetime.h $
 
 $(TEST_DIR)/pa_coordinates.o: $(TEST_DIR)/pa_coordinates.c $(TEST_DIR)/pa_coordinates.h $(LIB_DIR)/pa_coordinates.h
 	gcc -c $(TEST_DIR)/pa_coordinates.c -o $(TEST_DIR)/pa_coordinates.o
+
+$(TEST_DIR)/pa_sun.o: $(TEST_DIR)/pa_sun.c $(TEST_DIR)/pa_sun.h $(LIB_DIR)/pa_sun.h
+	gcc -c $(TEST_DIR)/pa_sun.c -o $(TEST_DIR)/pa_sun.o
 
 clean:
 	-rm -f pa_cli
@@ -61,6 +67,7 @@ format:
 # Library files
 	$(FORMATTER) $(LIB_DIR)/pa_datetime.c $(LIB_DIR)/pa_datetime.h
 	$(FORMATTER) $(LIB_DIR)/pa_coordinates.c $(LIB_DIR)/pa_coordinates.h
+	$(FORMATTER) $(LIB_DIR)/pa_sun.c $(LIB_DIR)/pa_sun.h
 	$(FORMATTER) $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
 	$(FORMATTER) $(LIB_DIR)/pa_util.c $(LIB_DIR)/pa_util.h
 	$(FORMATTER) $(LIB_DIR)/pa_types.h
@@ -68,3 +75,4 @@ format:
 # Test files
 	$(FORMATTER) $(TEST_DIR)/pa_datetime.c $(TEST_DIR)/pa_datetime.h
 	$(FORMATTER) $(TEST_DIR)/pa_coordinates.c $(TEST_DIR)/pa_coordinates.h
+	$(FORMATTER) $(TEST_DIR)/pa_sun.c $(TEST_DIR)/pa_sun.h
