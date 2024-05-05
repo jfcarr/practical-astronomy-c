@@ -15,4 +15,10 @@ TSunPosition precise_position_of_sun(double lct_hours, double lct_minutes,
                                      int local_month, int local_year,
                                      bool is_daylight_saving,
                                      int zone_correction);
+
+TSunDistanceSize
+sun_distance_and_angular_size(double lct_hours, double lct_minutes,
+                              double lct_seconds, double local_day,
+                              int local_month, int local_year,
+                              bool is_daylight_saving, int zone_correction);
 #endif
