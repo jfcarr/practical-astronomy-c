@@ -56,16 +56,16 @@ int civil_date_to_day_number(int month, int day, int year) {
  */
 double civil_time_to_decimal_hours(double hours, double minutes,
                                    double seconds) {
-  return hms_dh(hours, minutes, seconds);
+  return ma_hms_dh(hours, minutes, seconds);
 }
 
 /**
  * Convert decimal hours (HH.########) to civil time (HH:MM:SS)
  */
 TFullTime decimal_hours_to_civil_time(double decimal_hours) {
-  int hours = decimal_hours_hour(decimal_hours);
-  int minutes = decimal_hours_minute(decimal_hours);
-  double seconds = decimal_hours_second(decimal_hours);
+  int hours = ma_decimal_hours_hour(decimal_hours);
+  int minutes = ma_decimal_hours_minute(decimal_hours);
+  double seconds = ma_decimal_hours_second(decimal_hours);
 
   TFullTime return_value = {hours, minutes, seconds};
 
@@ -87,20 +87,21 @@ local_civil_time_to_universal_time(double lct_hours, double lct_minutes,
   double ut_interim = lct - daylight_savings_offset - zone_correction;
   double g_day_interim = local_day + (ut_interim / 24);
 
-  double jd = civil_date_to_julian_date(g_day_interim, local_month, local_year);
+  double jd =
+      ma_civil_date_to_julian_date(g_day_interim, local_month, local_year);
 
-  double g_day = julian_date_day(jd);
-  int g_month = julian_date_month(jd);
-  int g_year = julian_date_year(jd);
+  double g_day = ma_julian_date_day(jd);
+  int g_month = ma_julian_date_month(jd);
+  int g_year = ma_julian_date_year(jd);
 
   double ut = 24 * (g_day - floor(g_day));
 
   return (TFullDateTime){g_month,
                          (int)floor(g_day),
                          g_year,
-                         decimal_hours_hour(ut),
-                         decimal_hours_minute(ut),
-                         (int)decimal_hours_second(ut)};
+                         ma_decimal_hours_hour(ut),
+                         ma_decimal_hours_minute(ut),
+                         (int)ma_decimal_hours_second(ut)};
 }
 
 /**
@@ -112,24 +113,25 @@ universal_time_to_local_civil_time(double ut_hours, double ut_minutes,
                                    int zone_correction, int gw_day,
                                    int gw_month, int gw_year) {
   int dst_value = (is_daylight_savings) ? 1 : 0;
-  double ut = hms_dh(ut_hours, ut_minutes, ut_seconds);
+  double ut = ma_hms_dh(ut_hours, ut_minutes, ut_seconds);
   double zone_time = ut + zone_correction;
   double local_time = zone_time + dst_value;
   double local_jd_plus_local_time =
-      civil_date_to_julian_date(gw_day, gw_month, gw_year) + (local_time / 24);
-  double local_day = julian_date_day(local_jd_plus_local_time);
+      ma_civil_date_to_julian_date(gw_day, gw_month, gw_year) +
+      (local_time / 24);
+  double local_day = ma_julian_date_day(local_jd_plus_local_time);
   double integer_day = floor(local_day);
-  int local_month = julian_date_month(local_jd_plus_local_time);
-  int local_year = julian_date_year(local_jd_plus_local_time);
+  int local_month = ma_julian_date_month(local_jd_plus_local_time);
+  int local_year = ma_julian_date_year(local_jd_plus_local_time);
 
   double lct = 24 * (local_day - integer_day);
 
   return (TFullDateTime){local_month,
                          (int)integer_day,
                          local_year,
-                         decimal_hours_hour(lct),
-                         decimal_hours_minute(lct),
-                         decimal_hours_second(lct)};
+                         ma_decimal_hours_hour(lct),
+                         ma_decimal_hours_minute(lct),
+                         ma_decimal_hours_second(lct)};
 }
 
 /**
@@ -140,19 +142,19 @@ TFullTime universal_time_to_greenwich_sidereal_time(double ut_hours,
                                                     double ut_seconds,
                                                     double gw_day, int gw_month,
                                                     int gw_year) {
-  double jd = civil_date_to_julian_date(gw_day, gw_month, gw_year);
+  double jd = ma_civil_date_to_julian_date(gw_day, gw_month, gw_year);
   double s = jd - 2451545.0;
   double t = s / 36525.0;
   double t01 = 6.697374558 + (2400.051336 * t) + (0.000025862 * t * t);
   double t02 = t01 - (24.0 * floor(t01 / 24.0));
-  double ut = hms_dh(ut_hours, ut_minutes, ut_seconds);
+  double ut = ma_hms_dh(ut_hours, ut_minutes, ut_seconds);
   double a = ut * 1.002737909;
   double gst1 = t02 + a;
   double gst2 = gst1 - (24.0 * floor(gst1 / 24.0));
 
-  int gst_hours = decimal_hours_hour(gst2);
-  int gst_minutes = decimal_hours_minute(gst2);
-  double gst_seconds = decimal_hours_second(gst2);
+  int gst_hours = ma_decimal_hours_hour(gst2);
+  int gst_minutes = ma_decimal_hours_minute(gst2);
+  double gst_seconds = ma_decimal_hours_second(gst2);
 
   return (TFullTime){gst_hours, gst_minutes, gst_seconds};
 }
@@ -164,19 +166,19 @@ TFullTimeWarning
 greenwich_sidereal_time_to_universal_time(double gst_hours, double gst_minutes,
                                           double gst_seconds, double gw_day,
                                           int gw_month, int gw_year) {
-  double jd = civil_date_to_julian_date(gw_day, gw_month, gw_year);
+  double jd = ma_civil_date_to_julian_date(gw_day, gw_month, gw_year);
   double s = jd - 2451545;
   double t = s / 36525;
   double t01 = 6.697374558 + (2400.051336 * t) + (0.000025862 * t * t);
   double t02 = t01 - (24 * floor(t01 / 24));
-  double gst_hours1 = hms_dh(gst_hours, gst_minutes, gst_seconds);
+  double gst_hours1 = ma_hms_dh(gst_hours, gst_minutes, gst_seconds);
 
   double a = gst_hours1 - t02;
   double b = a - (24 * floor(a / 24));
   double ut = b * 0.9972695663;
-  int ut_hours = decimal_hours_hour(ut);
-  int ut_minutes = decimal_hours_minute(ut);
-  double ut_seconds = decimal_hours_second(ut);
+  int ut_hours = ma_decimal_hours_hour(ut);
+  int ut_minutes = ma_decimal_hours_minute(ut);
+  double ut_seconds = ma_decimal_hours_second(ut);
 
   enum WarningFlags warning_flag =
       (ut < 0.065574) ? WarningFlag_Warning : WarningFlag_OK;
@@ -190,14 +192,14 @@ greenwich_sidereal_time_to_universal_time(double gst_hours, double gst_minutes,
 TFullTime greenwich_sidereal_time_to_local_sidereal_time(
     double gst_hours, double gst_minutes, double gst_seconds,
     double geographical_longitude) {
-  double gst = hms_dh(gst_hours, gst_minutes, gst_seconds);
+  double gst = ma_hms_dh(gst_hours, gst_minutes, gst_seconds);
   double offset = geographical_longitude / 15;
   double lst_hours1 = gst + offset;
   double lst_hours2 = lst_hours1 - (24 * floor(lst_hours1 / 24));
 
-  int lst_hours = decimal_hours_hour(lst_hours2);
-  int lst_minutes = decimal_hours_minute(lst_hours2);
-  double lst_seconds = decimal_hours_second(lst_hours2);
+  int lst_hours = ma_decimal_hours_hour(lst_hours2);
+  int lst_minutes = ma_decimal_hours_minute(lst_hours2);
+  double lst_seconds = ma_decimal_hours_second(lst_hours2);
 
   return (TFullTime){lst_hours, lst_minutes, lst_seconds};
 }
@@ -208,14 +210,14 @@ TFullTime greenwich_sidereal_time_to_local_sidereal_time(
 TFullTime local_sidereal_time_to_greenwich_sidereal_time(
     double lst_hours, double lst_minutes, double lst_seconds,
     double geographical_longitude) {
-  double gst = hms_dh(lst_hours, lst_minutes, lst_seconds);
+  double gst = ma_hms_dh(lst_hours, lst_minutes, lst_seconds);
   double long_hours = geographical_longitude / 15;
   double gst1 = gst - long_hours;
   double gst2 = gst1 - (24 * floor(gst1 / 24));
 
-  int gst_hours = decimal_hours_hour(gst2);
-  int gst_minutes = decimal_hours_minute(gst2);
-  double gst_seconds = decimal_hours_second(gst2);
+  int gst_hours = ma_decimal_hours_hour(gst2);
+  int gst_minutes = ma_decimal_hours_minute(gst2);
+  double gst_seconds = ma_decimal_hours_second(gst2);
 
   return (TFullTime){gst_hours, gst_minutes, gst_seconds};
 }
