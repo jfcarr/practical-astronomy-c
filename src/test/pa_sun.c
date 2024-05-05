@@ -65,3 +65,31 @@ void test_precise_position_of_sun(double lct_hours, double lct_minutes,
   assert(actual_result.sun_ra_min == expected_result.sun_ra_min);
   assert(actual_result.sun_ra_sec == expected_result.sun_ra_sec);
 }
+
+void test_sun_distance_and_angular_size(double lct_hours, double lct_minutes,
+                                        double lct_seconds, double local_day,
+                                        int local_month, int local_year,
+                                        bool is_daylight_saving,
+                                        int zone_correction,
+                                        TSunDistanceSize expected_result) {
+  TSunDistanceSize actual_result = sun_distance_and_angular_size(
+      lct_hours, lct_minutes, lct_seconds, local_day, local_month, local_year,
+      is_daylight_saving, zone_correction);
+
+  printf("[Sun Distance and Angular Size]\n");
+  printf("\tExpected:\n");
+  printf("\t\tAngular Size is %0.0fd %0.0fm %0.0fs\n",
+         expected_result.sun_ang_size_deg, expected_result.sun_ang_size_min,
+         expected_result.sun_ang_size_sec);
+  printf("\t\tDistance is %0.0f km\n", expected_result.sun_dist_km);
+  printf("\tActual:\n");
+  printf("\t\tAngular Size is %0.0fd %0.0fm %0.0fs\n",
+         actual_result.sun_ang_size_deg, actual_result.sun_ang_size_min,
+         actual_result.sun_ang_size_sec);
+  printf("\t\tDistance is %0.0f km\n", actual_result.sun_dist_km);
+
+  assert(actual_result.sun_ang_size_deg == expected_result.sun_ang_size_deg);
+  assert(actual_result.sun_ang_size_min == expected_result.sun_ang_size_min);
+  assert(actual_result.sun_ang_size_sec == expected_result.sun_ang_size_sec);
+  assert(actual_result.sun_dist_km == expected_result.sun_dist_km);
+}

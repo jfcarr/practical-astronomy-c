@@ -230,4 +230,11 @@ typedef struct pa_sun_position {
   double sun_dec_min;
   double sun_dec_sec;
 } TSunPosition;
+
+typedef struct pa_sun_distance_size {
+  double sun_dist_km;
+  double sun_ang_size_deg;
+  double sun_ang_size_min;
+  double sun_ang_size_sec;
+} TSunDistanceSize;
 #endif

@@ -126,6 +126,10 @@ void test_sun() {
 
   test_precise_position_of_sun(0, 0, 0, 27, 7, 1988, false, 0,
                                (TSunPosition){8, 26, 3.83, 19, 12, 49.72});
+
+  test_sun_distance_and_angular_size(
+      0, 0, 0, 27, 7, 1988, false, 0,
+      (TSunDistanceSize){151920130, 0, 31, 29.93});
 }
 
 int main() {
