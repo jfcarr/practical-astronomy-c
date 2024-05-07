@@ -8,6 +8,13 @@ enum WarningFlags {
   WarningFlag_Warning /**< Calculation result is invalid/inaccurate. */
 };
 
+enum RiseSetStatus {
+  RiseSetStatus_OK,
+  RiseSetStatus_NEVER_RISES,
+  RiseSetStatus_CIRCUMPOLAR,
+  RiseSetStatus_GST_TO_UT_CONVERSION_WARNING
+};
+
 /**
  * Angle measurement units.
  */
@@ -237,4 +244,22 @@ typedef struct pa_sun_distance_size {
   double sun_ang_size_min;
   double sun_ang_size_sec;
 } TSunDistanceSize;
+
+typedef struct pa_sunrise_sunset_info {
+  double local_sunrise_hour;
+  double local_sunrise_minute;
+  double local_sunset_hour;
+  double local_sunset_minute;
+  double azimuth_of_sunrise_deg;
+  double azimuth_of_sunset_deg;
+  enum RiseSetStatus status;
+} TSunriseSunsetInfo;
+
+typedef struct pa_sunrise_lct_helper {
+  double a;
+  double x;
+  double y;
+  double la;
+  enum RiseSetStatus s;
+} TSunriseLctHelper;
 #endif

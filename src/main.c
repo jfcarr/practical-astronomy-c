@@ -130,6 +130,10 @@ void test_sun() {
   test_sun_distance_and_angular_size(
       0, 0, 0, 27, 7, 1988, false, 0,
       (TSunDistanceSize){151920130, 0, 31, 29.93});
+
+  test_sunrise_and_sunset(
+      10, 3, 1986, false, -5, -71.05, 42.37,
+      (TSunriseSunsetInfo){6, 5, 17, 45, 94.83, 265.43, RiseSetStatus_OK});
 }
 
 int main() {

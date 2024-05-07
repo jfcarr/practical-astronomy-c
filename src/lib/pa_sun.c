@@ -132,3 +132,67 @@ sun_distance_and_angular_size(double lct_hours, double lct_minutes,
   return (TSunDistanceSize){sun_dist_km, sun_ang_size_deg, sun_ang_size_min,
                             sun_ang_size_sec};
 }
+
+/**
+ * Calculate local sunrise and sunset.
+ */
+TSunriseSunsetInfo sunrise_and_sunset(double local_day, int local_month,
+                                      int local_year, bool is_daylight_saving,
+                                      int zone_correction,
+                                      double geographical_long_deg,
+                                      double geographical_lat_deg) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double local_sunrise_hours = ma_sunrise_lct(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg);
+  double local_sunset_hours = ma_sunset_lct(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg);
+
+  enum RiseSetStatus sun_rise_set_status =
+      ma_e_sun_rs(local_day, local_month, local_year, daylight_saving,
+                  zone_correction, geographical_long_deg, geographical_lat_deg);
+
+  double adjusted_sunrise_hours = local_sunrise_hours + 0.008333;
+  double adjusted_sunset_hours = local_sunset_hours + 0.008333;
+
+  double azimuth_of_sunrise_deg1 = ma_sunrise_az(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg);
+  double azimuth_of_sunset_deg1 = ma_sunset_az(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg);
+
+  int local_sunrise_hour = sun_rise_set_status == RiseSetStatus_OK
+                               ? ma_decimal_hours_hour(adjusted_sunrise_hours)
+                               : 0;
+  int local_sunrise_minute =
+      sun_rise_set_status == RiseSetStatus_Ok
+          ? ma_decimal_hours_minute(adjusted_sunrise_hours)
+          : 0;
+
+  int local_sunset_hour = sun_rise_set_status == RiseSetStatus_Ok
+                              ? ma_decimal_hours_hour(adjusted_sunset_hours)
+                              : 0;
+  int local_sunset_minute = sun_rise_set_status == RiseSetStatus_Ok
+                                ? ma_decimal_hours_minute(adjusted_sunset_hours)
+                                : 0;
+
+  double azimuth_of_sunrise_deg = sun_rise_set_status == RiseSetStatus_Ok
+                                      ? dround(azimuth_of_sunrise_deg1, 2)
+                                      : 0;
+  double azimuth_of_sunset_deg = sun_rise_set_status == RiseSetStatus_Ok
+                                     ? dround(azimuth_of_sunset_deg1, 2)
+                                     : 0;
+
+  enum RiseSetStatus status = sun_rise_set_status;
+
+  return (TSunriseSunsetInfo){local_sunrise_hour,
+                              local_sunrise_minute,
+                              local_sunset_hour,
+                              local_sunset_minute,
+                              azimuth_of_sunrise_deg,
+                              azimuth_of_sunset_deg,
+                              status};
+}

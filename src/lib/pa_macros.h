@@ -29,6 +29,12 @@ double ma_local_civil_time_to_universal_time_macro(
     int daylight_saving, int zone_correction, double local_day, int local_month,
     int local_year);
 
+double
+ma_universal_time_to_local_civil_time(double uHours, double uMinutes,
+                                      double uSeconds, int daylightSaving,
+                                      int zoneCorrection, double greenwichDay,
+                                      int greenwichMonth, int greenwichYear);
+
 double ma_local_civil_time_greenwich_day(double lct_hours, double lct_minutes,
                                          double lct_seconds,
                                          int daylight_saving,
@@ -180,4 +186,54 @@ double ma_ec_ra(double eld, double elm, double els, double bd, double bm,
 
 double ma_sun_true_anomaly(double lch, double lcm, double lcs, int ds, int zc,
                            double ld, int lm, int ly);
+
+double ma_sunrise_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                      double gp);
+
+TSunriseLctHelper ma_sunrise_lct_3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp);
+
+double ma_sunset_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                     double gp);
+
+TSunriseLctHelper ma_sunset_lct_l3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp);
+
+enum WarningFlags ma_eg_st_ut(double gsh, double gsm, double gss, double gd,
+                              int gm, int gy);
+
+double ma_rise_set_local_sidereal_time_rise(double rah, double ram, double ras,
+                                            double dd, double dm, double ds,
+                                            double vd, double g);
+
+double ma_rise_set_local_sidereal_time_set(double rah, double ram, double ras,
+                                           double dd, double dm, double ds,
+                                           double vd, double g);
+
+double ma_rise_set_azimuth_rise(double rah, double ram, double ras, double dd,
+                                double dm, double ds, double vd, double g);
+
+double ma_rise_set_azimuth_set(double rah, double ram, double ras, double dd,
+                               double dm, double ds, double vd, double g);
+
+enum RiseSetStatus ma_ers(double rah, double ram, double ras, double dd,
+                          double dm, double ds, double vd, double g);
+
+enum RiseSetStatus ma_e_sun_rs(double ld, int lm, int ly, int ds, int zc,
+                               double gl, double gp);
+
+TSunriseLctHelper ma_e_sun_rs_l3710(double gd, int gm, int gy, double sr,
+                                    double di, double gp);
+
+double ma_sunrise_az(double ld, int lm, int ly, int ds, int zc, double gl,
+                     double gp);
+
+TSunriseLctHelper ma_sunrise_az_l3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp);
+
+double ma_sunset_az(double ld, int lm, int ly, int ds, int zc, double gl,
+                    double gp);
+
+TSunriseLctHelper ma_sunset_az_l3710(double gd, int gm, int gy, double sr,
+                                     double di, double gp);
 #endif
