@@ -93,3 +93,47 @@ void test_sun_distance_and_angular_size(double lct_hours, double lct_minutes,
   assert(actual_result.sun_ang_size_sec == expected_result.sun_ang_size_sec);
   assert(actual_result.sun_dist_km == expected_result.sun_dist_km);
 }
+
+test_sunrise_and_sunset(double local_day, int local_month, int local_year,
+                        bool is_daylight_saving, int zone_correction,
+                        double geographical_long_deg,
+                        double geographical_lat_deg,
+                        TSunriseSunsetInfo expected_result) {
+  TSunriseSunsetInfo actual_result = sunrise_and_sunset(
+      local_day, local_month, local_year, is_daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg);
+
+  printf("[Sunrise and Sunset]\n");
+  printf("\tExpected:\n");
+  printf("\t\tAzimuth of sunrise/sunset: %0.2fd/%0.2fd\n",
+         expected_result.azimuth_of_sunrise_deg,
+         expected_result.azimuth_of_sunset_deg);
+  printf("\t\tLocal sunrise: %0.0fh %0.0fm\n",
+         expected_result.local_sunrise_hour,
+         expected_result.local_sunrise_minute);
+  printf("\t\tLocal sunset: %0.0fh %0.0fm\n", expected_result.local_sunset_hour,
+         expected_result.local_sunset_minute);
+  printf("\t\tStatus: %d\n", expected_result.status);
+  printf("\tActual:\n");
+  printf("\t\tAzimuth of sunrise/sunset: %0.2fd/%0.2fd\n",
+         actual_result.azimuth_of_sunrise_deg,
+         actual_result.azimuth_of_sunset_deg);
+  printf("\t\tLocal sunrise: %0.0fh %0.0fm\n", actual_result.local_sunrise_hour,
+         actual_result.local_sunrise_minute);
+  printf("\t\tLocal sunset: %0.0fh %0.0fm\n", actual_result.local_sunset_hour,
+         actual_result.local_sunset_minute);
+  printf("\t\tStatus: %d\n", actual_result.status);
+
+  assert(actual_result.azimuth_of_sunrise_deg ==
+         expected_result.azimuth_of_sunrise_deg);
+  assert(actual_result.azimuth_of_sunset_deg ==
+         expected_result.azimuth_of_sunset_deg);
+  assert(actual_result.local_sunrise_hour ==
+         expected_result.local_sunrise_hour);
+  assert(actual_result.local_sunrise_minute ==
+         expected_result.local_sunrise_minute);
+  assert(actual_result.local_sunset_hour == expected_result.local_sunset_hour);
+  assert(actual_result.local_sunset_minute ==
+         expected_result.local_sunset_minute);
+  assert(actual_result.status == expected_result.status);
+}

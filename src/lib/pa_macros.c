@@ -242,6 +242,28 @@ double ma_local_civil_time_to_universal_time_macro(
 }
 
 /**
+ * Convert Universal Time to Local Civil Time
+ *
+ * Original macro name: UTLct
+ */
+double
+ma_universal_time_to_local_civil_time(double uHours, double uMinutes,
+                                      double uSeconds, int daylightSaving,
+                                      int zoneCorrection, double greenwichDay,
+                                      int greenwichMonth, int greenwichYear) {
+  double a = ma_hms_dh(uHours, uMinutes, uSeconds);
+  double b = a + zoneCorrection;
+  double c = b + daylightSaving;
+  double d = ma_civil_date_to_julian_date(greenwichDay, greenwichMonth,
+                                          greenwichYear) +
+             (c / 24);
+  double e = ma_julian_date_day(d);
+  double e1 = floor(e);
+
+  return 24 * (e - e1);
+}
+
+/**
  * Determine Greenwich Day for Local Time
  *
  * Original macro name: LctGDay
@@ -1485,4 +1507,413 @@ double ma_sun_true_anomaly(double lch, double lcm, double lcs, int ds, int zc,
   double am = degrees_to_radians(m1);
 
   return ma_degrees(ma_true_anomaly(am, ec));
+}
+
+/**
+ * Calculate local civil time of sunrise.
+ *
+ * Original macro name: SunriseLCT
+ */
+double ma_sunrise_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                      double gp) {
+  double di = 0.8333333;
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TSunriseLctHelper result1 = ma_sunrise_lct_3710(gd, gm, gy, sr, di, gp);
+
+  double xx;
+  if (!result1.s == RiseSetStatus_OK) {
+    xx = -99.0;
+  } else {
+    double x =
+        ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+    double ut =
+        ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+    if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+      xx = -99.0;
+    } else {
+      sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+      TSunriseLctHelper result2 = ma_sunrise_lct_3710(gd, gm, gy, sr, di, gp);
+
+      if (!result2.s == RiseSetStatus_OK) {
+        xx = -99.0;
+      } else {
+        x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0,
+                                                              gl);
+        ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+        xx =
+            ma_universal_time_to_local_civil_time(ut, 0, 0, ds, zc, gd, gm, gy);
+      }
+    }
+  }
+
+  return xx;
+}
+
+/**
+ * Helper function for sunrise_lct()
+ */
+TSunriseLctHelper ma_sunrise_lct_3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_rise(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s = ma_ers(ma_decimal_degrees_to_degree_hours(x), 0.0, 0.0,
+                                y, 0.0, 0.0, di, gp);
+
+  return (TSunriseLctHelper){a, x, y, la, s};
+}
+
+/**
+ * Calculate local civil time of sunset.
+ */
+double ma_sunset_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                     double gp) {
+  double di = 0.8333333;
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TSunriseLctHelper result1 = ma_sunset_lct_l3710(gd, gm, gy, sr, di, gp);
+
+  double xx;
+  if (!result1.s == RiseSetStatus_OK) {
+    xx = -99.0;
+  } else {
+    double x =
+        ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+    double ut =
+        ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+    if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+      xx = -99.0;
+    } else {
+      sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+      TSunriseLctHelper result2 = ma_sunset_lct_l3710(gd, gm, gy, sr, di, gp);
+
+      if (!result2.s == RiseSetStatus_OK) {
+        xx = -99;
+      } else {
+        x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0,
+                                                              gl);
+        ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+        xx =
+            ma_universal_time_to_local_civil_time(ut, 0, 0, ds, zc, gd, gm, gy);
+      }
+    }
+  }
+  return xx;
+}
+
+/**
+ * Helper function for sunset_lct().
+ */
+TSunriseLctHelper ma_sunset_lct_l3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0.0, 0.0, 0.0, 0.0, 0.0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0.0, 0.0, 0.0, 0.0, 0.0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_set(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TSunriseLctHelper){a, x, y, la, s};
+}
+
+/**
+ * Status of conversion of Greenwich Sidereal Time to Universal Time.
+ *
+ * Original macro name: eGSTUT
+ */
+enum WarningFlags ma_eg_st_ut(double gsh, double gsm, double gss, double gd,
+                              int gm, int gy) {
+  double a = ma_civil_date_to_julian_date(gd, gm, gy);
+  double b = a - 2451545;
+  double c = b / 36525;
+  double d = 6.697374558 + (2400.051336 * c) + (0.000025862 * c * c);
+  double e = d - (24 * floor(d / 24));
+  double f = ma_hms_dh(gsh, gsm, gss);
+  double g = f - e;
+  double h = g - (24 * floor(g / 24));
+
+  return ((h * 0.9972695663) < (4.0 / 60.0)) ? WarningFlag_Warning
+                                             : WarningFlag_OK;
+}
+
+/**
+ * Local sidereal time of rise, in hours.
+ *
+ * Original macro name: RSLSTR
+ */
+double ma_rise_set_local_sidereal_time_rise(double rah, double ram, double ras,
+                                            double dd, double dm, double ds,
+                                            double vd, double g) {
+  double a = ma_hms_dh(rah, ram, ras);
+  double b = degrees_to_radians(ma_degree_hours_to_decimal_degrees(a));
+  double c = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double d = degrees_to_radians(vd);
+  double e = degrees_to_radians(g);
+  double f = -(sin(d) + sin(e) * sin(c)) / (cos(e) * cos(c));
+  double h = (abs(f) < 1) ? acos(f) : 0;
+  double i = ma_decimal_degrees_to_degree_hours(ma_degrees(b - h));
+
+  return i - 24 * floor(i / 24);
+}
+
+/**
+ * Local sidereal time of setting, in hours.
+ *
+ * Original macro name: RSLSTS
+ */
+double ma_rise_set_local_sidereal_time_set(double rah, double ram, double ras,
+                                           double dd, double dm, double ds,
+                                           double vd, double g) {
+  double a = ma_hms_dh(rah, ram, ras);
+  double b = degrees_to_radians(ma_degree_hours_to_decimal_degrees(a));
+  double c = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double d = degrees_to_radians(vd);
+  double e = degrees_to_radians(g);
+  double f = -(sin(d) + sin(e) * sin(c)) / (cos(e) * cos(c));
+  double h = (abs(f) < 1) ? acos(f) : 0;
+  double i = ma_decimal_degrees_to_degree_hours(ma_degrees(b + h));
+
+  return i - 24 * floor(i / 24);
+}
+
+/**
+ * Azimuth of rising, in degrees.
+ *
+ * Original macro name: RSAZR
+ */
+double ma_rise_set_azimuth_rise(double rah, double ram, double ras, double dd,
+                                double dm, double ds, double vd, double g) {
+  double a = ma_hms_dh(rah, ram, ras);
+  double c = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double d = degrees_to_radians(vd);
+  double e = degrees_to_radians(g);
+  double f = (sin(c) + sin(d) * sin(e)) / (cos(d) * cos(e));
+  double h = ma_ers(rah, ram, ras, dd, dm, ds, vd, g) == RiseSetStatus_OK
+                 ? acos(f)
+                 : 0;
+  double i = ma_degrees(h);
+
+  return i - 360 * floor(i / 360);
+}
+
+/**
+ * Azimuth of setting, in degrees.
+ *
+ * Original macro name: RSAZS
+ */
+double ma_rise_set_azimuth_set(double rah, double ram, double ras, double dd,
+                               double dm, double ds, double vd, double g) {
+  double a = ma_hms_dh(rah, ram, ras);
+  double c = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double d = degrees_to_radians(vd);
+  double e = degrees_to_radians(g);
+  double f = (sin(c) + sin(d) * sin(e)) / (cos(d) * cos(e));
+  double h = ma_ers(rah, ram, ras, dd, dm, ds, vd, g) == RiseSetStatus_OK
+                 ? acos(f)
+                 : 0;
+  double i = 360 - ma_degrees(h);
+
+  return i - 360 * floor(i / 360);
+}
+
+/**
+ * Rise/Set status
+ */
+enum RiseSetStatus ma_ers(double rah, double ram, double ras, double dd,
+                          double dm, double ds, double vd, double g) {
+  double a = ma_hms_dh(rah, ram, ras);
+  double c = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double d = degrees_to_radians(vd);
+  double e = degrees_to_radians(g);
+  double f = -(sin(d) + sin(e) * sin(c)) / (cos(e) * cos(c));
+
+  enum RiseSetStatus return_value = RiseSetStatus_OK;
+  if (f >= 1)
+    return_value = RiseSetStatus_NEVER_RISES;
+  if (f <= -1)
+    return_value = RiseSetStatus_CIRCUMPOLAR;
+
+  return return_value;
+}
+
+/**
+ * Sunrise/Sunset calculation status.
+ *
+ * Original macro name: eSunRS
+ */
+enum RiseSetStatus ma_e_sun_rs(double ld, int lm, int ly, int ds, int zc,
+                               double gl, double gp) {
+  double di = 0.8333333;
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TSunriseLctHelper result1 = ma_e_sun_rs_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == RiseSetStatus_OK) {
+    return result1.s;
+  } else {
+    double x =
+        ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+    double ut =
+        ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+    sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+    TSunriseLctHelper result2 = ma_e_sun_rs_l3710(gd, gm, gy, sr, di, gp);
+    if (!result2.s == RiseSetStatus_OK) {
+      return result2.s;
+    } else {
+      x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0,
+                                                            gl);
+
+      if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+        enum RiseSetStatus s = RiseSetStatus_GST_TO_UT_CONVERSION_WARNING;
+
+        return s;
+      }
+
+      return result2.s;
+    }
+  }
+}
+
+/**
+ * Helper function for e_sun_rs()
+ */
+TSunriseLctHelper ma_e_sun_rs_l3710(double gd, int gm, int gy, double sr,
+                                    double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_rise(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TSunriseLctHelper){a, x, y, la, s};
+}
+
+/**
+ * Calculate azimuth of sunrise.
+ *
+ * Original macro name: SunriseAz
+ */
+double ma_sunrise_az(double ld, int lm, int ly, int ds, int zc, double gl,
+                     double gp) {
+  double di = 0.8333333;
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TSunriseLctHelper result1 = ma_sunrise_az_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == RiseSetStatus_OK) {
+    return -99.0;
+  }
+
+  double x =
+      ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+  double ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+    return -99.0;
+  }
+
+  sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+  TSunriseLctHelper result2 = ma_sunrise_az_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result2.s == RiseSetStatus_OK) {
+    return -99.0;
+  }
+
+  return ma_rise_set_azimuth_rise(ma_decimal_degrees_to_degree_hours(x), 0, 0,
+                                  result2.y, 0.0, 0.0, di, gp);
+}
+
+/**
+ * Helper function for sunrise_az()
+ */
+TSunriseLctHelper ma_sunrise_az_l3710(double gd, int gm, int gy, double sr,
+                                      double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_rise(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TSunriseLctHelper){a, x, y, la, s};
+}
+
+/**
+ * Calculate azimuth of sunset.
+ *
+ * Original macro name: SunsetAz
+ */
+double ma_sunset_az(double ld, int lm, int ly, int ds, int zc, double gl,
+                    double gp) {
+  double di = 0.8333333;
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TSunriseLctHelper result1 = ma_sunset_az_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == RiseSetStatus_OK) {
+    return -99.0;
+  }
+
+  double x =
+      ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+  double ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+    return -99.0;
+  }
+
+  sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+
+  TSunriseLctHelper result2 = ma_sunset_az_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result2.s == RiseSetStatus_OK) {
+    return -99.0;
+  }
+  return ma_rise_set_azimuth_set(ma_decimal_degrees_to_degree_hours(x), 0, 0,
+                                 result2.y, 0, 0, di, gp);
+}
+
+/**
+ * Helper function for sunset_az()
+ */
+TSunriseLctHelper ma_sunset_az_l3710(double gd, int gm, int gy, double sr,
+                                     double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_set(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TSunriseLctHelper){a, x, y, la, s};
 }

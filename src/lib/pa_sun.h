@@ -21,4 +21,10 @@ sun_distance_and_angular_size(double lct_hours, double lct_minutes,
                               double lct_seconds, double local_day,
                               int local_month, int local_year,
                               bool is_daylight_saving, int zone_correction);
+
+TSunriseSunsetInfo sunrise_and_sunset(double local_day, int local_month,
+                                      int local_year, bool is_daylight_saving,
+                                      int zone_correction,
+                                      double geographical_long_deg,
+                                      double geographical_lat_deg);
 #endif
