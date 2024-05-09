@@ -15,6 +15,19 @@ enum RiseSetStatus {
   RiseSetStatus_GST_TO_UT_CONVERSION_WARNING
 };
 
+enum TwilightStatus {
+  TwilightStatus_OK,
+  TwilightStatus_LASTS_ALL_NIGHT,
+  TwilightStatus_SUN_TOO_FAR_BELOW_HORIZON,
+  TwilightStatus_GST_TO_UT_CONVERSION_WARNING
+};
+
+enum TwilightType {
+  TwilightType_CIVIL = 6,
+  TwilightType_NAUTICAL = 12,
+  TwilightType_ASTRONOMICAL = 18,
+};
+
 /**
  * Angle measurement units.
  */
@@ -262,4 +275,28 @@ typedef struct pa_sunrise_lct_helper {
   double la;
   enum RiseSetStatus s;
 } TSunriseLctHelper;
+
+typedef struct pa_twilight_info {
+  double am_twilight_begins_hour;
+  double am_twilight_begins_min;
+  double pm_twilight_ends_hour;
+  double pm_twilight_ends_min;
+  enum TwilightStatus status;
+} TTwilightInfo;
+
+typedef struct pa_twilight_lct_helper {
+  double a;
+  double x;
+  double y;
+  double la;
+  enum RiseSetStatus s;
+} TTwilightLctHelper;
+
+typedef struct pa_twilight_lct_helper2 {
+  double a;
+  double x;
+  double y;
+  double la;
+  enum TwilightStatus s;
+} TTwilightLctHelper2;
 #endif

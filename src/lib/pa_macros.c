@@ -1917,3 +1917,181 @@ TSunriseLctHelper ma_sunset_az_l3710(double gd, int gm, int gy, double sr,
 
   return (TSunriseLctHelper){a, x, y, la, s};
 }
+
+/**
+ * Calculate morning twilight start, in local time.
+ *
+ * Original macro name: TwilightAMLCT
+ */
+double ma_twilight_am_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                          double gp, enum TwilightType tt) {
+  double di = (double)tt;
+
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TTwilightLctHelper result1 = ma_twilight_am_lct_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == RiseSetStatus_OK)
+    return -99.0;
+
+  double x =
+      ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+  double ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK)
+    return -99.0;
+
+  sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+
+  TTwilightLctHelper result2 = ma_twilight_am_lct_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result2.s == RiseSetStatus_OK)
+    return -99.0;
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0, gl);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  double xx =
+      ma_universal_time_to_local_civil_time(ut, 0, 0, ds, zc, gd, gm, gy);
+
+  return xx;
+}
+
+/**
+ * Helper function for twilight_am_lct()
+ */
+TTwilightLctHelper ma_twilight_am_lct_l3710(double gd, int gm, int gy,
+                                            double sr, double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_rise(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TTwilightLctHelper){a, x, y, la, s};
+}
+
+/// <summary>
+/// Calculate evening twilight end, in local time.
+/// </summary>
+/// <remarks>
+/// <para>Twilight type can be one of "C" (civil), "N" (nautical), or "A"
+/// (astronomical)</para> <para>Original macro name: TwilightPMLCT</para>
+/// </remarks>
+double ma_twilight_pm_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                          double gp, enum TwilightType tt) {
+  double di = (double)tt;
+
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TTwilightLctHelper result1 = ma_twilight_pm_lct_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == RiseSetStatus_OK)
+    return 0.0;
+
+  double x =
+      ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+  double ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK)
+    return 0.0;
+
+  sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+
+  TTwilightLctHelper result2 = ma_twilight_pm_lct_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result2.s == RiseSetStatus_OK)
+    return 0.0;
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0, gl);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+
+  return ma_universal_time_to_local_civil_time(ut, 0, 0, ds, zc, gd, gm, gy);
+}
+
+/**
+ * Helper function for twilight_pm_lct()
+ */
+TTwilightLctHelper ma_twilight_pm_lct_l3710(double gd, int gm, int gy,
+                                            double sr, double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_set(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  return (TTwilightLctHelper){a, x, y, la, s};
+}
+
+/**
+ * Twilight calculation status.
+ *
+ * Original macro name: eTwilight
+ */
+enum TwilightStatus ma_e_twilight(double ld, int lm, int ly, int ds, int zc,
+                                  double gl, double gp, enum TwilightType tt) {
+  double di = (double)tt;
+
+  double gd = ma_local_civil_time_greenwich_day(12, 0, 0, ds, zc, ld, lm, ly);
+  int gm = ma_local_civil_time_greenwich_month(12, 0, 0, ds, zc, ld, lm, ly);
+  int gy = ma_local_civil_time_greenwich_year(12, 0, 0, ds, zc, ld, lm, ly);
+  double sr = ma_sun_long(12, 0, 0, ds, zc, ld, lm, ly);
+
+  TTwilightLctHelper2 result1 = ma_e_twilight_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result1.s == TwilightStatus_OK) {
+    return result1.s;
+  }
+
+  double x =
+      ma_local_sidereal_time_to_greenwich_sidereal_time(result1.la, 0, 0, gl);
+  double ut = ma_greenwich_sidereal_time_to_universal_time(x, 0, 0, gd, gm, gy);
+  sr = ma_sun_long(ut, 0, 0, 0, 0, gd, gm, gy);
+
+  TTwilightLctHelper2 result2 = ma_e_twilight_l3710(gd, gm, gy, sr, di, gp);
+
+  if (!result2.s == TwilightStatus_OK) {
+    return result1.s;
+  }
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(result2.la, 0, 0, gl);
+
+  if (!ma_eg_st_ut(x, 0, 0, gd, gm, gy) == WarningFlag_OK) {
+    return TwilightStatus_GST_TO_UT_CONVERSION_WARNING;
+  }
+
+  return result2.s;
+}
+
+/**
+ * Helper function for e_twilight()
+ */
+TTwilightLctHelper2 ma_e_twilight_l3710(double gd, int gm, int gy, double sr,
+                                        double di, double gp) {
+  double a = sr + ma_nutat_long(gd, gm, gy) - 0.005694;
+  double x = ma_ec_ra(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double y = ma_ec_dec(a, 0, 0, 0, 0, 0, gd, gm, gy);
+  double la = ma_rise_set_local_sidereal_time_rise(
+      ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+  enum RiseSetStatus s =
+      ma_ers(ma_decimal_degrees_to_degree_hours(x), 0, 0, y, 0, 0, di, gp);
+
+  enum TwilightStatus ts = TwilightStatus_OK;
+  if (s == RiseSetStatus_CIRCUMPOLAR)
+    ts = TwilightStatus_LASTS_ALL_NIGHT;
+  if (s == RiseSetStatus_NEVER_RISES)
+    ts = TwilightStatus_SUN_TOO_FAR_BELOW_HORIZON;
+
+  return (TTwilightLctHelper2){a, x, y, la, ts};
+}

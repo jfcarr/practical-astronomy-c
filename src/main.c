@@ -134,6 +134,10 @@ void test_sun() {
   test_sunrise_and_sunset(
       10, 3, 1986, false, -5, -71.05, 42.37,
       (TSunriseSunsetInfo){6, 5, 17, 45, 94.83, 265.43, RiseSetStatus_OK});
+
+  test_morning_and_evening_twilight(
+      7, 9, 1979, false, 0, 0, 52, TwilightType_ASTRONOMICAL,
+      (TTwilightInfo){3, 17, 20, 37, TwilightStatus_OK});
 }
 
 int main() {

@@ -94,11 +94,11 @@ void test_sun_distance_and_angular_size(double lct_hours, double lct_minutes,
   assert(actual_result.sun_dist_km == expected_result.sun_dist_km);
 }
 
-test_sunrise_and_sunset(double local_day, int local_month, int local_year,
-                        bool is_daylight_saving, int zone_correction,
-                        double geographical_long_deg,
-                        double geographical_lat_deg,
-                        TSunriseSunsetInfo expected_result) {
+void test_sunrise_and_sunset(double local_day, int local_month, int local_year,
+                             bool is_daylight_saving, int zone_correction,
+                             double geographical_long_deg,
+                             double geographical_lat_deg,
+                             TSunriseSunsetInfo expected_result) {
   TSunriseSunsetInfo actual_result = sunrise_and_sunset(
       local_day, local_month, local_year, is_daylight_saving, zone_correction,
       geographical_long_deg, geographical_lat_deg);
@@ -135,5 +135,46 @@ test_sunrise_and_sunset(double local_day, int local_month, int local_year,
   assert(actual_result.local_sunset_hour == expected_result.local_sunset_hour);
   assert(actual_result.local_sunset_minute ==
          expected_result.local_sunset_minute);
+  assert(actual_result.status == expected_result.status);
+}
+
+void test_morning_and_evening_twilight(double local_day, int local_month,
+                                       int local_year, bool is_daylight_saving,
+                                       int zone_correction,
+                                       double geographical_long_deg,
+                                       double geographical_lat_deg,
+                                       enum TwilightType twilight_type,
+                                       TTwilightInfo expected_result) {
+
+  TTwilightInfo actual_result = morning_and_evening_twilight(
+      local_day, local_month, local_year, is_daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg, twilight_type);
+
+  printf("[Morning and Evening Twilight]\n");
+  printf("\tExpected:\n");
+  printf("\t\tAM twilight begins: %0.0fh %0.0fm\n",
+         expected_result.am_twilight_begins_hour,
+         expected_result.am_twilight_begins_min);
+  printf("\t\tPM twilight ends: %0.0fh %0.0fm\n",
+         expected_result.pm_twilight_ends_hour,
+         expected_result.pm_twilight_ends_min);
+  printf("\t\tStatus: %d\n", expected_result.status);
+  printf("\tActual:\n");
+  printf("\t\tAM twilight begins: %0.0fh %0.0fm\n",
+         actual_result.am_twilight_begins_hour,
+         actual_result.am_twilight_begins_min);
+  printf("\t\tPM twilight ends: %0.0fh %0.0fm\n",
+         actual_result.pm_twilight_ends_hour,
+         actual_result.pm_twilight_ends_min);
+  printf("\t\tStatus: %d\n", actual_result.status);
+
+  assert(actual_result.am_twilight_begins_hour ==
+         expected_result.am_twilight_begins_hour);
+  assert(actual_result.am_twilight_begins_min ==
+         expected_result.am_twilight_begins_min);
+  assert(actual_result.pm_twilight_ends_hour ==
+         expected_result.pm_twilight_ends_hour);
+  assert(actual_result.pm_twilight_ends_min ==
+         expected_result.pm_twilight_ends_min);
   assert(actual_result.status == expected_result.status);
 }

@@ -27,4 +27,9 @@ TSunriseSunsetInfo sunrise_and_sunset(double local_day, int local_month,
                                       int zone_correction,
                                       double geographical_long_deg,
                                       double geographical_lat_deg);
+
+TTwilightInfo morning_and_evening_twilight(
+    double local_day, int local_month, int local_year, bool is_daylight_saving,
+    int zone_correction, double geographical_long_deg,
+    double geographical_lat_deg, enum TwilightType twilight_type);
 #endif

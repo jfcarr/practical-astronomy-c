@@ -196,3 +196,51 @@ TSunriseSunsetInfo sunrise_and_sunset(double local_day, int local_month,
                               azimuth_of_sunset_deg,
                               status};
 }
+
+/**
+ * Calculate times of morning and evening twilight.
+ */
+TTwilightInfo morning_and_evening_twilight(
+    double local_day, int local_month, int local_year, bool is_daylight_saving,
+    int zone_correction, double geographical_long_deg,
+    double geographical_lat_deg, enum TwilightType twilight_type) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double start_of_am_twilight_hours = ma_twilight_am_lct(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg, twilight_type);
+
+  double end_of_pm_twilight_hours = ma_twilight_pm_lct(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg, twilight_type);
+
+  enum TwilightStatus twilight_status = ma_e_twilight(
+      local_day, local_month, local_year, daylight_saving, zone_correction,
+      geographical_long_deg, geographical_lat_deg, twilight_type);
+
+  double adjusted_am_start_time = start_of_am_twilight_hours + 0.008333;
+  double adjusted_pm_start_time = end_of_pm_twilight_hours + 0.008333;
+
+  double am_twilight_begins_hour =
+      twilight_status == TwilightStatus_OK
+          ? ma_decimal_hours_hour(adjusted_am_start_time)
+          : -99;
+  double am_twilight_begins_min =
+      twilight_status == TwilightStatus_OK
+          ? ma_decimal_hours_minute(adjusted_am_start_time)
+          : -99;
+
+  double pm_twilight_ends_hour =
+      twilight_status == TwilightStatus_OK
+          ? ma_decimal_hours_hour(adjusted_pm_start_time)
+          : -99;
+  double pm_twilight_ends_min =
+      twilight_status == TwilightStatus_OK
+          ? ma_decimal_hours_minute(adjusted_pm_start_time)
+          : -99;
+
+  enum TwilightStatus status = twilight_status;
+
+  return (TTwilightInfo){am_twilight_begins_hour, am_twilight_begins_min,
+                         pm_twilight_ends_hour, pm_twilight_ends_min, status};
+}
