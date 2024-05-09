@@ -138,6 +138,8 @@ void test_sun() {
   test_morning_and_evening_twilight(
       7, 9, 1979, false, 0, 0, 52, TwilightType_ASTRONOMICAL,
       (TTwilightInfo){3, 17, 20, 37, TwilightStatus_OK});
+
+  test_equation_of_time(27, 7, 2010, (TEquationOfTime){6, 31.52});
 }
 
 int main() {

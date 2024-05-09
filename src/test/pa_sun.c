@@ -178,3 +178,23 @@ void test_morning_and_evening_twilight(double local_day, int local_month,
          expected_result.pm_twilight_ends_min);
   assert(actual_result.status == expected_result.status);
 }
+
+void test_equation_of_time(double gw_date_day, int gw_date_month,
+                           int gw_date_year, TEquationOfTime expected_result) {
+  TEquationOfTime actual_result =
+      equation_of_time(gw_date_day, gw_date_month, gw_date_year);
+
+  printf("[Equation of Time]\n");
+  printf("\tExpected:\n");
+  printf("\t\tDifference: %0.0fh %0.2fm\n",
+         expected_result.equation_of_time_min,
+         expected_result.equation_of_time_sec);
+  printf("\tActual:\n");
+  printf("\t\tDifference: %0.0fh %0.2fm\n", actual_result.equation_of_time_min,
+         actual_result.equation_of_time_sec);
+
+  assert(actual_result.equation_of_time_min ==
+         expected_result.equation_of_time_min);
+  assert(actual_result.equation_of_time_sec ==
+         expected_result.equation_of_time_sec);
+}

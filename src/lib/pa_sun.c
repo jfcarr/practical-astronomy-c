@@ -244,3 +244,24 @@ TTwilightInfo morning_and_evening_twilight(
   return (TTwilightInfo){am_twilight_begins_hour, am_twilight_begins_min,
                          pm_twilight_ends_hour, pm_twilight_ends_min, status};
 }
+
+/**
+ * Calculate the equation of time. (The difference between the real Sun time and
+ * the mean Sun time.)
+ */
+TEquationOfTime equation_of_time(double gw_date_day, int gw_date_month,
+                                 int gw_date_year) {
+  double sun_longitude_deg =
+      ma_sun_long(12, 0, 0, 0, 0, gw_date_day, gw_date_month, gw_date_year);
+  double sun_ra_hours = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(sun_longitude_deg, 0, 0, 0, 0, 0, gw_date_day, gw_date_month,
+               gw_date_year));
+  double equivalent_ut_hours = ma_greenwich_sidereal_time_to_universal_time(
+      sun_ra_hours, 0, 0, gw_date_day, gw_date_month, gw_date_year);
+  double equation_of_time_hours = equivalent_ut_hours - 12;
+
+  int equation_of_time_min = ma_decimal_hours_minute(equation_of_time_hours);
+  double equation_of_time_sec = ma_decimal_hours_second(equation_of_time_hours);
+
+  return (TEquationOfTime){equation_of_time_min, equation_of_time_sec};
+}

@@ -299,4 +299,9 @@ typedef struct pa_twilight_lct_helper2 {
   double la;
   enum TwilightStatus s;
 } TTwilightLctHelper2;
+
+typedef struct pa_equation_of_time {
+  double equation_of_time_min;
+  double equation_of_time_sec;
+} TEquationOfTime;
 #endif
