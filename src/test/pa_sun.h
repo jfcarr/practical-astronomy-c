@@ -39,4 +39,9 @@ void test_morning_and_evening_twilight(double local_day, int local_month,
 
 void test_equation_of_time(double gw_date_day, int gw_date_month,
                            int gw_date_year, TEquationOfTime expected_result);
+
+void test_solar_elongation(double ra_hour, double ra_min, double ra_sec,
+                           double dec_deg, double dec_min, double dec_sec,
+                           double gw_date_day, int gw_date_month,
+                           int gw_date_year, double expected_result);
 #endif

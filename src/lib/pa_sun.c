@@ -265,3 +265,27 @@ TEquationOfTime equation_of_time(double gw_date_day, int gw_date_month,
 
   return (TEquationOfTime){equation_of_time_min, equation_of_time_sec};
 }
+
+/**
+ * Calculate solar elongation for a celestial body.
+ *
+ * Solar elongation is the angle between the lines of sight from the Earth to
+ * the Sun and from the Earth to the celestial body.
+ */
+double solar_elongation(double ra_hour, double ra_min, double ra_sec,
+                        double dec_deg, double dec_min, double dec_sec,
+                        double gw_date_day, int gw_date_month,
+                        int gw_date_year) {
+  double sun_longitude_deg =
+      ma_sun_long(0, 0, 0, 0, 0, gw_date_day, gw_date_month, gw_date_year);
+  double sun_ra_hours = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(sun_longitude_deg, 0, 0, 0, 0, 0, gw_date_day, gw_date_month,
+               gw_date_year));
+  double sun_dec_deg = ma_ec_dec(sun_longitude_deg, 0, 0, 0, 0, 0, gw_date_day,
+                                 gw_date_month, gw_date_year);
+  double solar_elongation_deg =
+      ma_angle(sun_ra_hours, 0, 0, sun_dec_deg, 0, 0, ra_hour, ra_min, ra_sec,
+               dec_deg, dec_min, dec_sec, AngleMeasurementType_HOURS);
+
+  return dround(solar_elongation_deg, 2);
+}

@@ -28,6 +28,11 @@ enum TwilightType {
   TwilightType_ASTRONOMICAL = 18,
 };
 
+enum AngleMeasurementType {
+  AngleMeasurementType_DEGREES,
+  AngleMeasurementType_HOURS
+};
+
 /**
  * Angle measurement units.
  */

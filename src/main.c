@@ -140,6 +140,8 @@ void test_sun() {
       (TTwilightInfo){3, 17, 20, 37, TwilightStatus_OK});
 
   test_equation_of_time(27, 7, 2010, (TEquationOfTime){6, 31.52});
+
+  test_solar_elongation(10, 6, 45, 11, 57, 27, 27.8333333, 7, 2010, 24.78);
 }
 
 int main() {
