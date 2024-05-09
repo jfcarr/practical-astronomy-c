@@ -80,12 +80,12 @@ void test_coordinates() {
       (TEquatorialCoordinates2){10, 21, 0, 10, 3, 11});
 
   test_angle_between_two_objects(5, 13, 31.7, -8, 13, 30, 6, 44, 13.4, -16, 41,
-                                 11, AngleMeasurement_Hours,
+                                 11, AngleMeasurementType_HOURS,
                                  (TAngle){23, 40, 25.86});
 
   test_rising_and_setting(
       23, 39, 20, 21, 42, 0, 24, 8, 2010, 64, 30, 0.5667,
-      (TRiseSet){RiseSetStatus_Ok, 14, 16, 4, 10, 64.36, 295.64});
+      (TRiseSet){RiseSetStatus_OK, 14, 16, 4, 10, 64.36, 295.64});
 
   test_correct_for_precession(
       9, 10, 43, 14, 23, 25, 0.923, 1, 1950, 1, 6, 1979,
@@ -99,12 +99,12 @@ void test_coordinates() {
       (TCorrectedEclipticCoordinates){352, 37, 30.45, -1, 32, 56.33});
 
   test_atmospheric_refraction(
-      23, 14, 0, 40, 10, 0, CoordinateType_Actual, 0.17, 51.2036110, 0, 0, 23,
+      23, 14, 0, 40, 10, 0, CoordinateType_ACTUAL, 0.17, 51.2036110, 0, 0, 23,
       3, 1987, 1, 1, 24, 1012, 21.7,
       (TCorrectedRefraction){23, 13, 44.74, 40, 19, 45.76});
 
   test_corrections_for_geocentric_parallax(
-      22, 35, 19, -7, 41, 13, CoordinateType_Actual, 1.019167, -100, 50, 60, 0,
+      22, 35, 19, -7, 41, 13, CoordinateType_ACTUAL, 1.019167, -100, 50, 60, 0,
       -6, 26, 2, 1979, 10, 45, 0,
       (TCorrectedParallax){22, 36, 43.22, -8, 32, 17.4});
 

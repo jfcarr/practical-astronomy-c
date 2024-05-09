@@ -362,14 +362,14 @@ TAngle angle_between_two_objects(double ra_long1_hour_deg, double ra_long1_min,
                                  double ra_long2_hour_deg, double ra_long2_min,
                                  double ra_long2_sec, double dec_lat2_deg,
                                  double dec_lat2_min, double dec_lat2_sec,
-                                 TAngleMeasurementUnits hour_or_degree) {
+                                 enum AngleMeasurementType hour_or_degree) {
   double ra_long1_decimal =
-      (hour_or_degree == AngleMeasurement_Hours)
+      (hour_or_degree == AngleMeasurementType_HOURS)
           ? ma_hms_dh(ra_long1_hour_deg, ra_long1_min, ra_long1_sec)
           : ma_degrees_minutes_seconds_to_decimal_degrees(
                 ra_long1_hour_deg, ra_long1_min, ra_long1_sec);
   double ra_long1_deg =
-      (hour_or_degree == AngleMeasurement_Hours)
+      (hour_or_degree == AngleMeasurementType_HOURS)
           ? ma_degree_hours_to_decimal_degrees(ra_long1_decimal)
           : ra_long1_decimal;
 
@@ -379,12 +379,12 @@ TAngle angle_between_two_objects(double ra_long1_hour_deg, double ra_long1_min,
   double dec_lat1_rad = degrees_to_radians(dec_lat1_deg1);
 
   double ra_long2_decimal =
-      (hour_or_degree == AngleMeasurement_Hours)
+      (hour_or_degree == AngleMeasurementType_HOURS)
           ? ma_hms_dh(ra_long2_hour_deg, ra_long2_min, ra_long2_sec)
           : ma_degrees_minutes_seconds_to_decimal_degrees(
                 ra_long2_hour_deg, ra_long2_min, ra_long2_sec);
   double ra_long2_deg =
-      (hour_or_degree == AngleMeasurement_Hours)
+      (hour_or_degree == AngleMeasurementType_HOURS)
           ? ma_degree_hours_to_decimal_degrees(ra_long2_decimal)
           : ra_long2_decimal;
   double ra_long2_rad = degrees_to_radians(ra_long2_deg);
@@ -446,26 +446,26 @@ TRiseSet rising_and_setting(double ra_hours, double ra_minutes,
   double ut_rise_adjusted_hours = ut_rise_hours1 + 0.008333;
   double ut_set_adjusted_hours = ut_set_hours1 + 0.008333;
 
-  TRiseSetStatus rs_status = RiseSetStatus_Ok;
+  enum RiseSetStatus rs_status = RiseSetStatus_OK;
   if (cos_h > 1)
-    rs_status = RiseSetStatus_NeverRises;
+    rs_status = RiseSetStatus_NEVER_RISES;
   if (cos_h < -1)
-    rs_status = RiseSetStatus_Circumpolar;
+    rs_status = RiseSetStatus_CIRCUMPOLAR;
 
-  int ut_rise_hour = (rs_status == RiseSetStatus_Ok)
+  int ut_rise_hour = (rs_status == RiseSetStatus_OK)
                          ? ma_decimal_hours_hour(ut_rise_adjusted_hours)
                          : 0;
-  int ut_rise_min = (rs_status == RiseSetStatus_Ok)
+  int ut_rise_min = (rs_status == RiseSetStatus_OK)
                         ? ma_decimal_hours_minute(ut_rise_adjusted_hours)
                         : 0;
-  int ut_set_hour = (rs_status == RiseSetStatus_Ok)
+  int ut_set_hour = (rs_status == RiseSetStatus_OK)
                         ? ma_decimal_hours_hour(ut_set_adjusted_hours)
                         : 0;
-  int ut_set_min = (rs_status == RiseSetStatus_Ok)
+  int ut_set_min = (rs_status == RiseSetStatus_OK)
                        ? ma_decimal_hours_minute(ut_set_adjusted_hours)
                        : 0;
-  double az_rise = (rs_status == RiseSetStatus_Ok) ? dround(az_rise_deg, 2) : 0;
-  double az_set = (rs_status == RiseSetStatus_Ok) ? dround(az_set_deg, 2) : 0;
+  double az_rise = (rs_status == RiseSetStatus_OK) ? dround(az_rise_deg, 2) : 0;
+  double az_set = (rs_status == RiseSetStatus_OK) ? dround(az_set_deg, 2) : 0;
 
   return (TRiseSet){rs_status,  ut_rise_hour, ut_rise_min, ut_set_hour,
                     ut_set_min, az_rise,      az_set};
@@ -600,10 +600,10 @@ correct_for_aberration(double ut_hour, double ut_minutes, double ut_seconds,
 TCorrectedRefraction atmospheric_refraction(
     double true_ra_hour, double true_ra_min, double true_ra_sec,
     double true_dec_deg, double true_dec_min, double true_dec_sec,
-    TCoordinateType coordinate_type1, double geog_long_deg, double geog_lat_deg,
-    int daylight_saving_hours, int timezone_hours, double lcd_day,
-    int lcd_month, int lcd_year, double lct_hour, double lct_min,
-    double lct_sec, double atmospheric_pressure_mbar,
+    enum CoordinateType coordinate_type1, double geog_long_deg,
+    double geog_lat_deg, int daylight_saving_hours, int timezone_hours,
+    double lcd_day, int lcd_month, int lcd_year, double lct_hour,
+    double lct_min, double lct_sec, double atmospheric_pressure_mbar,
     double atmospheric_temperature_celsius) {
   double ha_hour = ma_right_ascension_to_hour_angle_macro(
       true_ra_hour, true_ra_min, true_ra_sec, lct_hour, lct_min, lct_sec,
@@ -646,7 +646,7 @@ TCorrectedRefraction atmospheric_refraction(
  */
 TCorrectedParallax corrections_for_geocentric_parallax(
     double ra_hour, double ra_min, double ra_sec, double dec_deg,
-    double dec_min, double dec_sec, TCoordinateType coordinate_type,
+    double dec_min, double dec_sec, enum CoordinateType coordinate_type,
     double equatorial_hor_parallax_deg, double geog_long_deg,
     double geog_lat_deg, double height_m, int daylight_saving,
     int timezone_hours, double lcd_day, int lcd_month, int lcd_year,
