@@ -198,3 +198,22 @@ void test_equation_of_time(double gw_date_day, int gw_date_month,
   assert(actual_result.equation_of_time_sec ==
          expected_result.equation_of_time_sec);
 }
+
+void test_solar_elongation(double ra_hour, double ra_min, double ra_sec,
+                           double dec_deg, double dec_min, double dec_sec,
+                           double gw_date_day, int gw_date_month,
+                           int gw_date_year, double expected_result) {
+  double actual_result =
+      solar_elongation(ra_hour, ra_min, ra_sec, dec_deg, dec_min, dec_sec,
+                       gw_date_day, gw_date_month, gw_date_year
+
+      );
+
+  printf("[Solar Elongation]\n");
+  printf("\tExpected:\n");
+  printf("\t\tElongation: %0.2f d\n", expected_result);
+  printf("\tActual:\n");
+  printf("\t\tElongation: %0.2f d\n", actual_result);
+
+  assert(actual_result == expected_result);
+}

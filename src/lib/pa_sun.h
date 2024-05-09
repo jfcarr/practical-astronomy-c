@@ -35,4 +35,9 @@ TTwilightInfo morning_and_evening_twilight(
 
 TEquationOfTime equation_of_time(double gw_date_day, int gw_date_month,
                                  int gw_date_year);
+
+double solar_elongation(double ra_hour, double ra_min, double ra_sec,
+                        double dec_deg, double dec_min, double dec_sec,
+                        double gw_date_day, int gw_date_month,
+                        int gw_date_year);
 #endif

@@ -2095,3 +2095,28 @@ TTwilightLctHelper2 ma_e_twilight_l3710(double gd, int gm, int gy, double sr,
 
   return (TTwilightLctHelper2){a, x, y, la, ts};
 }
+
+/**
+ * Calculate the angle between two celestial objects
+ *
+ * Original macro name: Angle
+ */
+double ma_angle(double xx1, double xm1, double xs1, double dd1, double dm1,
+                double ds1, double xx2, double xm2, double xs2, double dd2,
+                double dm2, double ds2, enum AngleMeasurementType s) {
+  double a = (s == AngleMeasurementType_HOURS)
+                 ? ma_degree_hours_to_decimal_degrees(ma_hms_dh(xx1, xm1, xs1))
+                 : ma_degrees_minutes_seconds_to_decimal_degrees(xx1, xm1, xs1);
+  double b = degrees_to_radians(a);
+  double c = ma_degrees_minutes_seconds_to_decimal_degrees(dd1, dm1, ds1);
+  double d = degrees_to_radians(c);
+  double e = (s == AngleMeasurementType_HOURS)
+                 ? ma_degree_hours_to_decimal_degrees(ma_hms_dh(xx2, xm2, xs2))
+                 : ma_degrees_minutes_seconds_to_decimal_degrees(xx2, xm2, xs2);
+  double f = degrees_to_radians(e);
+  double g = ma_degrees_minutes_seconds_to_decimal_degrees(dd2, dm2, ds2);
+  double h = degrees_to_radians(g);
+  double i = acos(sin(d) * sin(h) + cos(d) * cos(h) * cos(b - f));
+
+  return ma_degrees(i);
+}

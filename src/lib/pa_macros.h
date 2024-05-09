@@ -254,4 +254,8 @@ enum TwilightStatus ma_e_twilight(double ld, int lm, int ly, int ds, int zc,
 
 TTwilightLctHelper2 ma_e_twilight_l3710(double gd, int gm, int gy, double sr,
                                         double di, double gp);
+
+double ma_angle(double xx1, double xm1, double xs1, double dd1, double dm1,
+                double ds1, double xx2, double xm2, double xs2, double dd2,
+                double dm2, double ds2, enum AngleMeasurementType s);
 #endif
