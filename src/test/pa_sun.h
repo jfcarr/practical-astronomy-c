@@ -36,4 +36,7 @@ void test_morning_and_evening_twilight(double local_day, int local_month,
                                        double geographical_lat_deg,
                                        enum TwilightType twilight_type,
                                        TTwilightInfo expected_result);
+
+void test_equation_of_time(double gw_date_day, int gw_date_month,
+                           int gw_date_year, TEquationOfTime expected_result);
 #endif
