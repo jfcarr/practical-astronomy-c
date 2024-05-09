@@ -168,21 +168,21 @@ TSunriseSunsetInfo sunrise_and_sunset(double local_day, int local_month,
                                ? ma_decimal_hours_hour(adjusted_sunrise_hours)
                                : 0;
   int local_sunrise_minute =
-      sun_rise_set_status == RiseSetStatus_Ok
+      sun_rise_set_status == RiseSetStatus_OK
           ? ma_decimal_hours_minute(adjusted_sunrise_hours)
           : 0;
 
-  int local_sunset_hour = sun_rise_set_status == RiseSetStatus_Ok
+  int local_sunset_hour = sun_rise_set_status == RiseSetStatus_OK
                               ? ma_decimal_hours_hour(adjusted_sunset_hours)
                               : 0;
-  int local_sunset_minute = sun_rise_set_status == RiseSetStatus_Ok
+  int local_sunset_minute = sun_rise_set_status == RiseSetStatus_OK
                                 ? ma_decimal_hours_minute(adjusted_sunset_hours)
                                 : 0;
 
-  double azimuth_of_sunrise_deg = sun_rise_set_status == RiseSetStatus_Ok
+  double azimuth_of_sunrise_deg = sun_rise_set_status == RiseSetStatus_OK
                                       ? dround(azimuth_of_sunrise_deg1, 2)
                                       : 0;
-  double azimuth_of_sunset_deg = sun_rise_set_status == RiseSetStatus_Ok
+  double azimuth_of_sunset_deg = sun_rise_set_status == RiseSetStatus_OK
                                      ? dround(azimuth_of_sunset_deg1, 2)
                                      : 0;
 

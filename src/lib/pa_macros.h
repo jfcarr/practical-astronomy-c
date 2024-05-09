@@ -137,19 +137,19 @@ double ma_true_anomaly(double am, double ec);
 
 double ma_eccentric_anomaly(double am, double ec);
 
-double ma_refract(double y2, TCoordinateType sw, double pr, double tr);
+double ma_refract(double y2, enum CoordinateType sw, double pr, double tr);
 
 double ma_refract_l3035(double pr, double tr, double y, double d);
 
 double ma_parallax_ha(double hh, double hm, double hs, double dd, double dm,
-                      double ds, TCoordinateType sw, double gp, double ht,
+                      double ds, enum CoordinateType sw, double gp, double ht,
                       double hp);
 
 TParallaxHelper ma_parallax_ha_l2870(double x, double y, double rc, double rp,
                                      double rs, double tp);
 
 double ma_parallax_dec(double hh, double hm, double hs, double dd, double dm,
-                       double ds, TCoordinateType sw, double gp, double ht,
+                       double ds, enum CoordinateType sw, double gp, double ht,
                        double hp);
 
 TParallaxHelper ma_parallax_dec_l2870(double x, double y, double rc, double rp,

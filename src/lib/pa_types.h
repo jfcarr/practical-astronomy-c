@@ -1,5 +1,6 @@
 #ifndef _pa_lib_types
 #define _pa_lib_types
+
 /**
  * Warning flags for calculation results.
  */
@@ -28,33 +29,21 @@ enum TwilightType {
   TwilightType_ASTRONOMICAL = 18,
 };
 
+/**
+ * Angle measurement units.
+ */
 enum AngleMeasurementType {
   AngleMeasurementType_DEGREES,
   AngleMeasurementType_HOURS
 };
 
 /**
- * Angle measurement units.
- */
-typedef enum pa_angle_measurement_units {
-  AngleMeasurement_Hours,
-  AngleMeasurement_Degrees
-} TAngleMeasurementUnits;
-
-typedef enum pa_rise_set_status {
-  RiseSetStatus_Ok,          /**< Object rises and sets */
-  RiseSetStatus_NeverRises,  /**< Object is never visible above the horizon. */
-  RiseSetStatus_Circumpolar, /**< Object never sets. */
-  RiseSetStatus_GstToUtConversionWarning /**< Error in conversion. */
-} TRiseSetStatus;
-
-/**
  * Coordinate types
  */
-typedef enum pa_coordinate_type {
-  CoordinateType_Actual,  /**< actual/real */
-  CoordinateType_Apparent /**< apparent (observer) */
-} TCoordinateType;
+enum CoordinateType {
+  CoordinateType_ACTUAL,  /**< actual/real */
+  CoordinateType_APPARENT /**< apparent (observer) */
+};
 
 /**
  * Structure to hold a Date value:
@@ -211,7 +200,7 @@ typedef struct pa_ecliptic_galactic_coordinates {
 } TEclipticCoordinates, TCorrectedEclipticCoordinates, TGalacticCoordinates;
 
 typedef struct pa_rise_set {
-  TRiseSetStatus rise_set_status;
+  enum RiseSetStatus rise_set_status;
   double ut_rise_hour;
   double ut_rise_minute;
   double ut_set_hour;

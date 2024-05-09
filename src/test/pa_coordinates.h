@@ -67,7 +67,7 @@ void test_angle_between_two_objects(
     double dec_lat1_deg, double dec_lat1_min, double dec_lat1_sec,
     double ra_long2_hour_deg, double ra_long2_min, double ra_long2_sec,
     double dec_lat2_deg, double dec_lat2_min, double dec_lat2_sec,
-    TAngleMeasurementUnits hour_or_degree, TAngle expected_result);
+    enum AngleMeasurementType hour_or_degree, TAngle expected_result);
 
 void test_rising_and_setting(double ra_hours, double ra_minutes,
                              double ra_seconds, double dec_deg, double dec_min,
@@ -98,16 +98,16 @@ void test_correct_for_aberration(
 void test_atmospheric_refraction(
     double true_ra_hour, double true_ra_min, double true_ra_sec,
     double true_dec_deg, double true_dec_min, double true_dec_sec,
-    TCoordinateType coordinate_type1, double geog_long_deg, double geog_lat_deg,
-    int daylight_saving_hours, int timezone_hours, double lcd_day,
-    int lcd_month, int lcd_year, double lct_hour, double lct_min,
-    double lct_sec, double atmospheric_pressure_mbar,
+    enum CoordinateType coordinate_type1, double geog_long_deg,
+    double geog_lat_deg, int daylight_saving_hours, int timezone_hours,
+    double lcd_day, int lcd_month, int lcd_year, double lct_hour,
+    double lct_min, double lct_sec, double atmospheric_pressure_mbar,
     double atmospheric_temperature_celsius,
     TCorrectedRefraction expected_result);
 
 void test_corrections_for_geocentric_parallax(
     double ra_hour, double ra_min, double ra_sec, double dec_deg,
-    double dec_min, double dec_sec, TCoordinateType coordinate_type,
+    double dec_min, double dec_sec, enum CoordinateType coordinate_type,
     double equatorial_hor_parallax_deg, double geog_long_deg,
     double geog_lat_deg, double height_m, int daylight_saving,
     int timezone_hours, double lcd_day, int lcd_month, int lcd_year,

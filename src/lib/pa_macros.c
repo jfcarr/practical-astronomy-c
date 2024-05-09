@@ -880,10 +880,10 @@ double ma_eccentric_anomaly(double am, double ec) {
  *
  * Original macro name: Refract
  */
-double ma_refract(double y2, TCoordinateType sw, double pr, double tr) {
+double ma_refract(double y2, enum CoordinateType sw, double pr, double tr) {
   double y = degrees_to_radians(y2);
 
-  double d = (sw == CoordinateType_Actual) ? -1.0 : 1.0;
+  double d = (sw == CoordinateType_ACTUAL) ? -1.0 : 1.0;
 
   if (d == -1) {
     double y3 = y;
@@ -943,7 +943,7 @@ double ma_refract_l3035(double pr, double tr, double y, double d) {
  * Original macro name: ParallaxHA
  */
 double ma_parallax_ha(double hh, double hm, double hs, double dd, double dm,
-                      double ds, TCoordinateType sw, double gp, double ht,
+                      double ds, enum CoordinateType sw, double gp, double ht,
                       double hp) {
   double a = degrees_to_radians(gp);
   double c1 = cos(a);
@@ -968,7 +968,7 @@ double ma_parallax_ha(double hh, double hm, double hs, double dd, double dm,
       ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
   double y1 = y;
 
-  double d = (sw == CoordinateType_Actual) ? 1.0 : -1.0;
+  double d = (sw == CoordinateType_ACTUAL) ? 1.0 : -1.0;
 
   if (d == 1) {
     TParallaxHelper result = ma_parallax_ha_l2870(x, y, rc, rp, rs, tp);
@@ -1033,7 +1033,7 @@ TParallaxHelper ma_parallax_ha_l2870(double x, double y, double rc, double rp,
  * Original macro name: ParallaxDec
  */
 double ma_parallax_dec(double hh, double hm, double hs, double dd, double dm,
-                       double ds, TCoordinateType sw, double gp, double ht,
+                       double ds, enum CoordinateType sw, double gp, double ht,
                        double hp) {
   double a = degrees_to_radians(gp);
   double c1 = cos(a);
@@ -1059,7 +1059,7 @@ double ma_parallax_dec(double hh, double hm, double hs, double dd, double dm,
       ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
   double y1 = y;
 
-  double d = (sw == CoordinateType_Actual) ? 1.0 : -1.0;
+  double d = (sw == CoordinateType_ACTUAL) ? 1.0 : -1.0;
 
   if (d == 1) {
     TParallaxHelper result = ma_parallax_dec_l2870(x, y, rc, rp, rs, tp);
