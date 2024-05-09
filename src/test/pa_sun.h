@@ -23,9 +23,17 @@ void test_sun_distance_and_angular_size(double lct_hours, double lct_minutes,
                                         int zone_correction,
                                         TSunDistanceSize expected_result);
 
-test_sunrise_and_sunset(double local_day, int local_month, int local_year,
-                        bool is_daylight_saving, int zone_correction,
-                        double geographical_long_deg,
-                        double geographical_lat_deg,
-                        TSunriseSunsetInfo expected_result);
+void test_sunrise_and_sunset(double local_day, int local_month, int local_year,
+                             bool is_daylight_saving, int zone_correction,
+                             double geographical_long_deg,
+                             double geographical_lat_deg,
+                             TSunriseSunsetInfo expected_result);
+
+void test_morning_and_evening_twilight(double local_day, int local_month,
+                                       int local_year, bool is_daylight_saving,
+                                       int zone_correction,
+                                       double geographical_long_deg,
+                                       double geographical_lat_deg,
+                                       enum TwilightType twilight_type,
+                                       TTwilightInfo expected_result);
 #endif

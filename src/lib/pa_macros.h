@@ -236,4 +236,22 @@ double ma_sunset_az(double ld, int lm, int ly, int ds, int zc, double gl,
 
 TSunriseLctHelper ma_sunset_az_l3710(double gd, int gm, int gy, double sr,
                                      double di, double gp);
+
+double ma_twilight_am_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                          double gp, enum TwilightType tt);
+
+TTwilightLctHelper ma_twilight_am_lct_l3710(double gd, int gm, int gy,
+                                            double sr, double di, double gp);
+
+double ma_twilight_pm_lct(double ld, int lm, int ly, int ds, int zc, double gl,
+                          double gp, enum TwilightType tt);
+
+TTwilightLctHelper ma_twilight_pm_lct_l3710(double gd, int gm, int gy,
+                                            double sr, double di, double gp);
+
+enum TwilightStatus ma_e_twilight(double ld, int lm, int ly, int ds, int zc,
+                                  double gl, double gp, enum TwilightType tt);
+
+TTwilightLctHelper2 ma_e_twilight_l3710(double gd, int gm, int gy, double sr,
+                                        double di, double gp);
 #endif
