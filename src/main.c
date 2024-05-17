@@ -1,6 +1,7 @@
 #include "lib/pa_datetime.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
+#include "test/pa_planets.h"
 #include "test/pa_sun.h"
 #include <math.h>
 #include <stdbool.h>
@@ -144,10 +145,17 @@ void test_sun() {
   test_solar_elongation(10, 6, 45, 11, 57, 27, 27.8333333, 7, 2010, 24.78);
 }
 
+void test_planets() {
+  test_approximate_position_of_planet(
+      0, 0, 0, false, 0, 22, 11, 2003, "Jupiter",
+      (TPlanetPosition){11, 11, 13.8, 6, 21, 25.1});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
   test_sun();
+  test_planets();
 
   return (0);
 }
