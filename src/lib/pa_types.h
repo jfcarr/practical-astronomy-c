@@ -298,4 +298,13 @@ typedef struct pa_equation_of_time {
   double equation_of_time_min;
   double equation_of_time_sec;
 } TEquationOfTime;
+
+typedef struct pa_planet_position {
+  double planet_ra_hour;
+  double planet_ra_min;
+  double planet_ra_sec;
+  double planet_dec_deg;
+  double planet_dec_min;
+  double planet_dec_sec;
+} TPlanetPosition;
 #endif
