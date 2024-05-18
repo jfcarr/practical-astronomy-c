@@ -2,6 +2,7 @@ SRC_DIR = src
 LIB_DIR = $(SRC_DIR)/lib
 TEST_DIR = $(SRC_DIR)/test
 FORMATTER = clang-format -i
+LINTER = cppcheck
 
 default:
 	@echo 'Targets:'
@@ -11,6 +12,7 @@ default:
 	@echo '  lib       Build the library'
 	@echo '  clean     Remove all build artifacts (object files, library archives, and binaries)'
 	@echo '  format    Beautify source code'
+	@echo '  check     Run linter'
 
 run: build
 	@echo '----------'
@@ -73,7 +75,6 @@ clean:
 format:
 	$(FORMATTER) $(SRC_DIR)/main.c
 
-# Library files
 	$(FORMATTER) $(LIB_DIR)/pa_datetime.c $(LIB_DIR)/pa_datetime.h
 	$(FORMATTER) $(LIB_DIR)/pa_coordinates.c $(LIB_DIR)/pa_coordinates.h
 	$(FORMATTER) $(LIB_DIR)/pa_sun.c $(LIB_DIR)/pa_sun.h
@@ -83,8 +84,24 @@ format:
 	$(FORMATTER) $(LIB_DIR)/pa_util.c $(LIB_DIR)/pa_util.h
 	$(FORMATTER) $(LIB_DIR)/pa_types.h
 
-# Test files
 	$(FORMATTER) $(TEST_DIR)/pa_datetime.c $(TEST_DIR)/pa_datetime.h
 	$(FORMATTER) $(TEST_DIR)/pa_coordinates.c $(TEST_DIR)/pa_coordinates.h
 	$(FORMATTER) $(TEST_DIR)/pa_sun.c $(TEST_DIR)/pa_sun.h
 	$(FORMATTER) $(TEST_DIR)/pa_planets.c $(TEST_DIR)/pa_planets.h
+
+check:
+	$(LINTER) $(SRC_DIR)/main.c
+
+	$(LINTER) $(LIB_DIR)/pa_datetime.c $(LIB_DIR)/pa_datetime.h
+	$(LINTER) $(LIB_DIR)/pa_coordinates.c $(LIB_DIR)/pa_coordinates.h
+	$(LINTER) $(LIB_DIR)/pa_sun.c $(LIB_DIR)/pa_sun.h
+	$(LINTER) $(LIB_DIR)/pa_planets.c $(LIB_DIR)/pa_planets.h
+	$(LINTER) $(LIB_DIR)/pa_planets_data.c $(LIB_DIR)/pa_planets_data.h
+	$(LINTER) $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
+	$(LINTER) $(LIB_DIR)/pa_util.c $(LIB_DIR)/pa_util.h
+	$(LINTER) $(LIB_DIR)/pa_types.h
+
+	$(LINTER) $(TEST_DIR)/pa_datetime.c $(TEST_DIR)/pa_datetime.h
+	$(LINTER) $(TEST_DIR)/pa_coordinates.c $(TEST_DIR)/pa_coordinates.h
+	$(LINTER) $(TEST_DIR)/pa_sun.c $(TEST_DIR)/pa_sun.h
+	$(LINTER) $(TEST_DIR)/pa_planets.c $(TEST_DIR)/pa_planets.h
