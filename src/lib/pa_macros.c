@@ -2591,7 +2591,7 @@ TPlanetCoordinates ma_planet_coordinates(double lh, double lm, double ls,
 
   double li = 0.0;
   double ms = ma_sun_mean_anomaly(lh, lm, ls, ds, zc, dy, mn, yr);
-  double sr = degrees_to_radians((lh, lm, ls, ds, zc, dy, mn, yr));
+  double sr = degrees_to_radians(ma_sun_long(lh, lm, ls, ds, zc, dy, mn, yr));
   double re = ma_sun_dist(lh, lm, ls, ds, zc, dy, mn, yr);
   double lg = sr + PA_PI;
 
