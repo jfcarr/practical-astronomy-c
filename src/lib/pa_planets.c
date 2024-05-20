@@ -38,7 +38,7 @@ TPlanetPosition approximate_position_of_planet(
                   planet_info.peri_LongitudePerihelion;
   double lp_deg1 = np_deg2 +
                    (360 * planet_info.ecc_EccentricityOrbit *
-                    sin(degrees_to_radians(mp_deg)) / M_PI) +
+                    sin(degrees_to_radians(mp_deg)) / PA_PI) +
                    planet_info.long_LongitudeEpoch;
   double lp_deg2 = lp_deg1 - 360 * floor(lp_deg1 / 360);
   double planet_true_anomaly_deg =
@@ -56,7 +56,7 @@ TPlanetPosition approximate_position_of_planet(
                   earth_info.peri_LongitudePerihelion;
   double le_deg1 = ne_deg2 + earth_info.long_LongitudeEpoch +
                    360 * earth_info.ecc_EccentricityOrbit *
-                       sin(degrees_to_radians(me_deg)) / M_PI;
+                       sin(degrees_to_radians(me_deg)) / PA_PI;
   double le_deg2 = le_deg1 - 360 * floor(le_deg1 / 360);
   double earth_true_anomaly_deg = le_deg2 - earth_info.peri_LongitudePerihelion;
   double r_au2 = earth_info.axis_AxisOrbit *
@@ -97,6 +97,40 @@ TPlanetPosition approximate_position_of_planet(
   double planet_dec_deg = ma_decimal_degrees_degrees(dec_deg);
   double planet_dec_min = ma_decimal_degrees_minutes(dec_deg);
   double planet_dec_sec = ma_decimal_degrees_seconds(dec_deg);
+
+  return (TPlanetPosition){planet_ra_hour, planet_ra_min,  planet_ra_sec,
+                           planet_dec_deg, planet_dec_min, planet_dec_sec};
+}
+
+/**
+ * Calculate precise position of a planet.
+ */
+TPlanetPosition
+precise_position_of_planet(double lct_hour, double lct_min, double lct_sec,
+                           bool is_daylight_saving, int zone_correction_hours,
+                           double local_date_day, int local_date_month,
+                           int local_date_year, char *planet_name) {
+  int daylightSaving = is_daylight_saving ? 1 : 0;
+
+  TPlanetCoordinates coordinate_results = ma_planet_coordinates(
+      lct_hour, lct_min, lct_sec, daylightSaving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year, planet_name);
+
+  double planet_ra_hours = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(coordinate_results.planet_longitude, 0, 0,
+               coordinate_results.planet_latitude, 0, 0, local_date_day,
+               local_date_month, local_date_year));
+  double planet_dec_deg1 =
+      ma_ec_dec(coordinate_results.planet_longitude, 0, 0,
+                coordinate_results.planet_latitude, 0, 0, local_date_day,
+                local_date_month, local_date_year);
+
+  int planet_ra_hour = ma_decimal_hours_hour(planet_ra_hours);
+  int planet_ra_min = ma_decimal_hours_minute(planet_ra_hours);
+  double planet_ra_sec = ma_decimal_hours_second(planet_ra_hours);
+  double planet_dec_deg = ma_decimal_degrees_degrees(planet_dec_deg1);
+  double planet_dec_min = ma_decimal_degrees_minutes(planet_dec_deg1);
+  double planet_dec_sec = ma_decimal_degrees_seconds(planet_dec_deg1);
 
   return (TPlanetPosition){planet_ra_hour, planet_ra_min,  planet_ra_sec,
                            planet_dec_deg, planet_dec_min, planet_dec_sec};

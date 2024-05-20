@@ -1,4 +1,5 @@
 #include "pa_util.h"
+#include "pa_types.h"
 #include <stdbool.h>
 
 /**
@@ -41,9 +42,9 @@ double dround(double input, int places) {
 /**
  * Convert degrees to radians
  */
-double degrees_to_radians(double degrees) { return (degrees * M_PI) / 180; }
+double degrees_to_radians(double degrees) { return (degrees * PA_PI) / 180; }
 
 /**
  * Convert radians to degrees
  */
-double radians_to_degrees(double radians) { return (radians * 180) / M_PI; }
+double radians_to_degrees(double radians) { return (radians * 180) / PA_PI; }

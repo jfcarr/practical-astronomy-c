@@ -1,6 +1,8 @@
 #ifndef _pa_lib_types
 #define _pa_lib_types
 
+#define PA_PI 3.14159265358979323846
+
 /**
  * Warning flags for calculation results.
  */
@@ -307,4 +309,46 @@ typedef struct pa_planet_position {
   double planet_dec_min;
   double planet_dec_sec;
 } TPlanetPosition;
+
+typedef struct pa_planet_coordinates {
+  double planet_longitude;
+  double planet_latitude;
+  double planet_distance_au;
+  double planet_h_long1;
+  double planet_h_long2;
+  double planet_h_lat;
+  double planet_r_vect;
+} TPlanetCoordinates;
+
+typedef struct pa_planet_longlat_l4685 {
+  double qa;
+  double qb;
+} TPlanetLongLatL4685;
+
+typedef struct pa_planet_longlat_l4735 {
+  double qa;
+  double qb;
+  double qc;
+  double qe;
+} TPlanetLongLatL4735;
+
+typedef struct pa_planet_longlat_l4810 {
+  double a;
+  double sa;
+  double ca;
+  double qc;
+  double qe;
+  double qa;
+  double qb;
+} TPlanetLongLatL4810;
+
+typedef struct pa_planet_longlat_l4945 {
+  double qa;
+  double qb;
+  double qc;
+  double qd;
+  double qe;
+  double qf;
+  double qg;
+} TPlanetLongLatL4945;
 #endif

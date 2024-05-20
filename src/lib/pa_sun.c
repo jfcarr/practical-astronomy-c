@@ -36,7 +36,7 @@ TSunPosition approximate_position_of_sun(double lct_hours, double lct_minutes,
   double m_deg1 = n_deg + ma_sun_e_long(0, 1, 2010) - ma_sun_peri(0, 1, 2010);
   double m_deg2 = m_deg1 - 360 * floor(m_deg1 / 360);
   double ec_deg =
-      360 * ma_sun_ecc(0, 1, 2010) * sin(degrees_to_radians(m_deg2)) / M_PI;
+      360 * ma_sun_ecc(0, 1, 2010) * sin(degrees_to_radians(m_deg2)) / PA_PI;
   double ls_deg1 = n_deg + ec_deg + ma_sun_e_long(0, 1, 2010);
   double ls_deg2 = ls_deg1 - 360 * floor(ls_deg1 / 360);
   double ra_deg = ma_ec_ra(ls_deg2, 0, 0, 0, 0, 0, greenwich_date_day,

@@ -23,6 +23,29 @@ struct PlanetRecord populate_planet_data(
   return return_data;
 }
 
+PlanetDataPrecise populate_precise_planet_data(char *name, double value1,
+                                               double value2, double value3,
+                                               double value4, double value5,
+                                               double value6, double value7,
+                                               double value8, double value9,
+                                               double ap_value) {
+  PlanetDataPrecise return_data;
+
+  strcpy(return_data.name, name);
+  return_data.value1 = value1;
+  return_data.value2 = value2;
+  return_data.value3 = value3;
+  return_data.value4 = value4;
+  return_data.value5 = value5;
+  return_data.value6 = value6;
+  return_data.value7 = value7;
+  return_data.value8 = value8;
+  return_data.value9 = value9;
+  return_data.ap_value = ap_value;
+
+  return return_data;
+}
+
 struct PlanetRecord get_planet_data(char *planetName) {
   struct PlanetRecord planet_data[9];
 
@@ -71,6 +94,36 @@ struct PlanetRecord get_planet_data(char *planetName) {
   return_data.node_LongitudeAscendingNode = -99;
   return_data.theta0_AngularDiameter = -99;
   return_data.v0_VisualMagnitude = -99;
+
+  return return_data;
+}
+
+PlanetDataPrecise
+get_precise_planet_data(char *planet_name,
+                        PlanetDataPrecise precise_planet_data[],
+                        size_t precise_planet_data_size) {
+  PlanetDataPrecise return_data;
+
+  for (int i = 0; i < precise_planet_data_size / sizeof(precise_planet_data[0]);
+       i++) {
+    if (strcmp(precise_planet_data[i].name, planet_name) == 0) {
+      return_data = precise_planet_data[i];
+
+      return return_data;
+    }
+  }
+
+  strcpy(return_data.name, "NOTFOUND");
+  return_data.value1 = -99;
+  return_data.value2 = -99;
+  return_data.value3 = -99;
+  return_data.value4 = -99;
+  return_data.value5 = -99;
+  return_data.value6 = -99;
+  return_data.value7 = -99;
+  return_data.value8 = -99;
+  return_data.value9 = -99;
+  return_data.ap_value = -99;
 
   return return_data;
 }
