@@ -1,4 +1,5 @@
 #include "pa_datetime.h"
+#include "pa_planets_data.h"
 
 #ifndef _pa_lib_macros
 #define _pa_lib_macros
@@ -187,6 +188,9 @@ double ma_ec_ra(double eld, double elm, double els, double bd, double bm,
 double ma_sun_true_anomaly(double lch, double lcm, double lcs, int ds, int zc,
                            double ld, int lm, int ly);
 
+double ma_sun_mean_anomaly(double lch, double lcm, double lcs, int ds, int zc,
+                           double ld, int lm, int ly);
+
 double ma_sunrise_lct(double ld, int lm, int ly, int ds, int zc, double gl,
                       double gp);
 
@@ -258,4 +262,17 @@ TTwilightLctHelper2 ma_e_twilight_l3710(double gd, int gm, int gy, double sr,
 double ma_angle(double xx1, double xm1, double xs1, double dd1, double dm1,
                 double ds1, double xx2, double xm2, double xs2, double dd2,
                 double dm2, double ds2, enum AngleMeasurementType s);
+
+TPlanetCoordinates ma_planet_coordinates(double lh, double lm, double ls,
+                                         int ds, int zc, double dy, int mn,
+                                         int yr, char *s);
+
+TPlanetLongLatL4685 ma_planet_long_l4685(PlanetDataPrecise pl[]);
+
+TPlanetLongLatL4735 ma_planet_long_l4735(PlanetDataPrecise pl[], double ms,
+                                         double t);
+
+TPlanetLongLatL4810 ma_planet_long_l4810(PlanetDataPrecise pl[], double ms);
+
+TPlanetLongLatL4945 ma_planet_long_l4945(double t, PlanetDataPrecise planet);
 #endif

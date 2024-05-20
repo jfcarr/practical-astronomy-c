@@ -149,6 +149,10 @@ void test_planets() {
   test_approximate_position_of_planet(
       0, 0, 0, false, 0, 22, 11, 2003, "Jupiter",
       (TPlanetPosition){11, 11, 13.8, 6, 21, 25.1});
+
+  test_precise_position_of_planet(
+      0, 0, 0, false, 0, 22, 11, 2003, "Jupiter",
+      (TPlanetPosition){11, 10, 30.99, 6, 25, 49.46});
 }
 
 int main() {
