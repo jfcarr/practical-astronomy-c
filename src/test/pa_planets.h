@@ -12,4 +12,12 @@ void test_precise_position_of_planet(
     double lct_hour, double lct_min, double lct_sec, bool is_daylight_saving,
     int zone_correction_hours, double local_date_day, int local_date_month,
     int local_date_year, char *planet_name, TPlanetPosition expected_result);
+
+void test_visual_aspects_of_a_planet(double lct_hour, double lct_min,
+                                     double lct_sec, bool is_daylight_saving,
+                                     int zone_correction_hours,
+                                     double local_date_day,
+                                     int local_date_month, int local_date_year,
+                                     char *planet_name,
+                                     TPlanetVisualAspects expected_result);
 #endif

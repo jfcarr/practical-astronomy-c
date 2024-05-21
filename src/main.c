@@ -153,6 +153,10 @@ void test_planets() {
   test_precise_position_of_planet(
       0, 0, 0, false, 0, 22, 11, 2003, "Jupiter",
       (TPlanetPosition){11, 10, 30.99, 6, 25, 49.46});
+
+  test_visual_aspects_of_a_planet(
+      0, 0, 0, false, 0, 22, 11, 2003, "Jupiter",
+      (TPlanetVisualAspects){5.59829, 35.1, 0.99, 0, 46, 33.32, 113.2, -2.0});
 }
 
 int main() {
