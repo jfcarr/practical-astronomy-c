@@ -351,4 +351,15 @@ typedef struct pa_planet_longlat_l4945 {
   double qf;
   double qg;
 } TPlanetLongLatL4945;
+
+typedef struct pa_planet_visual_aspects {
+  double distance_au;
+  double ang_dia_arcsec;
+  double phase;
+  double light_time_hour;
+  double light_time_minutes;
+  double light_time_seconds;
+  double pos_angle_bright_limb_deg;
+  double approximate_magnitude;
+} TPlanetVisualAspects;
 #endif
