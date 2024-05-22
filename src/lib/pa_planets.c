@@ -26,7 +26,7 @@ TPlanetPosition approximate_position_of_planet(
       lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
       local_date_day, local_date_month, local_date_year);
 
-  double ut_hours = ma_local_civil_time_to_universal_time_macro(
+  double ut_hours = ma_local_civil_time_to_universal_time(
       lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
       local_date_day, local_date_month, local_date_year);
   double g_days = ma_civil_date_to_julian_date(g_date_day + (ut_hours / 24),

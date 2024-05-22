@@ -19,16 +19,19 @@ int ma_julian_date_month(double julian_date);
 
 int ma_julian_date_year(double julian_date);
 
-double ma_right_ascension_to_hour_angle_macro(
-    double ra_hours, double ra_minutes, double ra_seconds, double lct_hours,
-    double lct_minutes, double lct_seconds, int daylight_saving,
-    int zone_correction, double local_day, int local_month, int local_year,
-    double geographical_longitude);
+double ma_right_ascension_to_hour_angle(double ra_hours, double ra_minutes,
+                                        double ra_seconds, double lct_hours,
+                                        double lct_minutes, double lct_seconds,
+                                        int daylight_saving,
+                                        int zone_correction, double local_day,
+                                        int local_month, int local_year,
+                                        double geographical_longitude);
 
-double ma_local_civil_time_to_universal_time_macro(
-    double lct_hours, double lct_minutes, double lct_seconds,
-    int daylight_saving, int zone_correction, double local_day, int local_month,
-    int local_year);
+double
+ma_local_civil_time_to_universal_time(double lct_hours, double lct_minutes,
+                                      double lct_seconds, int daylight_saving,
+                                      int zone_correction, double local_day,
+                                      int local_month, int local_year);
 
 double
 ma_universal_time_to_local_civil_time(double uHours, double uMinutes,

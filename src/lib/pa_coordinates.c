@@ -51,7 +51,7 @@ THourAngle right_ascension_to_hour_angle(double ra_hours, double ra_minutes,
                                          double geographical_longitude) {
   int daylight_saving = (is_daylight_savings) ? 1 : 0;
 
-  double hour_angle = ma_right_ascension_to_hour_angle_macro(
+  double hour_angle = ma_right_ascension_to_hour_angle(
       ra_hours, ra_minutes, ra_seconds, lct_hours, lct_minutes, lct_seconds,
       daylight_saving, zone_correction, local_day, local_month, local_year,
       geographical_longitude);
@@ -605,7 +605,7 @@ TCorrectedRefraction atmospheric_refraction(
     double lcd_day, int lcd_month, int lcd_year, double lct_hour,
     double lct_min, double lct_sec, double atmospheric_pressure_mbar,
     double atmospheric_temperature_celsius) {
-  double ha_hour = ma_right_ascension_to_hour_angle_macro(
+  double ha_hour = ma_right_ascension_to_hour_angle(
       true_ra_hour, true_ra_min, true_ra_sec, lct_hour, lct_min, lct_sec,
       daylight_saving_hours, timezone_hours, lcd_day, lcd_month, lcd_year,
       geog_long_deg);
@@ -651,7 +651,7 @@ TCorrectedParallax corrections_for_geocentric_parallax(
     double geog_lat_deg, double height_m, int daylight_saving,
     int timezone_hours, double lcd_day, int lcd_month, int lcd_year,
     double lct_hour, double lct_min, double lct_sec) {
-  double ha_hours = ma_right_ascension_to_hour_angle_macro(
+  double ha_hours = ma_right_ascension_to_hour_angle(
       ra_hour, ra_min, ra_sec, lct_hour, lct_min, lct_sec, daylight_saving,
       timezone_hours, lcd_day, lcd_month, lcd_year, geog_long_deg);
 
