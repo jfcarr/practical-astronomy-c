@@ -3,7 +3,7 @@
 #ifndef comet_data_inc
 #define comet_data_inc
 
-struct CometRecord {
+struct CometDataElliptical {
   char name[50];                        /** Name of comet */
   double epoch_EpochOfPerihelion;       /** Epoch of the perihelion */
   double peri_LongitudeOfPerihelion;    /** Longitude of the perihelion */
@@ -25,7 +25,7 @@ struct CometDataParabolic {
   double incl;           /** Inclination */
 };
 
-struct CometRecord populate_comet_data(
+struct CometDataElliptical populate_comet_data_elliptical(
     char *name, double epoch_EpochOfPerihelion,
     double peri_LongitudeOfPerihelion, double node_LongitudeOfAscendingNode,
     double period_PeriodOfOrbit, double axis_SemiMajorAxisOfOrbit,
@@ -37,7 +37,7 @@ populate_comet_data_parabolic(char *name, double epoch_peri_day,
                               double arg_peri, double node, double peri_dist,
                               double incl);
 
-struct CometRecord get_comet_data(char *cometName);
+struct CometDataElliptical get_comet_data_elliptical(char *cometName);
 
 struct CometDataParabolic get_comet_data_parabolic(char *cometName);
 #endif
