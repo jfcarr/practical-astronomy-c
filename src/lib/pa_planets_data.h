@@ -4,16 +4,16 @@
 #define planets_data_inc
 
 struct PlanetRecord {
-  char name[25];
-  double tp_PeriodOrbit;
-  double long_LongitudeEpoch;
-  double peri_LongitudePerihelion;
-  double ecc_EccentricityOrbit;
-  double axis_AxisOrbit;
-  double incl_OrbitalInclination;
-  double node_LongitudeAscendingNode;
-  double theta0_AngularDiameter;
-  double v0_VisualMagnitude;
+  char name[25];                      /** Name of planet. */
+  double tp_PeriodOrbit;              /** Period of orbit. */
+  double long_LongitudeEpoch;         /** Longitude at the epoch. */
+  double peri_LongitudePerihelion;    /** Longitude of the perihelion. */
+  double ecc_EccentricityOrbit;       /** Eccentricity of the orbit. */
+  double axis_AxisOrbit;              /** Semi-major axis of the orbit. */
+  double incl_OrbitalInclination;     /** Orbital inclination. */
+  double node_LongitudeAscendingNode; /** Longitude of the ascending node. */
+  double theta0_AngularDiameter;      /** Angular diameter at 1 AU. */
+  double v0_VisualMagnitude;          /** Visual magnitude at 1 AU. */
 };
 
 typedef struct {
