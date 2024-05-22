@@ -20,6 +20,25 @@ struct CometRecord populate_comet_data(
   return return_data;
 }
 
+struct CometDataParabolic
+populate_comet_data_parabolic(char *name, double epoch_peri_day,
+                              int epoch_peri_month, int epoch_peri_year,
+                              double arg_peri, double node, double peri_dist,
+                              double incl) {
+  struct CometDataParabolic return_data;
+
+  strcpy(return_data.name, name);
+  return_data.epoch_peri_day = epoch_peri_day;
+  return_data.epoch_peri_month = epoch_peri_month;
+  return_data.epoch_peri_year = epoch_peri_year;
+  return_data.arg_peri = arg_peri;
+  return_data.node = node;
+  return_data.peri_dist = peri_dist;
+  return_data.incl = incl;
+
+  return return_data;
+}
+
 struct CometRecord get_comet_data(char *cometName) {
   struct CometRecord comet_data[15];
 
@@ -86,6 +105,34 @@ struct CometRecord get_comet_data(char *cometName) {
   return_data.axis_SemiMajorAxisOfOrbit = -99;
   return_data.ecc_EccentricityOfOrbit = -99;
   return_data.incl_InclinationOfOrbit = -99;
+
+  return return_data;
+}
+
+struct CometDataParabolic get_comet_data_parabolic(char *cometName) {
+  struct CometDataParabolic comet_data[1];
+
+  comet_data[0] = populate_comet_data_parabolic(
+      "Kohler", 10.5659, 11, 1977, 163.4799, 181.8175, 0.990662, 48.7196);
+
+  struct CometDataParabolic return_data;
+
+  for (int i = 0; i < sizeof(comet_data) / sizeof(comet_data[0]); i++) {
+    if (strcmp(comet_data[i].name, cometName) == 0) {
+      return_data = comet_data[i];
+
+      return return_data;
+    }
+  }
+
+  strcpy(return_data.name, "NOTFOUND");
+  return_data.epoch_peri_day == -99;
+  return_data.epoch_peri_month == -99;
+  return_data.epoch_peri_year == -99;
+  return_data.arg_peri == -99;
+  return_data.node == -99;
+  return_data.peri_dist == -99;
+  return_data.incl == -99;
 
   return return_data;
 }

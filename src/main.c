@@ -162,6 +162,10 @@ void test_planets() {
 void test_comet() {
   test_position_of_elliptical_comet(0, 0, 0, false, 0, 1, 1, 1984, "Halley",
                                     (TCometPosition){6, 29, 10, 13, 8.13});
+
+  test_position_of_parabolic_comet(
+      0, 0, 0, false, 0, 25, 12, 1977, "Kohler",
+      (TCometPosition){23, 17, 11.53, -33, 42, 26.42, 1.11});
 }
 
 int main() {

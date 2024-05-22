@@ -102,3 +102,61 @@ position_of_elliptical_comet(double lct_hour, double lct_min, double lct_sec,
   return (TCometPosition){comet_ra_hour, comet_ra_min, comet_dec_deg,
                           comet_dec_min, comet_dist_earth};
 }
+
+/**
+ * Calculate position of a parabolic comet.
+ */
+TCometPosition
+position_of_parabolic_comet(double lct_hour, double lct_min, double lct_sec,
+                            bool is_daylight_saving, int zone_correction_hours,
+                            double local_date_day, int local_date_month,
+                            int local_date_year, char *comet_name) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double greenwich_date_day = ma_local_civil_time_greenwich_day(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int greenwich_date_month = ma_local_civil_time_greenwich_month(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int greenwich_date_year = ma_local_civil_time_greenwich_year(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  struct CometDataParabolic comet_info = get_comet_data_parabolic(comet_name);
+
+  double perihelion_epoch_day = comet_info.epoch_peri_day;
+  int perihelion_epoch_month = comet_info.epoch_peri_month;
+  int perihelion_epoch_year = comet_info.epoch_peri_year;
+  double q_au = comet_info.peri_dist;
+  double inclination_deg = comet_info.incl;
+  double perihelion_deg = comet_info.arg_peri;
+  double node_deg = comet_info.node;
+
+  TCometLongLatDist comet_long_lat_dist = ma_p_comet_long_lat_dist(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year, perihelion_epoch_day,
+      perihelion_epoch_month, perihelion_epoch_year, q_au, inclination_deg,
+      perihelion_deg, node_deg);
+
+  double comet_ra_hours = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(comet_long_lat_dist.comet_long_deg, 0, 0,
+               comet_long_lat_dist.comet_lat_deg, 0, 0, greenwich_date_day,
+               greenwich_date_month, greenwich_date_year));
+  double comet_dec_deg1 =
+      ma_ec_dec(comet_long_lat_dist.comet_long_deg, 0, 0,
+                comet_long_lat_dist.comet_lat_deg, 0, 0, greenwich_date_day,
+                greenwich_date_month, greenwich_date_year);
+
+  int comet_ra_hour = ma_decimal_hours_hour(comet_ra_hours);
+  int comet_ra_min = ma_decimal_hours_minute(comet_ra_hours);
+  double comet_ra_sec = ma_decimal_hours_second(comet_ra_hours);
+  double comet_dec_deg = ma_decimal_degrees_degrees(comet_dec_deg1);
+  double comet_dec_min = ma_decimal_degrees_minutes(comet_dec_deg1);
+  double comet_dec_sec = ma_decimal_degrees_seconds(comet_dec_deg1);
+  double comet_dist_earth = dround(comet_long_lat_dist.comet_dist_au, 2);
+
+  return (TCometPosition){comet_ra_hour,   comet_ra_min,  comet_ra_sec,
+                          comet_dec_deg,   comet_dec_min, comet_dec_sec,
+                          comet_dist_earth};
+}
