@@ -14,11 +14,30 @@ struct CometRecord {
   double incl_InclinationOfOrbit;       /** Inclination of the orbit */
 };
 
+struct CometDataParabolic {
+  char name[50];         /** Name of the comet  */
+  double epoch_peri_day; /** Epoch perihelion day */
+  int epoch_peri_month;  /** Epoch perihelion month */
+  int epoch_peri_year;   /** Epoch perihelion year */
+  double arg_peri;       /** Arg perihelion */
+  double node;           /** Comet's node */
+  double peri_dist;      /** Distance at the perihelion */
+  double incl;           /** Inclination */
+};
+
 struct CometRecord populate_comet_data(
     char *name, double epoch_EpochOfPerihelion,
     double peri_LongitudeOfPerihelion, double node_LongitudeOfAscendingNode,
     double period_PeriodOfOrbit, double axis_SemiMajorAxisOfOrbit,
     double ecc_EccentricityOfOrbit, double incl_InclinationOfOrbit);
 
+struct CometDataParabolic
+populate_comet_data_parabolic(char *name, double epoch_peri_day,
+                              int epoch_peri_month, int epoch_peri_year,
+                              double arg_peri, double node, double peri_dist,
+                              double incl);
+
 struct CometRecord get_comet_data(char *cometName);
+
+struct CometDataParabolic get_comet_data_parabolic(char *cometName);
 #endif

@@ -275,4 +275,12 @@ TPlanetLongLatL4735 ma_planet_long_l4735(PlanetDataPrecise pl[], double ms,
 TPlanetLongLatL4810 ma_planet_long_l4810(PlanetDataPrecise pl[], double ms);
 
 TPlanetLongLatL4945 ma_planet_long_l4945(double t, PlanetDataPrecise planet);
+
+TCometLongLatDist ma_p_comet_long_lat_dist(double lh, double lm, double ls,
+                                           int ds, int zc, double dy, int mn,
+                                           int yr, double td, int tm, int ty,
+                                           double q, double i, double p,
+                                           double n);
+
+double ma_solve_cubic(double w);
 #endif

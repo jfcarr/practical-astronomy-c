@@ -366,8 +366,16 @@ typedef struct pa_planet_visual_aspects {
 typedef struct pa_comet_position {
   double comet_ra_hour;
   double comet_ra_min;
+  double comet_ra_sec;
   double comet_dec_deg;
   double comet_dec_min;
+  double comet_dec_sec;
   double comet_dist_earth;
 } TCometPosition;
+
+typedef struct pa_comet_long_lat_dist {
+  double comet_long_deg;
+  double comet_lat_deg;
+  double comet_dist_au;
+} TCometLongLatDist;
 #endif
