@@ -1,4 +1,4 @@
-#include "lib/pa_datetime.h"
+#include "test/pa_comet.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
 #include "test/pa_planets.h"
@@ -159,11 +159,17 @@ void test_planets() {
       (TPlanetVisualAspects){5.59829, 35.1, 0.99, 0, 46, 33.32, 113.2, -2.0});
 }
 
+void test_comet() {
+  test_position_of_elliptical_comet(0, 0, 0, false, 0, 1, 1, 1984, "Halley",
+                                    (TCometPosition){6, 29, 10, 13, 8.13});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
   test_sun();
   test_planets();
+  test_comet();
 
   return (0);
 }
