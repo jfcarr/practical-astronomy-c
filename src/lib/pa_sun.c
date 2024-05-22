@@ -23,7 +23,7 @@ TSunPosition approximate_position_of_sun(double lct_hours, double lct_minutes,
   int greenwich_date_year = ma_local_civil_time_greenwich_year(
       lct_hours, lct_minutes, lct_seconds, daylight_saving, zone_correction,
       local_day, local_month, local_year);
-  double ut_hours = ma_local_civil_time_to_universal_time_macro(
+  double ut_hours = ma_local_civil_time_to_universal_time(
       lct_hours, lct_minutes, lct_seconds, daylight_saving, zone_correction,
       local_day, local_month, local_year);
   double ut_days = ut_hours / 24;

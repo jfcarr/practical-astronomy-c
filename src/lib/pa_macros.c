@@ -163,12 +163,14 @@ int ma_julian_date_year(double julian_date) {
  *
  * Original macro name: RAHA
  */
-double ma_right_ascension_to_hour_angle_macro(
-    double ra_hours, double ra_minutes, double ra_seconds, double lct_hours,
-    double lct_minutes, double lct_seconds, int daylight_saving,
-    int zone_correction, double local_day, int local_month, int local_year,
-    double geographical_longitude) {
-  double a = ma_local_civil_time_to_universal_time_macro(
+double ma_right_ascension_to_hour_angle(double ra_hours, double ra_minutes,
+                                        double ra_seconds, double lct_hours,
+                                        double lct_minutes, double lct_seconds,
+                                        int daylight_saving,
+                                        int zone_correction, double local_day,
+                                        int local_month, int local_year,
+                                        double geographical_longitude) {
+  double a = ma_local_civil_time_to_universal_time(
       lct_hours, lct_minutes, lct_seconds, daylight_saving, zone_correction,
       local_day, local_month, local_year);
   double b = ma_local_civil_time_greenwich_day(
@@ -202,7 +204,7 @@ double ma_hour_angle_to_right_ascension(double hour_angle_hours,
                                         int zone_correction, double local_day,
                                         int local_month, int local_year,
                                         double geographical_longitude) {
-  double a = ma_local_civil_time_to_universal_time_macro(
+  double a = ma_local_civil_time_to_universal_time(
       lct_hours, lct_minutes, lct_seconds, daylight_saving, zone_correction,
       local_day, local_month, local_year);
   double b = ma_local_civil_time_greenwich_day(
@@ -229,10 +231,11 @@ double ma_hour_angle_to_right_ascension(double hour_angle_hours,
  *
  * Original macro name: LctUT
  */
-double ma_local_civil_time_to_universal_time_macro(
-    double lct_hours, double lct_minutes, double lct_seconds,
-    int daylight_saving, int zone_correction, double local_day, int local_month,
-    int local_year) {
+double
+ma_local_civil_time_to_universal_time(double lct_hours, double lct_minutes,
+                                      double lct_seconds, int daylight_saving,
+                                      int zone_correction, double local_day,
+                                      int local_month, int local_year) {
   double a = ma_hms_dh(lct_hours, lct_minutes, lct_seconds);
   double b = a - daylight_saving - zone_correction;
   double c = local_day + (b / 24);
@@ -710,8 +713,8 @@ double ma_sun_long(double lch, double lcm, double lcs, int ds, int zc,
       ma_local_civil_time_greenwich_month(lch, lcm, lcs, ds, zc, ld, lm, ly);
   int cc =
       ma_local_civil_time_greenwich_year(lch, lcm, lcs, ds, zc, ld, lm, ly);
-  double ut = ma_local_civil_time_to_universal_time_macro(lch, lcm, lcs, ds, zc,
-                                                          ld, lm, ly);
+  double ut =
+      ma_local_civil_time_to_universal_time(lch, lcm, lcs, ds, zc, ld, lm, ly);
   double dj = ma_civil_date_to_julian_date(aa, bb, cc) - 2415020;
   double t = (dj / 36525) + (ut / 876600);
   double t2 = t * t;
@@ -787,8 +790,8 @@ double ma_sun_dist(double lch, double lcm, double lcs, int ds, int zc,
       ma_local_civil_time_greenwich_month(lch, lcm, lcs, ds, zc, ld, lm, ly);
   int cc =
       ma_local_civil_time_greenwich_year(lch, lcm, lcs, ds, zc, ld, lm, ly);
-  double ut = ma_local_civil_time_to_universal_time_macro(lch, lcm, lcs, ds, zc,
-                                                          ld, lm, ly);
+  double ut =
+      ma_local_civil_time_to_universal_time(lch, lcm, lcs, ds, zc, ld, lm, ly);
   double dj = ma_civil_date_to_julian_date(aa, bb, cc) - 2415020;
 
   double t = (dj / 36525) + (ut / 876600);
@@ -1123,8 +1126,8 @@ TParallaxHelper ma_parallax_dec_l2870(double x, double y, double rc, double rp,
  */
 double ma_moon_longitude(double lh, double lm, double ls, int ds, int zc,
                          double dy, int mn, int yr) {
-  double ut = ma_local_civil_time_to_universal_time_macro(lh, lm, ls, ds, zc,
-                                                          dy, mn, yr);
+  double ut =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
   double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
   int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
   int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
@@ -1221,8 +1224,8 @@ double ma_moon_longitude(double lh, double lm, double ls, int ds, int zc,
  */
 double ma_moon_latitude(double lh, double lm, double ls, int ds, int zc,
                         double dy, int mn, int yr) {
-  double ut = ma_local_civil_time_to_universal_time_macro(lh, lm, ls, ds, zc,
-                                                          dy, mn, yr);
+  double ut =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
   double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
   int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
   int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
@@ -1322,8 +1325,8 @@ double ma_moon_latitude(double lh, double lm, double ls, int ds, int zc,
  */
 double ma_moon_horizontal_parallax(double lh, double lm, double ls, int ds,
                                    int zc, double dy, int mn, int yr) {
-  double ut = ma_local_civil_time_to_universal_time_macro(lh, lm, ls, ds, zc,
-                                                          dy, mn, yr);
+  double ut =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
   double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
   int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
   int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
@@ -1493,8 +1496,8 @@ double ma_sun_true_anomaly(double lch, double lcm, double lcs, int ds, int zc,
       ma_local_civil_time_greenwich_month(lch, lcm, lcs, ds, zc, ld, lm, ly);
   int cc =
       ma_local_civil_time_greenwich_year(lch, lcm, lcs, ds, zc, ld, lm, ly);
-  double ut = ma_local_civil_time_to_universal_time_macro(lch, lcm, lcs, ds, zc,
-                                                          ld, lm, ly);
+  double ut =
+      ma_local_civil_time_to_universal_time(lch, lcm, lcs, ds, zc, ld, lm, ly);
   double dj = ma_civil_date_to_julian_date(aa, bb, cc) - 2415020;
 
   double t = (dj / 36525) + (ut / 876600);
@@ -1524,8 +1527,8 @@ double ma_sun_mean_anomaly(double lch, double lcm, double lcs, int ds, int zc,
       ma_local_civil_time_greenwich_month(lch, lcm, lcs, ds, zc, ld, lm, ly);
   int cc =
       ma_local_civil_time_greenwich_year(lch, lcm, lcs, ds, zc, ld, lm, ly);
-  double ut = ma_local_civil_time_to_universal_time_macro(lch, lcm, lcs, ds, zc,
-                                                          ld, lm, ly);
+  double ut =
+      ma_local_civil_time_to_universal_time(lch, lcm, lcs, ds, zc, ld, lm, ly);
   double dj = ma_civil_date_to_julian_date(aa, bb, cc) - 2415020;
   double t = (dj / 36525) + (ut / 876600);
   double t2 = t * t;
@@ -2328,8 +2331,8 @@ TPlanetCoordinates ma_planet_coordinates(double lh, double lm, double ls,
   pl[0] = populate_precise_planet_data("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   int ip = 0;
-  double b = ma_local_civil_time_to_universal_time_macro(lh, lm, ls, ds, zc, dy,
-                                                         mn, yr);
+  double b =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
   double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
   int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
   int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
@@ -3113,8 +3116,8 @@ ma_p_comet_long_lat_dist(double lh, /** Local civil time, hour part. */
   double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
   int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
   int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
-  double ut = ma_local_civil_time_to_universal_time_macro(lh, lm, ls, ds, zc,
-                                                          dy, mn, yr);
+  double ut =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
   double tpe = (ut / 365.242191) + ma_civil_date_to_julian_date(gd, gm, gy) -
                ma_civil_date_to_julian_date(td, tm, ty);
   double lg =
