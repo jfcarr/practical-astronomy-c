@@ -52,8 +52,9 @@ If you're interested in this topic, please buy the book! It provides far more de
 
 ### Comets
 
-- [ ] Calculate -> Position of comet (elliptical and parabolic)
-
+- [x] Calculate -> Position of elliptical comet
+- [ ] Calculate -> Position of parabolic comet
+ 
 ### Binary Stars
 
 - [ ] Calculate -> Binary star orbit data

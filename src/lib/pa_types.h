@@ -362,4 +362,12 @@ typedef struct pa_planet_visual_aspects {
   double pos_angle_bright_limb_deg;
   double approximate_magnitude;
 } TPlanetVisualAspects;
+
+typedef struct pa_comet_position {
+  double comet_ra_hour;
+  double comet_ra_min;
+  double comet_dec_deg;
+  double comet_dec_min;
+  double comet_dist_earth;
+} TCometPosition;
 #endif
