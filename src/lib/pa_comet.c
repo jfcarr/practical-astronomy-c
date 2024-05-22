@@ -25,7 +25,7 @@ position_of_elliptical_comet(double lct_hour, double lct_min, double lct_sec,
       lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
       local_date_day, local_date_month, local_date_year);
 
-  struct CometRecord comet_info = get_comet_data(comet_name);
+  struct CometDataElliptical comet_info = get_comet_data_elliptical(comet_name);
 
   double time_since_epoch_years =
       (ma_civil_date_to_julian_date(greenwich_date_day, greenwich_date_month,
