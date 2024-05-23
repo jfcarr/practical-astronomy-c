@@ -392,4 +392,21 @@ typedef struct pa_moon_approximate_position {
   double moon_dec_min;
   double moon_dec_sec;
 } TMoonApproximatePosition;
+
+typedef struct pa_moon_precise_position {
+  double moon_ra_hour;
+  double moon_ra_min;
+  double moon_ra_sec;
+  double moon_dec_deg;
+  double moon_dec_min;
+  double moon_dec_sec;
+  double earth_moon_dist_km;
+  double moon_hor_parallax_deg;
+} TMoonPrecisePosition;
+
+typedef struct pa_moon_long_lat_hp {
+  double moon_long_deg;
+  double moon_lat_deg;
+  double moon_hor_para;
+} TMoonLongLatHP;
 #endif

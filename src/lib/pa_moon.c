@@ -79,3 +79,54 @@ approximate_position_of_moon(double lct_hour, double lct_min, double lct_sec,
   return (TMoonApproximatePosition){moon_ra_hour, moon_ra_min,  moon_ra_sec,
                                     moon_dec_deg, moon_dec_min, moon_dec_sec};
 }
+
+/**
+ * Calculate precise position of the Moon.
+ */
+TMoonPrecisePosition
+precise_position_of_moon(double lct_hour, double lct_min, double lct_sec,
+                         bool is_daylight_saving, int zone_correction_hours,
+                         double local_date_day, int local_date_month,
+                         int local_date_year) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double gdate_day = ma_local_civil_time_greenwich_day(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int gdate_month = ma_local_civil_time_greenwich_month(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int gdate_year = ma_local_civil_time_greenwich_year(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  TMoonLongLatHP moon_result = ma_moon_long_lat_hp(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  double nutation_in_longitude_deg =
+      ma_nutat_long(gdate_day, gdate_month, gdate_year);
+  double corrected_long_deg =
+      moon_result.moon_long_deg + nutation_in_longitude_deg;
+  double earth_moon_distance_km =
+      6378.14 / sin(degrees_to_radians(moon_result.moon_hor_para));
+  double moon_ra_hours1 = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(corrected_long_deg, 0, 0, moon_result.moon_lat_deg, 0, 0,
+               gdate_day, gdate_month, gdate_year));
+  double moon_dec_deg1 =
+      ma_ec_dec(corrected_long_deg, 0, 0, moon_result.moon_lat_deg, 0, 0,
+                gdate_day, gdate_month, gdate_year);
+
+  int moon_ra_hour = ma_decimal_hours_hour(moon_ra_hours1);
+  int moon_ra_min = ma_decimal_hours_minute(moon_ra_hours1);
+  double moon_ra_sec = ma_decimal_hours_second(moon_ra_hours1);
+  double moon_dec_deg = ma_decimal_degrees_degrees(moon_dec_deg1);
+  double moon_dec_min = ma_decimal_degrees_minutes(moon_dec_deg1);
+  double moon_dec_sec = ma_decimal_degrees_seconds(moon_dec_deg1);
+  double earth_moon_dist_km = dround(earth_moon_distance_km, 0);
+  double moon_hor_parallax_deg = dround(moon_result.moon_hor_para, 6);
+
+  return (TMoonPrecisePosition){
+      moon_ra_hour, moon_ra_min,  moon_ra_sec,        moon_dec_deg,
+      moon_dec_min, moon_dec_sec, earth_moon_dist_km, moon_hor_parallax_deg};
+}

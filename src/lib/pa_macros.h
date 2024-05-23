@@ -288,4 +288,7 @@ TCometLongLatDist ma_p_comet_long_lat_dist(double lh, double lm, double ls,
                                            double n);
 
 double ma_solve_cubic(double w);
+
+TMoonLongLatHP ma_moon_long_lat_hp(double lh, double lm, double ls, int ds,
+                                   int zc, double dy, int mn, int yr);
 #endif

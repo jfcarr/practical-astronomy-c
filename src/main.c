@@ -179,6 +179,10 @@ void test_moon() {
   test_approximate_position_of_moon(
       0, 0, 0, false, 0, 1, 9, 2003,
       (TMoonApproximatePosition){14, 12, 42.31, -11, 31, 38.27});
+
+  test_precise_position_of_moon(
+      0, 0, 0, false, 0, 1, 9, 2003,
+      (TMoonPrecisePosition){14, 12, 10.21, -11, 34, 57.83, 367964, 0.993191});
 }
 
 int main() {
