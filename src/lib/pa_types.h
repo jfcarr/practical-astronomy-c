@@ -383,4 +383,13 @@ typedef struct pa_binary_star_orbital_data {
   double position_angle_deg;
   double separation_arcsec;
 } TBinaryStarOrbitalData;
+
+typedef struct pa_moon_approximate_position {
+  double moon_ra_hour;
+  double moon_ra_min;
+  double moon_ra_sec;
+  double moon_dec_deg;
+  double moon_dec_min;
+  double moon_dec_sec;
+} TMoonApproximatePosition;
 #endif

@@ -20,10 +20,10 @@ run: build
 
 build: lib bin
 
-bin: lib $(SRC_DIR)/main.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o $(TEST_DIR)/pa_sun.o $(TEST_DIR)/pa_planets.o $(TEST_DIR)/pa_comet.o $(TEST_DIR)/pa_binary.o
+bin: lib $(SRC_DIR)/main.o $(TEST_DIR)/pa_datetime.o $(TEST_DIR)/pa_coordinates.o $(TEST_DIR)/pa_sun.o $(TEST_DIR)/pa_planets.o $(TEST_DIR)/pa_comet.o $(TEST_DIR)/pa_binary.o $(TEST_DIR)/pa_moon.o
 	gcc -L. -o pa_cli src/main.o src/test/*.o -lpa_lib -lm
 
-lib: $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_sun.o $(LIB_DIR)/pa_planets.o $(LIB_DIR)/pa_planets_data.o $(LIB_DIR)/pa_comet.o $(LIB_DIR)/pa_comet_data.o $(LIB_DIR)/pa_binary.o $(LIB_DIR)/pa_binary_data.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o
+lib: $(LIB_DIR)/pa_datetime.o $(LIB_DIR)/pa_coordinates.o $(LIB_DIR)/pa_sun.o $(LIB_DIR)/pa_planets.o $(LIB_DIR)/pa_planets_data.o $(LIB_DIR)/pa_comet.o $(LIB_DIR)/pa_comet_data.o $(LIB_DIR)/pa_binary.o $(LIB_DIR)/pa_binary_data.o $(LIB_DIR)/pa_moon.o $(LIB_DIR)/pa_macros.o $(LIB_DIR)/pa_util.o
 	ar -r libpa_lib.a src/lib/*.o
 
 src/main.o: $(SRC_DIR)/main.c $(LIB_DIR)/pa_datetime.h
@@ -56,6 +56,9 @@ $(LIB_DIR)/pa_binary.o: $(LIB_DIR)/pa_binary.c $(LIB_DIR)/pa_binary.h
 $(LIB_DIR)/pa_binary_data.o: $(LIB_DIR)/pa_binary_data.c $(LIB_DIR)/pa_binary_data.h
 	gcc -c $(LIB_DIR)/pa_binary_data.c -o $(LIB_DIR)/pa_binary_data.o
 
+$(LIB_DIR)/pa_moon.o: $(LIB_DIR)/pa_moon.c $(LIB_DIR)/pa_moon.h
+	gcc -c $(LIB_DIR)/pa_moon.c -o $(LIB_DIR)/pa_moon.o
+
 $(LIB_DIR)/pa_macros.o: $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
 	gcc -c $(LIB_DIR)/pa_macros.c -o $(LIB_DIR)/pa_macros.o
 
@@ -80,6 +83,9 @@ $(TEST_DIR)/pa_comet.o: $(TEST_DIR)/pa_comet.c $(TEST_DIR)/pa_comet.h $(LIB_DIR)
 $(TEST_DIR)/pa_binary.o: $(TEST_DIR)/pa_binary.c $(TEST_DIR)/pa_binary.h $(LIB_DIR)/pa_binary.h
 	gcc -c $(TEST_DIR)/pa_binary.c -o $(TEST_DIR)/pa_binary.o
 
+$(TEST_DIR)/pa_moon.o: $(TEST_DIR)/pa_moon.c $(TEST_DIR)/pa_moon.h $(LIB_DIR)/pa_moon.h
+	gcc -c $(TEST_DIR)/pa_moon.c -o $(TEST_DIR)/pa_moon.o
+
 clean:
 	-rm -f pa_cli
 	-rm -f libpa_lib.a
@@ -102,6 +108,7 @@ format:
 	$(FORMATTER) $(LIB_DIR)/pa_comet_data.c $(LIB_DIR)/pa_comet_data.h
 	$(FORMATTER) $(LIB_DIR)/pa_binary.c $(LIB_DIR)/pa_binary.h
 	$(FORMATTER) $(LIB_DIR)/pa_binary_data.c $(LIB_DIR)/pa_binary_data.h
+	$(FORMATTER) $(LIB_DIR)/pa_moon.c $(LIB_DIR)/pa_moon.h
 	$(FORMATTER) $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
 	$(FORMATTER) $(LIB_DIR)/pa_util.c $(LIB_DIR)/pa_util.h
 	$(FORMATTER) $(LIB_DIR)/pa_types.h
@@ -112,6 +119,7 @@ format:
 	$(FORMATTER) $(TEST_DIR)/pa_planets.c $(TEST_DIR)/pa_planets.h
 	$(FORMATTER) $(TEST_DIR)/pa_comet.c $(TEST_DIR)/pa_comet.h
 	$(FORMATTER) $(TEST_DIR)/pa_binary.c $(TEST_DIR)/pa_binary.h
+	$(FORMATTER) $(TEST_DIR)/pa_moon.c $(TEST_DIR)/pa_moon.h
 
 check:
 	$(LINTER) $(SRC_DIR)/main.c
@@ -125,6 +133,7 @@ check:
 	$(LINTER) $(LIB_DIR)/pa_comet_data.c $(LIB_DIR)/pa_comet_data.h
 	$(LINTER) $(LIB_DIR)/pa_binary.c $(LIB_DIR)/pa_binary.h
 	$(LINTER) $(LIB_DIR)/pa_binary_data.c $(LIB_DIR)/pa_binary_data.h
+	$(LINTER) $(LIB_DIR)/pa_moon.c $(LIB_DIR)/pa_moon.h
 	$(LINTER) $(LIB_DIR)/pa_macros.c $(LIB_DIR)/pa_macros.h
 	$(LINTER) $(LIB_DIR)/pa_util.c $(LIB_DIR)/pa_util.h
 	$(LINTER) $(LIB_DIR)/pa_types.h
@@ -135,3 +144,4 @@ check:
 	$(LINTER) $(TEST_DIR)/pa_planets.c $(TEST_DIR)/pa_planets.h
 	$(LINTER) $(TEST_DIR)/pa_comet.c $(TEST_DIR)/pa_comet.h
 	$(LINTER) $(TEST_DIR)/pa_binary.c $(TEST_DIR)/pa_binary.h
+	$(LINTER) $(TEST_DIR)/pa_moon.c $(TEST_DIR)/pa_moon.h
