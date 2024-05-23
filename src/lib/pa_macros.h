@@ -176,6 +176,8 @@ double ma_moon_horizontal_parallax(double lh, double lm, double ls, int ds,
 
 double ma_unwind(double w);
 
+double ma_unwind_deg(double w);
+
 double ma_sun_e_long(double gd, int gm, int gy);
 
 double ma_sun_peri(double gd, int gm, int gy);

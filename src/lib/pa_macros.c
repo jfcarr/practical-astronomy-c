@@ -1409,6 +1409,13 @@ double ma_moon_horizontal_parallax(double lh, double lm, double ls, int ds,
 double ma_unwind(double w) { return w - 6.283185308 * floor(w / 6.283185308); }
 
 /**
+ * Convert angle in degrees to equivalent angle in the range 0 to 360 degrees.
+ *
+ * Original macro name: UnwindDeg
+ */
+double ma_unwind_deg(double w) { return w - 360 * floor(w / 360); }
+
+/**
  * Mean ecliptic longitude of the Sun at the epoch
  *
  * Original macro name: SunElong

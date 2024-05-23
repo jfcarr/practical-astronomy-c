@@ -2,6 +2,7 @@
 #include "test/pa_comet.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
+#include "test/pa_moon.h"
 #include "test/pa_planets.h"
 #include "test/pa_sun.h"
 #include <math.h>
@@ -174,6 +175,12 @@ void test_binary_star() {
                          (TBinaryStarOrbitalData){318.5, 0.41});
 }
 
+void test_moon() {
+  test_approximate_position_of_moon(
+      0, 0, 0, false, 0, 1, 9, 2003,
+      (TMoonApproximatePosition){14, 12, 42.31, -11, 31, 38.27});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
@@ -181,6 +188,7 @@ int main() {
   test_planets();
   test_comet();
   test_binary_star();
+  test_moon();
 
   return (0);
 }
