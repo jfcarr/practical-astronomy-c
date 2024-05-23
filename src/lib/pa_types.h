@@ -378,4 +378,9 @@ typedef struct pa_comet_long_lat_dist {
   double comet_lat_deg;
   double comet_dist_au;
 } TCometLongLatDist;
+
+typedef struct pa_binary_star_orbital_data {
+  double position_angle_deg;
+  double separation_arcsec;
+} TBinaryStarOrbitalData;
 #endif
