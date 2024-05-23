@@ -1,3 +1,4 @@
+#include "test/pa_binary.h"
 #include "test/pa_comet.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
@@ -168,12 +169,18 @@ void test_comet() {
       (TCometPosition){23, 17, 11.53, -33, 42, 26.42, 1.11});
 }
 
+void test_binary_star() {
+  test_binary_star_orbit(1, 1, 1980, "eta-Cor",
+                         (TBinaryStarOrbitalData){318.5, 0.41});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
   test_sun();
   test_planets();
   test_comet();
+  test_binary_star();
 
   return (0);
 }
