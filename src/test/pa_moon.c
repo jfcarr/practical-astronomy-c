@@ -106,3 +106,54 @@ void test_moon_phase(double lct_hour, double lct_min, double lct_sec,
   assert(actual_result.bright_limb_deg == expected_result.bright_limb_deg);
   assert(actual_result.moon_phase == expected_result.moon_phase);
 }
+
+void test_times_of_new_moon_and_full_moon(bool isDaylightSaving,
+                                          int zoneCorrectionHours,
+                                          double localDateDay,
+                                          int localDateMonth, int localDateYear,
+                                          TMoonNewFull expected_result) {
+  TMoonNewFull actual_result = times_of_new_moon_and_full_moon(
+      isDaylightSaving, zoneCorrectionHours, localDateDay, localDateMonth,
+      localDateYear);
+
+  printf("[Times of New Moon and Full Moon]\n");
+  printf("\tExpected:\n");
+  printf("\t\tLocal Time of New Moon is %0.0f h %0.0f m\n",
+         expected_result.nm_local_time_hour, expected_result.nm_local_time_min);
+  printf("\t\tLocal Date of New Moon is %d/%0.0f/%d\n",
+         expected_result.nm_local_date_month, expected_result.nm_local_date_day,
+         expected_result.nm_local_date_year);
+  printf("\t\tLocal Time of Full Moon is %0.0f h %0.0f m\n",
+         expected_result.fm_local_time_hour, expected_result.fm_local_time_min);
+  printf("\t\tLocal Date of Full Moon is %d/%0.0f/%d\n",
+         expected_result.fm_local_date_month, expected_result.fm_local_date_day,
+         expected_result.fm_local_date_year);
+  printf("\tActual:\n");
+  printf("\t\tLocal Time of New Moon is %0.0f h %0.0f m\n",
+         actual_result.nm_local_time_hour, actual_result.nm_local_time_min);
+  printf("\t\tLocal Date of New Moon is %d/%0.0f/%d\n",
+         actual_result.nm_local_date_month, actual_result.nm_local_date_day,
+         actual_result.nm_local_date_year);
+  printf("\t\tLocal Time of Full Moon is %0.0f h %0.0f m\n",
+         actual_result.fm_local_time_hour, actual_result.fm_local_time_min);
+  printf("\t\tLocal Date of Full Moon is %d/%0.0f/%d\n",
+         actual_result.fm_local_date_month, actual_result.fm_local_date_day,
+         actual_result.fm_local_date_year);
+
+  assert(actual_result.fm_local_date_day == expected_result.fm_local_date_day);
+  assert(actual_result.fm_local_date_month ==
+         expected_result.fm_local_date_month);
+  assert(actual_result.fm_local_date_year ==
+         expected_result.fm_local_date_year);
+  assert(actual_result.fm_local_time_hour ==
+         expected_result.fm_local_time_hour);
+  assert(actual_result.fm_local_time_min == expected_result.fm_local_time_min);
+  assert(actual_result.nm_local_date_day == expected_result.nm_local_date_day);
+  assert(actual_result.nm_local_date_month ==
+         expected_result.nm_local_date_month);
+  assert(actual_result.nm_local_date_year ==
+         expected_result.nm_local_date_year);
+  assert(actual_result.nm_local_time_hour ==
+         expected_result.nm_local_time_hour);
+  assert(actual_result.nm_local_time_min == expected_result.nm_local_time_min);
+}

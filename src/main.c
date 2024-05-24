@@ -186,6 +186,10 @@ void test_moon() {
 
   test_moon_phase(0, 0, 0, false, 0, 1, 9, 2003, AccuracyLevel_APPROXIMATE,
                   (TMoonPhase){0.22, -71.58});
+
+  test_times_of_new_moon_and_full_moon(
+      false, 0, 1, 9, 2003,
+      (TMoonNewFull){17, 27, 27, 8, 2003, 16, 36, 10, 9, 2003});
 }
 
 int main() {

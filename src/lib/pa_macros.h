@@ -39,6 +39,26 @@ ma_universal_time_to_local_civil_time(double uHours, double uMinutes,
                                       int zoneCorrection, double greenwichDay,
                                       int greenwichMonth, int greenwichYear);
 
+double ma_universal_time_local_civil_day(double u_hours, double u_minutes,
+                                         double u_seconds, int daylight_saving,
+                                         int zone_correction,
+                                         double greenwich_day,
+                                         int greenwich_month,
+                                         int greenwich_year);
+
+int ma_universal_time_local_civil_month(double u_hours, double u_minutes,
+                                        double u_seconds, int daylight_saving,
+                                        int zone_correction,
+                                        double greenwich_day,
+                                        int greenwich_month,
+                                        int greenwich_year);
+
+int ma_universal_time_local_civil_year(double u_hours, double u_minutes,
+                                       double u_seconds, int daylight_saving,
+                                       int zone_correction,
+                                       double greenwich_day,
+                                       int greenwich_month, int greenwich_year);
+
 double ma_local_civil_time_greenwich_day(double lct_hours, double lct_minutes,
                                          double lct_seconds,
                                          int daylight_saving,
@@ -297,4 +317,18 @@ double ma_moon_phase(double lh, double lm, double ls, int ds, int zc, double dy,
 
 double ma_moon_mean_anomaly(double lh, double lm, double ls, int ds, int zc,
                             double dy, int mn, int yr);
+
+double ma_newmoon(int ds, int zc, double dy, int mn, int yr);
+
+double ma_fullmoon(int ds, int zc, double dy, int mn, int yr);
+
+TNewMoonFullMoonL6855 ma_new_moon_full_moon_l6855(double k, double t);
+
+double ma_fract(double w);
+
+double ma_lint(double w);
+
+double ma_i_int(double w);
+
+double ma_sign(double number_to_check);
 #endif
