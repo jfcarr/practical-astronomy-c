@@ -130,3 +130,61 @@ precise_position_of_moon(double lct_hour, double lct_min, double lct_sec,
       moon_ra_hour, moon_ra_min,  moon_ra_sec,        moon_dec_deg,
       moon_dec_min, moon_dec_sec, earth_moon_dist_km, moon_hor_parallax_deg};
 }
+
+/**
+ * Calculate Moon phase and position angle of bright limb.
+ */
+TMoonPhase moon_phase(double lct_hour, double lct_min, double lct_sec,
+                      bool is_daylight_saving, int zone_correction_hours,
+                      double local_date_day, int local_date_month,
+                      int local_date_year, enum AccuracyLevel accuracy_level) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double gdate_day = ma_local_civil_time_greenwich_day(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int gdate_month = ma_local_civil_time_greenwich_month(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  int gdate_year = ma_local_civil_time_greenwich_year(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  double sun_long_deg = ma_sun_long(lct_hour, lct_min, lct_sec, daylight_saving,
+                                    zone_correction_hours, local_date_day,
+                                    local_date_month, local_date_year);
+  TMoonLongLatHP moon_result = ma_moon_long_lat_hp(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  double d_rad = degrees_to_radians(moon_result.moon_long_deg - sun_long_deg);
+
+  double moon_phase1 =
+      (accuracy_level == AccuracyLevel_PRECISE)
+          ? ma_moon_phase(lct_hour, lct_min, lct_sec, daylight_saving,
+                          zone_correction_hours, local_date_day,
+                          local_date_month, local_date_year)
+          : (1.0 - cos(d_rad)) / 2.0;
+
+  double sun_ra_rad = degrees_to_radians(ma_ec_ra(
+      sun_long_deg, 0, 0, 0, 0, 0, gdate_day, gdate_month, gdate_year));
+  double moon_ra_rad = degrees_to_radians(
+      ma_ec_ra(moon_result.moon_long_deg, 0, 0, moon_result.moon_lat_deg, 0, 0,
+               gdate_day, gdate_month, gdate_year));
+  double sun_dec_rad = degrees_to_radians(ma_ec_dec(
+      sun_long_deg, 0, 0, 0, 0, 0, gdate_day, gdate_month, gdate_year));
+  double moon_dec_rad = degrees_to_radians(
+      ma_ec_dec(moon_result.moon_long_deg, 0, 0, moon_result.moon_lat_deg, 0, 0,
+                gdate_day, gdate_month, gdate_year));
+
+  double y = cos(sun_dec_rad) * sin(sun_ra_rad - moon_ra_rad);
+  double x =
+      cos(moon_dec_rad) * sin(sun_dec_rad) -
+      sin(moon_dec_rad) * cos(sun_dec_rad) * cos(sun_ra_rad - moon_ra_rad);
+
+  double chi_deg = ma_degrees(atan2(y, x));
+
+  double moon_phase = dround(moon_phase1, 2);
+  double bright_limb_deg = dround(chi_deg, 2);
+
+  return (TMoonPhase){moon_phase, bright_limb_deg};
+}

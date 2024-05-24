@@ -47,6 +47,8 @@ enum CoordinateType {
   CoordinateType_APPARENT /**< apparent (observer) */
 };
 
+enum AccuracyLevel { AccuracyLevel_APPROXIMATE, AccuracyLevel_PRECISE };
+
 /**
  * Structure to hold a Date value:
  *
@@ -409,4 +411,9 @@ typedef struct pa_moon_long_lat_hp {
   double moon_lat_deg;
   double moon_hor_para;
 } TMoonLongLatHP;
+
+typedef struct pa_moon_phase {
+  double moon_phase;
+  double bright_limb_deg;
+} TMoonPhase;
 #endif

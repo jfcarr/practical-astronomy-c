@@ -291,4 +291,10 @@ double ma_solve_cubic(double w);
 
 TMoonLongLatHP ma_moon_long_lat_hp(double lh, double lm, double ls, int ds,
                                    int zc, double dy, int mn, int yr);
+
+double ma_moon_phase(double lh, double lm, double ls, int ds, int zc, double dy,
+                     int mn, int yr);
+
+double ma_moon_mean_anomaly(double lh, double lm, double ls, int ds, int zc,
+                            double dy, int mn, int yr);
 #endif
