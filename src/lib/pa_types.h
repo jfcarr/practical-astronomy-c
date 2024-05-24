@@ -435,4 +435,13 @@ typedef struct pa_new_moon_full_moon_l6855 {
   double b;
   double f;
 } TNewMoonFullMoonL6855;
+
+typedef struct pa_moon_dist_diameter_hp {
+  double earth_moon_dist;
+  double ang_diameter_deg;
+  double ang_diameter_min;
+  double hor_parallax_deg;
+  double hor_parallax_min;
+  double hor_parallax_sec;
+} TMoonDistDiameterHP;
 #endif

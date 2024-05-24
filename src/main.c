@@ -190,6 +190,10 @@ void test_moon() {
   test_times_of_new_moon_and_full_moon(
       false, 0, 1, 9, 2003,
       (TMoonNewFull){17, 27, 27, 8, 2003, 16, 36, 10, 9, 2003});
+
+  test_moon_dist_ang_diam_hor_parallax(
+      0, 0, 0, false, 0, 1, 9, 2003,
+      (TMoonDistDiameterHP){367964, 0, 32, 0, 59, 35.49});
 }
 
 int main() {

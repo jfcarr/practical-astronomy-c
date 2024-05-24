@@ -157,3 +157,35 @@ void test_times_of_new_moon_and_full_moon(bool isDaylightSaving,
          expected_result.nm_local_time_hour);
   assert(actual_result.nm_local_time_min == expected_result.nm_local_time_min);
 }
+
+void test_moon_dist_ang_diam_hor_parallax(
+    double lct_hour, double lct_min, double lct_sec, bool is_daylight_saving,
+    int zone_correction_hours, double local_date_day, int local_date_month,
+    int local_date_year, TMoonDistDiameterHP expected_result) {
+  TMoonDistDiameterHP actual_result = moon_dist_ang_diam_hor_parallax(
+      lct_hour, lct_min, lct_sec, is_daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  printf("[Moon Distance, Angular Diameter, and Horizontal Parallax]\n");
+  printf("\tExpected:\n");
+  printf("\t\tEarth-Moon Distance is %0.0f\n", expected_result.earth_moon_dist);
+  printf("\t\tAngular Diameter is %0.0f d %0.0f m\n",
+         expected_result.ang_diameter_deg, expected_result.ang_diameter_min);
+  printf("\t\tHorizontal Parallax is %0.0f d %0.0f m %0.2f s\n",
+         expected_result.hor_parallax_deg, expected_result.hor_parallax_min,
+         expected_result.hor_parallax_sec);
+  printf("\tActual:\n");
+  printf("\t\tEarth-Moon Distance is %0.0f\n", actual_result.earth_moon_dist);
+  printf("\t\tAngular Diameter is %0.0f d %0.0f m\n",
+         actual_result.ang_diameter_deg, actual_result.ang_diameter_min);
+  printf("\t\tHorizontal Parallax is %0.0f d %0.0f m %0.2f s\n",
+         actual_result.hor_parallax_deg, actual_result.hor_parallax_min,
+         actual_result.hor_parallax_sec);
+
+  assert(actual_result.ang_diameter_deg == expected_result.ang_diameter_deg);
+  assert(actual_result.ang_diameter_min == expected_result.ang_diameter_min);
+  assert(actual_result.earth_moon_dist == expected_result.earth_moon_dist);
+  assert(actual_result.hor_parallax_deg == expected_result.hor_parallax_deg);
+  assert(actual_result.hor_parallax_min == expected_result.hor_parallax_min);
+  assert(actual_result.hor_parallax_sec == expected_result.hor_parallax_sec);
+}
