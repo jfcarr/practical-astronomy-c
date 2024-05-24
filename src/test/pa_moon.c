@@ -83,3 +83,26 @@ void test_precise_position_of_moon(double lct_hour, double lct_min,
   assert(actual_result.moon_ra_min == expected_result.moon_ra_min);
   assert(actual_result.moon_ra_sec == expected_result.moon_ra_sec);
 }
+
+void test_moon_phase(double lct_hour, double lct_min, double lct_sec,
+                     bool is_daylight_saving, int zone_correction_hours,
+                     double local_date_day, int local_date_month,
+                     int local_date_year, enum AccuracyLevel accuracy_level,
+                     TMoonPhase expected_result) {
+  TMoonPhase actual_result = moon_phase(
+      lct_hour, lct_min, lct_sec, is_daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year, accuracy_level);
+
+  printf("[Moon Phase and Bright Limb]\n");
+  printf("\tExpected:\n");
+  printf("\t\tMoon Phase is %0.2f\n", expected_result.moon_phase);
+  printf("\t\tPosition Angle of Bright Limb is %0.2f d\n",
+         expected_result.bright_limb_deg);
+  printf("\tActual:\n");
+  printf("\t\tMoon Phase is %0.2f\n", actual_result.moon_phase);
+  printf("\t\tPosition Angle of Bright Limb is %0.2f d\n",
+         actual_result.bright_limb_deg);
+
+  assert(actual_result.bright_limb_deg == expected_result.bright_limb_deg);
+  assert(actual_result.moon_phase == expected_result.moon_phase);
+}

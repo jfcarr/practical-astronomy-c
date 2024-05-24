@@ -183,6 +183,9 @@ void test_moon() {
   test_precise_position_of_moon(
       0, 0, 0, false, 0, 1, 9, 2003,
       (TMoonPrecisePosition){14, 12, 10.21, -11, 34, 57.83, 367964, 0.993191});
+
+  test_moon_phase(0, 0, 0, false, 0, 1, 9, 2003, AccuracyLevel_APPROXIMATE,
+                  (TMoonPhase){0.22, -71.58});
 }
 
 int main() {

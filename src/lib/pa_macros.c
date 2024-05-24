@@ -3371,3 +3371,82 @@ TMoonLongLatHP ma_moon_long_lat_hp(double lh, double lm, double ls, int ds,
 
   return (TMoonLongLatHP){moon_long_deg, moon_lat_deg, moon_hor_para};
 }
+
+/**
+ * Calculate current phase of Moon.
+ *
+ * Original macro name: MoonPhase
+ */
+double ma_moon_phase(double lh, double lm, double ls, int ds, int zc, double dy,
+                     int mn, int yr) {
+  TMoonLongLatHP moon_result =
+      ma_moon_long_lat_hp(lh, lm, ls, ds, zc, dy, mn, yr);
+
+  double cd =
+      cos(degrees_to_radians(moon_result.moon_long_deg -
+                             ma_sun_long(lh, lm, ls, ds, zc, dy, mn, yr))) *
+      cos(degrees_to_radians(moon_result.moon_lat_deg));
+  double d = acos(cd);
+  double sd = sin(d);
+  double i = 0.1468 * sd *
+             (1.0 - 0.0549 * sin(ma_moon_mean_anomaly(lh, lm, ls, ds, zc, dy,
+                                                      mn, yr)));
+  i /=
+      (1.0 - 0.0167 * sin(ma_sun_mean_anomaly(lh, lm, ls, ds, zc, dy, mn, yr)));
+  i = 3.141592654 - d - degrees_to_radians(i);
+  double k = (1.0 + cos(i)) / 2.0;
+
+  return dround(k, 2);
+}
+
+/**
+ * Calculate the Moon's mean anomaly.
+ *
+ * Original macro name: MoonMeanAnomaly
+ */
+double ma_moon_mean_anomaly(double lh, double lm, double ls, int ds, int zc,
+                            double dy, int mn, int yr) {
+  double ut =
+      ma_local_civil_time_to_universal_time(lh, lm, ls, ds, zc, dy, mn, yr);
+  double gd = ma_local_civil_time_greenwich_day(lh, lm, ls, ds, zc, dy, mn, yr);
+  int gm = ma_local_civil_time_greenwich_month(lh, lm, ls, ds, zc, dy, mn, yr);
+  int gy = ma_local_civil_time_greenwich_year(lh, lm, ls, ds, zc, dy, mn, yr);
+  double t =
+      ((ma_civil_date_to_julian_date(gd, gm, gy) - 2415020.0) / 36525.0) +
+      (ut / 876600.0);
+  double t2 = t * t;
+
+  double m1 = 27.32158213;
+  double m2 = 365.2596407;
+  double m3 = 27.55455094;
+  double m4 = 29.53058868;
+  double m5 = 27.21222039;
+  double m6 = 6798.363307;
+  double q = ma_civil_date_to_julian_date(gd, gm, gy) - 2415020.0 + (ut / 24.0);
+  m1 = q / m1;
+  m2 = q / m2;
+  m3 = q / m3;
+  m4 = q / m4;
+  m5 = q / m5;
+  m6 = q / m6;
+  m1 = 360.0 * (m1 - floor(m1));
+  m2 = 360.0 * (m2 - floor(m2));
+  m3 = 360.0 * (m3 - floor(m3));
+  m4 = 360.0 * (m4 - floor(m4));
+  m5 = 360.0 * (m5 - floor(m5));
+  m6 = 360.0 * (m6 - floor(m6));
+
+  double ml = 270.434164 + m1 - (0.001133 - 0.0000019 * t) * t2;
+  double ms = 358.475833 + m2 - (0.00015 + 0.0000033 * t) * t2;
+  double md = 296.104608 + m3 + (0.009192 + 0.0000144 * t) * t2;
+  double na = 259.183275 - m6 + (0.002078 + 0.0000022 * t) * t2;
+  double a = degrees_to_radians(51.2 + 20.2 * t);
+  double s1 = sin(a);
+  double s2 = sin(degrees_to_radians(na));
+  double b = 346.56 + (132.87 - 0.0091731 * t) * t;
+  double s3 = 0.003964 * sin(degrees_to_radians(b));
+  double c = degrees_to_radians(na + 275.05 - 2.3 * t);
+  md = md + 0.000817 * s1 + s3 + 0.002541 * s2;
+
+  return degrees_to_radians(md);
+}
