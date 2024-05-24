@@ -416,4 +416,23 @@ typedef struct pa_moon_phase {
   double moon_phase;
   double bright_limb_deg;
 } TMoonPhase;
+
+typedef struct pa_moon_new_full {
+  double nm_local_time_hour;
+  double nm_local_time_min;
+  double nm_local_date_day;
+  int nm_local_date_month;
+  int nm_local_date_year;
+  double fm_local_time_hour;
+  double fm_local_time_min;
+  double fm_local_date_day;
+  int fm_local_date_month;
+  int fm_local_date_year;
+} TMoonNewFull;
+
+typedef struct pa_new_moon_full_moon_l6855 {
+  double a;
+  double b;
+  double f;
+} TNewMoonFullMoonL6855;
 #endif

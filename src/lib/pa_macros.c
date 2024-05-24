@@ -269,6 +269,71 @@ ma_universal_time_to_local_civil_time(double uHours, double uMinutes,
 }
 
 /**
+ * Get Local Civil Day for Universal Time
+ *
+ * Original macro name: UTLcDay
+ */
+double ma_universal_time_local_civil_day(double u_hours, double u_minutes,
+                                         double u_seconds, int daylight_saving,
+                                         int zone_correction,
+                                         double greenwich_day,
+                                         int greenwich_month,
+                                         int greenwich_year) {
+  double a = ma_hms_dh(u_hours, u_minutes, u_seconds);
+  double b = a + zone_correction;
+  double c = b + daylight_saving;
+  double d = ma_civil_date_to_julian_date(greenwich_day, greenwich_month,
+                                          greenwich_year) +
+             (c / 24.0);
+  double e = ma_julian_date_day(d);
+  double e1 = floor(e);
+
+  return e1;
+}
+
+/**
+ * Get Local Civil Month for Universal Time
+ *
+ * Original macro name: UTLcMonth
+ */
+int ma_universal_time_local_civil_month(double u_hours, double u_minutes,
+                                        double u_seconds, int daylight_saving,
+                                        int zone_correction,
+                                        double greenwich_day,
+                                        int greenwich_month,
+                                        int greenwich_year) {
+  double a = ma_hms_dh(u_hours, u_minutes, u_seconds);
+  double b = a + zone_correction;
+  double c = b + daylight_saving;
+  double d = ma_civil_date_to_julian_date(greenwich_day, greenwich_month,
+                                          greenwich_year) +
+             (c / 24.0);
+
+  return ma_julian_date_month(d);
+}
+
+/**
+ * Get Local Civil Year for Universal Time
+ *
+ * Original macro name: UTLcYear
+ */
+int ma_universal_time_local_civil_year(double u_hours, double u_minutes,
+                                       double u_seconds, int daylight_saving,
+                                       int zone_correction,
+                                       double greenwich_day,
+                                       int greenwich_month,
+                                       int greenwich_year) {
+  double a = ma_hms_dh(u_hours, u_minutes, u_seconds);
+  double b = a + zone_correction;
+  double c = b + daylight_saving;
+  double d = ma_civil_date_to_julian_date(greenwich_day, greenwich_month,
+                                          greenwich_year) +
+             (c / 24.0);
+
+  return ma_julian_date_year(d);
+}
+
+/**
  * Determine Greenwich Day for Local Time
  *
  * Original macro name: LctGDay
@@ -3449,4 +3514,134 @@ double ma_moon_mean_anomaly(double lh, double lm, double ls, int ds, int zc,
   md = md + 0.000817 * s1 + s3 + 0.002541 * s2;
 
   return degrees_to_radians(md);
+}
+
+/**
+ * Calculate Julian date of New Moon.
+ *
+ * Original macro name: NewMoon
+ */
+double ma_newmoon(int ds, int zc, double dy, int mn, int yr) {
+  double d0 =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int m0 =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int y0 =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+
+  double j0 = ma_civil_date_to_julian_date(0.0, 1, y0) - 2415020.0;
+  double dj = ma_civil_date_to_julian_date(d0, m0, y0) - 2415020.0;
+  double k = ma_lint(((y0 - 1900.0 + ((dj - j0) / 365.0)) * 12.3685) + 0.5);
+  double tn = k / 1236.85;
+  double tf = (k + 0.5) / 1236.85;
+  double t = tn;
+  TNewMoonFullMoonL6855 nmfm_result1 = ma_new_moon_full_moon_l6855(k, t);
+  double ni = nmfm_result1.a;
+  double nf = nmfm_result1.b;
+  t = tf;
+  k += 0.5;
+  TNewMoonFullMoonL6855 nmfm_result2 = ma_new_moon_full_moon_l6855(k, t);
+
+  return ni + 2415020.0 + nf;
+}
+
+/**
+ * Calculate Julian date of Full Moon.
+ *
+ * Original macro name: FullMoon
+ */
+double ma_fullmoon(int ds, int zc, double dy, int mn, int yr) {
+  double d0 =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int m0 =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int y0 =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+
+  double j0 = ma_civil_date_to_julian_date(0.0, 1, y0) - 2415020.0;
+  double dj = ma_civil_date_to_julian_date(d0, m0, y0) - 2415020.0;
+  double k = ma_lint(((y0 - 1900.0 + ((dj - j0) / 365.0)) * 12.3685) + 0.5);
+  double tn = k / 1236.85;
+  double tf = (k + 0.5) / 1236.85;
+  double t = tn;
+  TNewMoonFullMoonL6855 nmfm_result1 = ma_new_moon_full_moon_l6855(k, t);
+  t = tf;
+  k += 0.5;
+  TNewMoonFullMoonL6855 nmfm_result2 = ma_new_moon_full_moon_l6855(k, t);
+  double fi = nmfm_result2.a;
+  double ff = nmfm_result2.b;
+
+  return fi + 2415020.0 + ff;
+}
+
+/**
+ * Helper function for new_moon() and full_moon() """
+ */
+TNewMoonFullMoonL6855 ma_new_moon_full_moon_l6855(double k, double t) {
+  double t2 = t * t;
+  double e = 29.53 * k;
+  double c = 166.56 + (132.87 - 0.009173 * t) * t;
+  c = degrees_to_radians(c);
+  double b = 0.00058868 * k + (0.0001178 - 0.000000155 * t) * t2;
+  b = b + 0.00033 * sin(c) + 0.75933;
+  double a = k / 12.36886;
+  double a1 =
+      359.2242 + 360.0 * ma_fract(a) - (0.0000333 + 0.00000347 * t) * t2;
+  double a2 = 306.0253 + 360.0 * ma_fract(k / 0.9330851);
+  a2 += (0.0107306 + 0.00001236 * t) * t2;
+  a = k / 0.9214926;
+  double f = 21.2964 + 360.0 * ma_fract(a) - (0.0016528 + 0.00000239 * t) * t2;
+  a1 = ma_unwind_deg(a1);
+  a2 = ma_unwind_deg(a2);
+  f = ma_unwind_deg(f);
+  a1 = degrees_to_radians(a1);
+  a2 = degrees_to_radians(a2);
+  f = degrees_to_radians(f);
+
+  double dd = (0.1734 - 0.000393 * t) * sin(a1) + 0.0021 * sin(2.0 * a1);
+  dd = dd - 0.4068 * sin(a2) + 0.0161 * sin(2.0 * a2) - 0.0004 * sin(3.0 * a2);
+  dd = dd + 0.0104 * sin(2.0 * f) - 0.0051 * sin(a1 + a2);
+  dd = dd - 0.0074 * sin(a1 - a2) + 0.0004 * sin(2.0 * f + a1);
+  dd = dd - 0.0004 * sin(2.0 * f - a1) - 0.0006 * sin(2.0 * f + a2) +
+       0.001 * sin(2.0 * f - a2);
+  dd += 0.0005 * sin(a1 + 2.0 * a2);
+  double e1 = floor(e);
+  b = b + dd + (e - e1);
+  double b1 = floor(b);
+  a = e1 + b1;
+  b -= b1;
+
+  return (TNewMoonFullMoonL6855){a, b, f};
+}
+
+/**
+ * Original macro name: FRACT
+ */
+double ma_fract(double w) { return w - ma_lint(w); }
+
+/**
+ * Original macro name: LINT
+ */
+double ma_lint(double w) {
+  return ma_i_int(w) + ma_i_int(((1.0 * ma_sign(w)) - 1.0) / 2.0);
+}
+
+/**
+ * Original macro name: IINT
+ */
+double ma_i_int(double w) { return ma_sign(w) * floor(fabs(w)); }
+
+/**
+ * Calculate sign of number.
+ */
+double ma_sign(double number_to_check) {
+  double sign_value = 0.0;
+
+  if (number_to_check < 0.0)
+    sign_value = -1.0;
+
+  if (number_to_check > 0.0)
+    sign_value = 1.0;
+
+  return sign_value;
 }

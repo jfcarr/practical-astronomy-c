@@ -188,3 +188,67 @@ TMoonPhase moon_phase(double lct_hour, double lct_min, double lct_sec,
 
   return (TMoonPhase){moon_phase, bright_limb_deg};
 }
+
+/**
+ * Calculate new moon and full moon instances.
+ */
+TMoonNewFull times_of_new_moon_and_full_moon(bool isDaylightSaving,
+                                             int zoneCorrectionHours,
+                                             double localDateDay,
+                                             int localDateMonth,
+                                             int localDateYear) {
+  int daylightSaving = isDaylightSaving ? 1 : 0;
+
+  double jdOfNewMoonDays =
+      ma_newmoon(daylightSaving, zoneCorrectionHours, localDateDay,
+                 localDateMonth, localDateYear);
+  double jdOfFullMoonDays = ma_fullmoon(3, zoneCorrectionHours, localDateDay,
+                                        localDateMonth, localDateYear);
+
+  double gDateOfNewMoonDay = ma_julian_date_day(jdOfNewMoonDays);
+  double integerDay1 = floor(gDateOfNewMoonDay);
+  int gDateOfNewMoonMonth = ma_julian_date_month(jdOfNewMoonDays);
+  int gDateOfNewMoonYear = ma_julian_date_year(jdOfNewMoonDays);
+
+  double gDateOfFullMoonDay = ma_julian_date_day(jdOfFullMoonDays);
+  double integerDay2 = floor(gDateOfFullMoonDay);
+  int gDateOfFullMoonMonth = ma_julian_date_month(jdOfFullMoonDays);
+  int gDateOfFullMoonYear = ma_julian_date_year(jdOfFullMoonDays);
+
+  double utOfNewMoonHours = 24.0 * (gDateOfNewMoonDay - integerDay1);
+  double utOfFullMoonHours = 24.0 * (gDateOfFullMoonDay - integerDay2);
+  double lctOfNewMoonHours = ma_universal_time_to_local_civil_time(
+      utOfNewMoonHours + 0.008333, 0, 0, daylightSaving, zoneCorrectionHours,
+      integerDay1, gDateOfNewMoonMonth, gDateOfNewMoonYear);
+  double lctOfFullMoonHours = ma_universal_time_to_local_civil_time(
+      utOfFullMoonHours + 0.008333, 0, 0, daylightSaving, zoneCorrectionHours,
+      integerDay2, gDateOfFullMoonMonth, gDateOfFullMoonYear);
+
+  int nmLocalTimeHour = ma_decimal_hours_hour(lctOfNewMoonHours);
+  int nmLocalTimeMin = ma_decimal_hours_minute(lctOfNewMoonHours);
+  double nmLocalDateDay = ma_universal_time_local_civil_day(
+      utOfNewMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay1,
+      gDateOfNewMoonMonth, gDateOfNewMoonYear);
+  int nmLocalDateMonth = ma_universal_time_local_civil_month(
+      utOfNewMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay1,
+      gDateOfNewMoonMonth, gDateOfNewMoonYear);
+  int nmLocalDateYear = ma_universal_time_local_civil_year(
+      utOfNewMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay1,
+      gDateOfNewMoonMonth, gDateOfNewMoonYear);
+  int fmLocalTimeHour = ma_decimal_hours_hour(lctOfFullMoonHours);
+  int fmLocalTimeMin = ma_decimal_hours_minute(lctOfFullMoonHours);
+  double fmLocalDateDay = ma_universal_time_local_civil_day(
+      utOfFullMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay2,
+      gDateOfFullMoonMonth, gDateOfFullMoonYear);
+  int fmLocalDateMonth = ma_universal_time_local_civil_month(
+      utOfFullMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay2,
+      gDateOfFullMoonMonth, gDateOfFullMoonYear);
+  int fmLocalDateYear = ma_universal_time_local_civil_year(
+      utOfFullMoonHours, 0, 0, daylightSaving, zoneCorrectionHours, integerDay2,
+      gDateOfFullMoonMonth, gDateOfFullMoonYear);
+
+  return (TMoonNewFull){nmLocalTimeHour,  nmLocalTimeMin,  nmLocalDateDay,
+                        nmLocalDateMonth, nmLocalDateYear, fmLocalTimeHour,
+                        fmLocalTimeMin,   fmLocalDateDay,  fmLocalDateMonth,
+                        fmLocalDateYear};
+}
