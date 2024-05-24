@@ -191,6 +191,12 @@ double ma_moon_longitude(double lh, double lm, double ls, int ds, int zc,
 double ma_moon_latitude(double lh, double lm, double ls, int ds, int zc,
                         double dy, int mn, int yr);
 
+double ma_moon_dist(double lh, double lm, double ls, int ds, int zc, double dy,
+                    int mn, int yr);
+
+double ma_moon_size(double lh, double lm, double ls, int ds, int zc, double dy,
+                    int mn, int yr);
+
 double ma_moon_horizontal_parallax(double lh, double lm, double ls, int ds,
                                    int zc, double dy, int mn, int yr);
 

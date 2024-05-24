@@ -252,3 +252,39 @@ TMoonNewFull times_of_new_moon_and_full_moon(bool isDaylightSaving,
                         fmLocalTimeMin,   fmLocalDateDay,  fmLocalDateMonth,
                         fmLocalDateYear};
 }
+
+/**
+ * Calculate Moon's distance, angular diameter, and horizontal parallax.
+ */
+TMoonDistDiameterHP moon_dist_ang_diam_hor_parallax(
+    double lct_hour, double lct_min, double lct_sec, bool is_daylight_saving,
+    int zone_correction_hours, double local_date_day, int local_date_month,
+    int local_date_year) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double moon_distance = ma_moon_dist(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  double moon_angular_diameter = ma_moon_size(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+  double moon_horizontal_parallax = ma_moon_horizontal_parallax(
+      lct_hour, lct_min, lct_sec, daylight_saving, zone_correction_hours,
+      local_date_day, local_date_month, local_date_year);
+
+  double earth_moon_dist = dround(moon_distance, 0);
+  double ang_diameter_deg =
+      ma_decimal_degrees_degrees(moon_angular_diameter + 0.008333);
+  double ang_diameter_min =
+      ma_decimal_degrees_minutes(moon_angular_diameter + 0.008333);
+  double hor_parallax_deg =
+      ma_decimal_degrees_degrees(moon_horizontal_parallax);
+  double hor_parallax_min =
+      ma_decimal_degrees_minutes(moon_horizontal_parallax);
+  double hor_parallax_sec =
+      ma_decimal_degrees_seconds(moon_horizontal_parallax);
+
+  return (TMoonDistDiameterHP){earth_moon_dist,  ang_diameter_deg,
+                               ang_diameter_min, hor_parallax_deg,
+                               hor_parallax_min, hor_parallax_sec};
+}

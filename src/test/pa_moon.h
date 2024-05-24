@@ -26,4 +26,9 @@ void test_times_of_new_moon_and_full_moon(bool isDaylightSaving,
                                           double localDateDay,
                                           int localDateMonth, int localDateYear,
                                           TMoonNewFull expected_result);
+
+void test_moon_dist_ang_diam_hor_parallax(
+    double lct_hour, double lct_min, double lct_sec, bool is_daylight_saving,
+    int zone_correction_hours, double local_date_day, int local_date_month,
+    int local_date_year, TMoonDistDiameterHP expected_result);
 #endif

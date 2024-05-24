@@ -1384,6 +1384,35 @@ double ma_moon_latitude(double lh, double lm, double ls, int ds, int zc,
 }
 
 /**
+ * Calculate distance from the Earth to the Moon (km)
+ *
+ * Original macro name: MoonDist
+ */
+double ma_moon_dist(double lh, double lm, double ls, int ds, int zc, double dy,
+                    int mn, int yr) {
+  double hp = degrees_to_radians(
+      ma_moon_horizontal_parallax(lh, lm, ls, ds, zc, dy, mn, yr));
+  double r = 6378.14 / sin(hp);
+
+  return r;
+}
+
+/**
+ * Calculate the Moon's angular diameter (degrees)
+ *
+ * Original macro name: MoonSize
+ */
+double ma_moon_size(double lh, double lm, double ls, int ds, int zc, double dy,
+                    int mn, int yr) {
+  double hp = degrees_to_radians(
+      ma_moon_horizontal_parallax(lh, lm, ls, ds, zc, dy, mn, yr));
+  double r = 6378.14 / sin(hp);
+  double th = 384401.0 * 0.5181 / r;
+
+  return th;
+}
+
+/**
  * Calculate horizontal parallax for the Moon
  *
  * Original macro name: MoonHP
