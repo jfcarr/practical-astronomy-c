@@ -107,14 +107,12 @@ void test_moon_phase(double lct_hour, double lct_min, double lct_sec,
   assert(actual_result.moon_phase == expected_result.moon_phase);
 }
 
-void test_times_of_new_moon_and_full_moon(bool isDaylightSaving,
-                                          int zoneCorrectionHours,
-                                          double localDateDay,
-                                          int localDateMonth, int localDateYear,
-                                          TMoonNewFull expected_result) {
+void test_times_of_new_moon_and_full_moon(
+    bool is_daylight_saving, int zone_correction_hours, double local_date_day,
+    int local_date_month, int local_date_year, TMoonNewFull expected_result) {
   TMoonNewFull actual_result = times_of_new_moon_and_full_moon(
-      isDaylightSaving, zoneCorrectionHours, localDateDay, localDateMonth,
-      localDateYear);
+      is_daylight_saving, zone_correction_hours, local_date_day,
+      local_date_month, local_date_year);
 
   printf("[Times of New Moon and Full Moon]\n");
   printf("\tExpected:\n");
