@@ -30,4 +30,9 @@ TMoonDistDiameterHP moon_dist_ang_diam_hor_parallax(
     double lct_hour, double lct_min, double lct_sec, bool is_daylight_saving,
     int zone_correction_hours, double local_date_day, int local_date_month,
     int local_date_year);
+
+TMoonRiseSet moonrise_and_moonset(double local_date_day, int local_date_month,
+                                  int local_date_year, bool is_daylight_saving,
+                                  int zone_correction_hours,
+                                  double geog_long_deg, double geog_lat_deg);
 #endif

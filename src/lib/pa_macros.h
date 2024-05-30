@@ -337,4 +337,71 @@ double ma_lint(double w);
 double ma_i_int(double w);
 
 double ma_sign(double number_to_check);
+
+double ma_ut_day_adjust(double ut, double g1);
+
+double ma_moon_rise_lct(double dy, int mn, int yr, int ds, int zc,
+                        double g_long, double g_lat);
+
+TMoonRiseLCTL6680 ma_moon_rise_lct_l6680(double x, int ds, int zc, double gdy,
+                                         int gmn, int gyr, double g1,
+                                         double ut);
+
+TMoonRiseLCTL6700 ma_moon_rise_lct_l6700(double lct, int ds, int zc, double dy1,
+                                         int mn1, int yr1, double gdy, int gmn,
+                                         int gyr, double g_lat);
+
+TFullDatePrecise ma_moon_rise_lc_dmy(double dy, int mn, int yr, int ds, int zc,
+                                     double g_long, double g_lat);
+
+TMoonRiseLcDMYL6680 ma_moon_rise_lc_dmy_l6680(double x, int ds, int zc,
+                                              double gdy, int gmn, int gyr,
+                                              double g1, double ut);
+
+TMoonRiseLcDMYL6700 ma_moon_rise_lc_dmy_l6700(double lct, int ds, int zc,
+                                              double dy1, int mn1, int yr1,
+                                              double gdy, int gmn, int gyr,
+                                              double g_lat);
+
+double ma_moon_rise_az(double dy, int mn, int yr, int ds, int zc, double g_long,
+                       double g_lat);
+
+TMoonRiseAzL6680 ma_moon_rise_az_l6680(double x, int ds, int zc, double gdy,
+                                       int gmn, int gyr, double g1, double ut);
+
+TMoonRiseAzL6700 ma_moon_rise_az_l6700(double lct, int ds, int zc, double dy1,
+                                       int mn1, int yr1, double gdy, int gmn,
+                                       int gyr, double g_lat);
+
+double ma_moon_set_lct(double dy, int mn, int yr, int ds, int zc, double g_long,
+                       double g_lat);
+
+TMoonSetLCTL6680 ma_moon_set_lct_l6680(double x, int ds, int zc, double gdy,
+                                       int gmn, int gyr, double g1, double ut);
+
+TMoonSetLCTL6700 ma_moon_set_lct_l6700(double lct, int ds, int zc, double dy1,
+                                       int mn1, int yr1, double gdy, int gmn,
+                                       int gyr, double g_lat);
+
+TFullDatePrecise ma_moon_set_lc_dmy(double dy, int mn, int yr, int ds, int zc,
+                                    double g_long, double g_lat);
+
+TMoonSetLcDMYL6680 ma_moon_set_lc_dmy_l6680(double x, int ds, int zc,
+                                            double gdy, int gmn, int gyr,
+                                            double g1, double ut);
+
+TMoonSetLcDMYL6700 ma_moon_set_lc_dmy_l6700(double lct, int ds, int zc,
+                                            double dy1, int mn1, int yr1,
+                                            double gdy, int gmn, int gyr,
+                                            double g_lat);
+
+double ma_moon_set_az(double dy, int mn, int yr, int ds, int zc, double g_long,
+                      double g_lat);
+
+TMoonSetAzL6680 ma_moon_set_az_l6680(double x, int ds, int zc, double gdy,
+                                     int gmn, int gyr, double g1, double ut);
+
+TMoonSetAzL6700 ma_moon_set_az_l6700(double lct, int ds, int zc, double dy1,
+                                     int mn1, int yr1, double gdy, int gmn,
+                                     int gyr, double g_lat);
 #endif

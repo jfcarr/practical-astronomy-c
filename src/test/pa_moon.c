@@ -187,3 +187,62 @@ void test_moon_dist_ang_diam_hor_parallax(
   assert(actual_result.hor_parallax_min == expected_result.hor_parallax_min);
   assert(actual_result.hor_parallax_sec == expected_result.hor_parallax_sec);
 }
+
+void test_moonrise_and_moonset(double local_date_day, int local_date_month,
+                               int local_date_year, bool is_daylight_saving,
+                               int zone_correction_hours, double geog_long_deg,
+                               double geog_lat_deg,
+                               TMoonRiseSet expected_result) {
+  TMoonRiseSet actual_result = moonrise_and_moonset(
+      local_date_day, local_date_month, local_date_year, is_daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+
+  printf("[Moonrise and Moonset]\n");
+  printf("\tExpected:\n");
+  printf("\t\tMoonrise:\n");
+  printf("\t\t\tLocal Date is %d/%0.0f/%d\n",
+         expected_result.mr_local_date_month, expected_result.mr_local_date_day,
+         expected_result.mr_local_date_year);
+  printf("\t\t\tLocal Time is %0.0f h %0.0f m\n",
+         expected_result.mr_local_time_hour, expected_result.mr_local_time_min);
+  printf("\t\t\tAzimuth is %0.2f d\n", expected_result.mr_azimuth_deg);
+  printf("\t\tMoonset:\n");
+  printf("\t\t\tLocal Date is %d/%0.0f/%d\n",
+         expected_result.ms_local_date_month, expected_result.ms_local_date_day,
+         expected_result.ms_local_date_year);
+  printf("\t\t\tLocal Time is %0.0f h %0.0f m\n",
+         expected_result.ms_local_time_hour, expected_result.ms_local_time_min);
+  printf("\t\t\tAzimuth is %0.2f d\n", expected_result.ms_azimuth_deg);
+  printf("\tActual:\n");
+  printf("\t\tMoonrise:\n");
+  printf("\t\t\tLocal Date is %d/%0.0f/%d\n", actual_result.mr_local_date_month,
+         actual_result.mr_local_date_day, actual_result.mr_local_date_year);
+  printf("\t\t\tLocal Time is %0.0f h %0.0f m\n",
+         actual_result.mr_local_time_hour, actual_result.mr_local_time_min);
+  printf("\t\t\tAzimuth is %0.2f d\n", actual_result.mr_azimuth_deg);
+  printf("\t\tMoonset:\n");
+  printf("\t\t\tLocal Date is %d/%0.0f/%d\n", actual_result.ms_local_date_month,
+         actual_result.ms_local_date_day, actual_result.ms_local_date_year);
+  printf("\t\t\tLocal Time is %0.0f h %0.0f m\n",
+         actual_result.ms_local_time_hour, actual_result.ms_local_time_min);
+  printf("\t\t\tAzimuth is %0.2f d\n", actual_result.ms_azimuth_deg);
+
+  assert(actual_result.mr_azimuth_deg == expected_result.mr_azimuth_deg);
+  assert(actual_result.mr_local_date_day == expected_result.mr_local_date_day);
+  assert(actual_result.mr_local_date_month ==
+         expected_result.mr_local_date_month);
+  assert(actual_result.mr_local_date_year ==
+         expected_result.mr_local_date_year);
+  assert(actual_result.mr_local_time_hour ==
+         expected_result.mr_local_time_hour);
+  assert(actual_result.mr_local_time_min == expected_result.mr_local_time_min);
+  assert(actual_result.ms_azimuth_deg == expected_result.ms_azimuth_deg);
+  assert(actual_result.ms_local_date_day == expected_result.ms_local_date_day);
+  assert(actual_result.ms_local_date_month ==
+         expected_result.ms_local_date_month);
+  assert(actual_result.ms_local_date_year ==
+         expected_result.ms_local_date_year);
+  assert(actual_result.ms_local_time_hour ==
+         expected_result.ms_local_time_hour);
+  assert(actual_result.ms_local_time_min == expected_result.ms_local_time_min);
+}
