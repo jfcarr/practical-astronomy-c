@@ -293,3 +293,56 @@ TMoonDistDiameterHP moon_dist_ang_diam_hor_parallax(
                                ang_diameter_min, hor_parallax_deg,
                                hor_parallax_min, hor_parallax_sec};
 }
+
+/**
+ * Calculate date/time of local moonrise and moonset.
+ */
+TMoonRiseSet moonrise_and_moonset(double local_date_day, int local_date_month,
+                                  int local_date_year, bool is_daylight_saving,
+                                  int zone_correction_hours,
+                                  double geog_long_deg, double geog_lat_deg) {
+  int daylight_saving = is_daylight_saving ? 1 : 0;
+
+  double local_time_of_moonrise_hours = ma_moon_rise_lct(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+  TFullDatePrecise moon_rise_lc_result = ma_moon_rise_lc_dmy(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+  double local_azimuth_deg1 = ma_moon_rise_az(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+
+  double local_time_of_moonset_hours = ma_moon_set_lct(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+  TFullDatePrecise moon_set_lc_result = ma_moon_set_lc_dmy(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+  double local_azimuth_deg2 = ma_moon_set_az(
+      local_date_day, local_date_month, local_date_year, daylight_saving,
+      zone_correction_hours, geog_long_deg, geog_lat_deg);
+
+  int mr_lt_hour =
+      ma_decimal_hours_hour(local_time_of_moonrise_hours + 0.008333);
+  int mr_lt_min =
+      ma_decimal_hours_minute(local_time_of_moonrise_hours + 0.008333);
+  double mr_local_date_day = moon_rise_lc_result.day;
+  int mr_local_date_month = moon_rise_lc_result.month;
+  int mr_local_date_year = moon_rise_lc_result.year;
+  double mr_azimuth_deg = dround(local_azimuth_deg1, 2);
+  int ms_lt_hour =
+      ma_decimal_hours_hour(local_time_of_moonset_hours + 0.008333);
+  int ms_lt_min =
+      ma_decimal_hours_minute(local_time_of_moonset_hours + 0.008333);
+  double ms_local_date_day = moon_set_lc_result.day;
+  int ms_local_date_month = moon_set_lc_result.month;
+  int ms_local_date_year = moon_set_lc_result.year;
+  double ms_azimuth_deg = dround(local_azimuth_deg2, 2);
+
+  return (TMoonRiseSet){
+      mr_lt_hour,          mr_lt_min,          mr_local_date_day,
+      mr_local_date_month, mr_local_date_year, mr_azimuth_deg,
+      ms_lt_hour,          ms_lt_min,          ms_local_date_day,
+      ms_local_date_month, ms_local_date_year, ms_azimuth_deg};
+}

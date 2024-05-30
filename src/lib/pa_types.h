@@ -62,6 +62,12 @@ typedef struct pa_full_date {
   int year;
 } TFullDate;
 
+typedef struct pa_full_date_precise {
+  int month;
+  double day;
+  int year;
+} TFullDatePrecise;
+
 /**
  * Structure to hold a Time value:
  *
@@ -444,4 +450,92 @@ typedef struct pa_moon_dist_diameter_hp {
   double hor_parallax_min;
   double hor_parallax_sec;
 } TMoonDistDiameterHP;
+
+typedef struct pa_moon_rise_set {
+  double mr_local_time_hour;
+  double mr_local_time_min;
+  double mr_local_date_day;
+  int mr_local_date_month;
+  int mr_local_date_year;
+  double mr_azimuth_deg;
+  double ms_local_time_hour;
+  double ms_local_time_min;
+  double ms_local_date_day;
+  int ms_local_date_month;
+  int ms_local_date_year;
+  double ms_azimuth_deg;
+} TMoonRiseSet;
+
+typedef struct pa_moon_rise_lct_l6680 {
+  double ut;
+  double lct;
+  double dy1;
+  int mn1;
+  int yr1;
+  double gdy;
+  int gmn;
+  int gyr;
+} TMoonRiseLCTL6680, TMoonSetLCTL6680;
+
+typedef struct pa_moon_rise_lct_l6700 {
+  double mm;
+  double bm;
+  double pm;
+  double dp;
+  double th;
+  double di;
+  double p;
+  double q;
+  double lu;
+  double lct;
+} TMoonRiseLCTL6700, TMoonSetLCTL6700;
+
+typedef struct pa_moon_rise_lc_dmy_l6680 {
+  double ut;
+  double lct;
+  double dy1;
+  int mn1;
+  int yr1;
+  double gdy;
+  int gmn;
+  int gyr;
+} TMoonRiseLcDMYL6680, TMoonSetLcDMYL6680;
+
+typedef struct pa_moon_rise_lc_dmy_l6700 {
+  double mm;
+  double bm;
+  double pm;
+  double dp;
+  double th;
+  double di;
+  double p;
+  double q;
+  double lu;
+  double lct;
+} TMoonRiseLcDMYL6700, TMoonSetLcDMYL6700;
+
+typedef struct pa_moon_rise_az_l6680 {
+  double ut;
+  double lct;
+  double dy1;
+  int mn1;
+  int yr1;
+  double gdy;
+  int gmn;
+  int gyr;
+} TMoonRiseAzL6680, TMoonSetAzL6680;
+
+typedef struct pa_moon_rise_az_l6700 {
+  double mm;
+  double bm;
+  double pm;
+  double dp;
+  double th;
+  double di;
+  double p;
+  double q;
+  double lu;
+  double lct;
+  double au;
+} TMoonRiseAzL6700, TMoonSetAzL6700;
 #endif

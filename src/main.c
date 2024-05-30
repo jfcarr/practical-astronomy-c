@@ -194,6 +194,10 @@ void test_moon() {
   test_moon_dist_ang_diam_hor_parallax(
       0, 0, 0, false, 0, 1, 9, 2003,
       (TMoonDistDiameterHP){367964, 0, 32, 0, 59, 35.49});
+
+  test_moonrise_and_moonset(
+      6, 3, 1986, false, -5, -71.05, 42.3667,
+      (TMoonRiseSet){4, 21, 6, 3, 1986, 127.34, 13, 8, 6, 3, 1986, 234.05});
 }
 
 int main() {

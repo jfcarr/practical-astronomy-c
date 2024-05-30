@@ -3674,3 +3674,794 @@ double ma_sign(double number_to_check) {
 
   return sign_value;
 }
+
+/**
+ * Original macro name: UTDayAdjust
+ */
+double ma_ut_day_adjust(double ut, double g1) {
+  double returnValue = ut;
+
+  if ((ut - g1) < -6.0)
+    returnValue = ut + 24.0;
+
+  if ((ut - g1) > 6.0)
+    returnValue = ut - 24.0;
+
+  return returnValue;
+}
+
+/**
+ * Local time of moonrise.
+ *
+ * Original macro name: MoonRiseLCT
+ */
+double ma_moon_rise_lct(double dy, int mn, int yr, int ds, int zc,
+                        double g_long, double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonRiseLCTL6700 lct6700_result1 =
+      ma_moon_rise_lct_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = lct6700_result1.lu;
+  lct = lct6700_result1.lct;
+
+  if (lct == -99.0)
+    return lct;
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1 = 0.0;
+  double gu = 0.0;
+
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonRiseLCTL6680 lct6680_result =
+        ma_moon_rise_lct_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = lct6680_result.lct;
+    dy1 = lct6680_result.dy1;
+    mn1 = lct6680_result.mn1;
+    yr1 = lct6680_result.yr1;
+    gdy = lct6680_result.gdy;
+    gmn = lct6680_result.gmn;
+    gyr = lct6680_result.gyr;
+
+    TMoonRiseLCTL6700 lct6700_result2 = ma_moon_rise_lct_l6700(
+        lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+    lu = lct6700_result2.lu;
+    lct = lct6700_result2.lct;
+
+    if (lct == -99.0)
+      return lct;
+
+    la = lu;
+  }
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn, gyr);
+
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy, gmn,
+                                              gyr);
+
+  return lct;
+}
+
+/**
+ * Helper function for MoonRiseLCT
+ */
+TMoonRiseLCTL6680 ma_moon_rise_lct_l6680(double x, int ds, int zc, double gdy,
+                                         int gmn, int gyr, double g1,
+                                         double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonRiseLCTL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for MoonRiseLCT
+ */
+TMoonRiseLCTL6700 ma_moon_rise_lct_l6700(double lct, int ds, int zc, double dy1,
+                                         int mn1, int yr1, double gdy, int gmn,
+                                         int gyr, double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_rise(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                   ma_degrees(di), g_lat);
+
+  if (!ma_ers(p, 0.0, 0.0, q, 0.0, 0.0, ma_degrees(di), g_lat) ==
+      RiseSetStatus_OK)
+    lct = -99.0;
+
+  return (TMoonRiseLCTL6700){mm, bm, pm, dp, th, di, p, q, lu, lct};
+}
+
+/**
+ * Local date of moonrise.
+ *
+ * Original macro names: MoonRiseLcDay, MoonRiseLcMonth, MoonRiseLcYear
+ */
+TFullDatePrecise ma_moon_rise_lc_dmy(double dy, int mn, int yr, int ds, int zc,
+                                     double g_long, double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonRiseLcDMYL6700 lct6700_result1 = ma_moon_rise_lc_dmy_l6700(
+      lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = lct6700_result1.lu;
+  lct = lct6700_result1.lct;
+
+  if (lct == -99.0)
+    return (TFullDatePrecise){lct, (int)lct, (int)lct};
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1 = 0.0;
+  double gu = 0.0;
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonRiseLcDMYL6680 lct6680_result1 =
+        ma_moon_rise_lc_dmy_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = lct6680_result1.lct;
+    dy1 = lct6680_result1.dy1;
+    mn1 = lct6680_result1.mn1;
+    yr1 = lct6680_result1.yr1;
+    gdy = lct6680_result1.gdy;
+    gmn = lct6680_result1.gmn;
+    gyr = lct6680_result1.gyr;
+
+    TMoonRiseLcDMYL6700 lct6700_result2 = ma_moon_rise_lc_dmy_l6700(
+        lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+
+    lu = lct6700_result2.lu;
+    lct = lct6700_result2.lct;
+
+    if (lct == -99.0)
+      return (TFullDatePrecise){lct, (int)lct, (int)lct};
+
+    la = lu;
+  }
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn, gyr);
+
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  dy1 = ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  yr1 = ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+
+  return (TFullDatePrecise){mn1, dy1, yr1};
+}
+
+/**
+ * Helper function for MoonRiseLcDMY
+ */
+TMoonRiseLcDMYL6680 ma_moon_rise_lc_dmy_l6680(double x, int ds, int zc,
+                                              double gdy, int gmn, int gyr,
+                                              double g1, double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonRiseLcDMYL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for MoonRiseLcDMY
+ */
+TMoonRiseLcDMYL6700 ma_moon_rise_lc_dmy_l6700(double lct, int ds, int zc,
+                                              double dy1, int mn1, int yr1,
+                                              double gdy, int gmn, int gyr,
+                                              double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_rise(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                   ma_degrees(di), g_lat);
+
+  return (TMoonRiseLcDMYL6700){mm, bm, pm, dp, th, di, p, q, lu, lct};
+}
+
+/**
+ * Local azimuth of moonrise.
+ *
+ * Original macro name: MoonRiseAz
+ */
+double ma_moon_rise_az(double dy, int mn, int yr, int ds, int zc, double g_long,
+                       double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonRiseAzL6700 az6700_result1 =
+      ma_moon_rise_az_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = az6700_result1.lu;
+  lct = az6700_result1.lct;
+  double au;
+
+  if (lct == -99.0)
+    return lct;
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1;
+  double gu = 0.0;
+  double aa = 0.0;
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonRiseAzL6680 az6680_result1 =
+        ma_moon_rise_az_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = az6680_result1.lct;
+    dy1 = az6680_result1.dy1;
+    mn1 = az6680_result1.mn1;
+    yr1 = az6680_result1.yr1;
+    gdy = az6680_result1.gdy;
+    gmn = az6680_result1.gmn;
+    gyr = az6680_result1.gyr;
+
+    TMoonRiseAzL6700 az6700_result2 =
+        ma_moon_rise_az_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+    lu = az6700_result2.lu;
+    lct = az6700_result2.lct;
+    au = az6700_result2.au;
+
+    if (lct == -99.0)
+      return lct;
+
+    la = lu;
+    aa = au;
+  }
+
+  au = aa;
+
+  return au;
+}
+
+/**
+ * Helper function for MoonRiseAz
+ */
+TMoonRiseAzL6680 ma_moon_rise_az_l6680(double x, int ds, int zc, double gdy,
+                                       int gmn, int gyr, double g1, double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonRiseAzL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for MoonRiseAz
+ */
+TMoonRiseAzL6700 ma_moon_rise_az_l6700(double lct, int ds, int zc, double dy1,
+                                       int mn1, int yr1, double gdy, int gmn,
+                                       int gyr, double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_rise(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                   ma_degrees(di), g_lat);
+  double au =
+      ma_rise_set_azimuth_rise(p, 0.0, 0.0, q, 0.0, 0.0, ma_degrees(di), g_lat);
+
+  return (TMoonRiseAzL6700){mm, bm, pm, dp, th, di, p, q, lu, lct, au};
+}
+
+/**
+ * Local time of moonset.
+ *
+ * Original macro name: MoonSetLCT
+ */
+double ma_moon_set_lct(double dy, int mn, int yr, int ds, int zc, double g_long,
+                       double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonSetLCTL6700 lct6700_result1 =
+      ma_moon_set_lct_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = lct6700_result1.lu;
+  lct = lct6700_result1.lct;
+
+  if (lct == -99.0)
+    return lct;
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1 = 0.0;
+  double gu = 0.0;
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonSetLCTL6680 lct6680_result1 =
+        ma_moon_set_lct_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = lct6680_result1.lct;
+    dy1 = lct6680_result1.dy1;
+    mn1 = lct6680_result1.mn1;
+    yr1 = lct6680_result1.yr1;
+    gdy = lct6680_result1.gdy;
+    gmn = lct6680_result1.gmn;
+    gyr = lct6680_result1.gyr;
+
+    TMoonSetLCTL6700 lct6700_result2 =
+        ma_moon_set_lct_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+    lu = lct6700_result2.lu;
+    lct = lct6700_result2.lct;
+
+    if (lct == -99.0)
+      return lct;
+
+    la = lu;
+  }
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn, gyr);
+
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy, gmn,
+                                              gyr);
+
+  return lct;
+}
+
+/**
+ * Helper function for MoonSetLCT
+ */
+TMoonSetLCTL6680 ma_moon_set_lct_l6680(double x, int ds, int zc, double gdy,
+                                       int gmn, int gyr, double g1, double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonSetLCTL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for MoonSetLCT
+ */
+TMoonSetLCTL6700 ma_moon_set_lct_l6700(double lct, int ds, int zc, double dy1,
+                                       int mn1, int yr1, double gdy, int gmn,
+                                       int gyr, double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_set(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                  ma_degrees(di), g_lat);
+
+  if (!ma_ers(p, 0.0, 0.0, q, 0.0, 0.0, ma_degrees(di), g_lat) ==
+      RiseSetStatus_OK)
+    lct = -99.0;
+
+  return (TMoonSetLCTL6700){mm, bm, pm, dp, th, di, p, q, lu, lct};
+}
+
+/**
+ * Local date of moonset.
+ *
+ * Original macro names: MoonSetLcDay, MoonSetLcMonth, MoonSetLcYear
+ */
+TFullDatePrecise ma_moon_set_lc_dmy(double dy, int mn, int yr, int ds, int zc,
+                                    double g_long, double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonSetLcDMYL6700 dmy6700_result1 = ma_moon_set_lc_dmy_l6700(
+      lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = dmy6700_result1.lu;
+  lct = dmy6700_result1.lct;
+
+  if (lct == -99.0)
+    return (TFullDatePrecise){lct, (int)lct, (int)lct};
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1 = 0.0;
+  double gu = 0.0;
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonSetLcDMYL6680 dmy6680_result1 =
+        ma_moon_set_lc_dmy_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = dmy6680_result1.lct;
+    dy1 = dmy6680_result1.dy1;
+    mn1 = dmy6680_result1.mn1;
+    yr1 = dmy6680_result1.yr1;
+    gdy = dmy6680_result1.gdy;
+    gmn = dmy6680_result1.gmn;
+    gyr = dmy6680_result1.gyr;
+
+    TMoonSetLcDMYL6700 dmy6700_result2 = ma_moon_set_lc_dmy_l6700(
+        lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+    lu = dmy6700_result2.lu;
+    lct = dmy6700_result2.lct;
+
+    if (lct == -99.0)
+      return (TFullDatePrecise){lct, (int)lct, (int)lct};
+
+    la = lu;
+  }
+
+  x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+  ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn, gyr);
+
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  dy1 = ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  yr1 = ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+
+  return (TFullDatePrecise){mn1, dy1, yr1};
+}
+
+/**
+ * Helper function for MoonSetLcDMY
+ */
+TMoonSetLcDMYL6680 ma_moon_set_lc_dmy_l6680(double x, int ds, int zc,
+                                            double gdy, int gmn, int gyr,
+                                            double g1, double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonSetLcDMYL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for MoonSetLcDMY
+ */
+TMoonSetLcDMYL6700 ma_moon_set_lc_dmy_l6700(double lct, int ds, int zc,
+                                            double dy1, int mn1, int yr1,
+                                            double gdy, int gmn, int gyr,
+                                            double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_set(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                  ma_degrees(di), g_lat);
+
+  return (TMoonSetLcDMYL6700){mm, bm, pm, dp, th, di, p, q, lu, lct};
+}
+
+/**
+ * Local azimuth of moonset.
+ *
+ * Original macro name: MoonSetAz
+ */
+double ma_moon_set_az(double dy, int mn, int yr, int ds, int zc, double g_long,
+                      double g_lat) {
+  double gdy =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gmn =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int gyr =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  double lct = 12.0;
+  double dy1 = dy;
+  int mn1 = mn;
+  int yr1 = yr;
+
+  TMoonSetAzL6700 az6700_result1 =
+      ma_moon_set_az_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+  double lu = az6700_result1.lu;
+  lct = az6700_result1.lct;
+
+  double au;
+
+  if (lct == -99.0)
+    return lct;
+
+  double la = lu;
+
+  double x;
+  double ut;
+  double g1;
+  double gu = 0.0;
+  double aa = 0.0;
+  for (int k = 1; k < 9; k++) {
+    x = ma_local_sidereal_time_to_greenwich_sidereal_time(la, 0.0, 0.0, g_long);
+    ut = ma_greenwich_sidereal_time_to_universal_time(x, 0.0, 0.0, gdy, gmn,
+                                                      gyr);
+
+    g1 = (k == 1) ? ut : gu;
+
+    gu = ut;
+    ut = gu;
+
+    TMoonSetAzL6680 az6680_result1 =
+        ma_moon_set_az_l6680(x, ds, zc, gdy, gmn, gyr, g1, ut);
+    lct = az6680_result1.lct;
+    dy1 = az6680_result1.dy1;
+    mn1 = az6680_result1.mn1;
+    yr1 = az6680_result1.yr1;
+    gdy = az6680_result1.gdy;
+    gmn = az6680_result1.gmn;
+    gyr = az6680_result1.gyr;
+
+    TMoonSetAzL6700 az6700_result2 =
+        ma_moon_set_az_l6700(lct, ds, zc, dy1, mn1, yr1, gdy, gmn, gyr, g_lat);
+    lu = az6700_result2.lu;
+    lct = az6700_result2.lct;
+    au = az6700_result2.au;
+
+    if (lct == -99.0)
+      return lct;
+
+    la = lu;
+    aa = au;
+  }
+
+  au = aa;
+
+  return au;
+}
+
+/**
+ * Helper function for moon_set_az
+ */
+TMoonSetAzL6680 ma_moon_set_az_l6680(double x, int ds, int zc, double gdy,
+                                     int gmn, int gyr, double g1, double ut) {
+  if (!ma_eg_st_ut(x, 0.0, 0.0, gdy, gmn, gyr) == WarningFlag_OK)
+    if (fabs(g1 - ut) > 0.5)
+      ut += 23.93447;
+
+  ut = ma_ut_day_adjust(ut, g1);
+  double lct = ma_universal_time_to_local_civil_time(ut, 0.0, 0.0, ds, zc, gdy,
+                                                     gmn, gyr);
+  double dy1 =
+      ma_universal_time_local_civil_day(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int mn1 =
+      ma_universal_time_local_civil_month(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  int yr1 =
+      ma_universal_time_local_civil_year(ut, 0.0, 0.0, ds, zc, gdy, gmn, gyr);
+  gdy = ma_local_civil_time_greenwich_day(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gmn =
+      ma_local_civil_time_greenwich_month(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  gyr =
+      ma_local_civil_time_greenwich_year(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  ut -= 24.0 * floor(ut / 24.0);
+
+  return (TMoonSetAzL6680){ut, lct, dy1, mn1, yr1, gdy, gmn, gyr};
+}
+
+/**
+ * Helper function for moon_set_az
+ */
+TMoonSetAzL6700 ma_moon_set_az_l6700(double lct, int ds, int zc, double dy1,
+                                     int mn1, int yr1, double gdy, int gmn,
+                                     int gyr, double g_lat) {
+  double mm = ma_moon_longitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double bm = ma_moon_latitude(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1);
+  double pm = degrees_to_radians(
+      ma_moon_horizontal_parallax(lct, 0.0, 0.0, ds, zc, dy1, mn1, yr1));
+  double dp = ma_nutat_long(gdy, gmn, gyr);
+  double th = 0.27249 * sin(pm);
+  double di = th + 0.0098902 - pm;
+  double p = ma_decimal_degrees_to_degree_hours(
+      ma_ec_ra(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr));
+  double q = ma_ec_dec(mm + dp, 0.0, 0.0, bm, 0.0, 0.0, gdy, gmn, gyr);
+  double lu = ma_rise_set_local_sidereal_time_set(p, 0.0, 0.0, q, 0.0, 0.0,
+                                                  ma_degrees(di), g_lat);
+  double au =
+      ma_rise_set_azimuth_set(p, 0.0, 0.0, q, 0.0, 0.0, ma_degrees(di), g_lat);
+
+  return (TMoonSetAzL6700){mm, bm, pm, dp, th, di, p, q, lu, lct, au};
+}
