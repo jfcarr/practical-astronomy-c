@@ -3691,6 +3691,11 @@ double ma_ut_day_adjust(double ut, double g1) {
 }
 
 /**
+ * Original macro name: Fpart
+ */
+double ma_f_part(double w) { return w - ma_lint(w); }
+
+/**
  * Local time of moonrise.
  *
  * Original macro name: MoonRiseLCT
@@ -4464,4 +4469,876 @@ TMoonSetAzL6700 ma_moon_set_az_l6700(double lct, int ds, int zc, double dy1,
       ma_rise_set_azimuth_set(p, 0.0, 0.0, q, 0.0, 0.0, ma_degrees(di), g_lat);
 
   return (TMoonSetAzL6700){mm, bm, pm, dp, th, di, p, q, lu, lct, au};
+}
+
+/**
+ * Determine if a lunar eclipse is likely to occur.
+ *
+ * Original macro name: LEOccurrence
+ */
+enum LunarEclipseStatus ma_lunar_eclipse_occurrence(int ds, int zc, double dy,
+                                                    int mn, int yr) {
+  double d0 =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int m0 =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int y0 =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+
+  double j0 = ma_civil_date_to_julian_date(0.0, 1, y0);
+  double dj = ma_civil_date_to_julian_date(d0, m0, y0);
+  double k = (y0 - 1900.0 + ((dj - j0) * 1.0 / 365.0)) * 12.3685;
+  k = ma_lint(k + 0.5);
+  double tn = k / 1236.85;
+  double tf = (k + 0.5) / 1236.85;
+  double t = tn;
+  TLunarEclipseOccurrence_L6855 l6855_result1 =
+      ma_lunar_eclipse_occurrence_l6855(t, k);
+  t = tf;
+  k += 0.5;
+  TLunarEclipseOccurrence_L6855 l6855_result2 =
+      ma_lunar_eclipse_occurrence_l6855(t, k);
+  double fb = l6855_result2.f;
+
+  double df = fabs(fb - 3.141592654 * ma_lint(fb / 3.141592654));
+
+  if (df > 0.37)
+    df = 3.141592654 - df;
+
+  enum LunarEclipseStatus s = LunarEclipseStatus_CERTAIN;
+  if (df >= 0.242600766) {
+    s = LunarEclipseStatus_POSSIBLE;
+
+    if (df > 0.37)
+      s = LunarEclipseStatus_NONE;
+  }
+
+  return s;
+}
+
+/**
+ * Helper function for lunar_eclipse_occurrence
+ */
+TLunarEclipseOccurrence_L6855 ma_lunar_eclipse_occurrence_l6855(double t,
+                                                                double k) {
+  double t2 = t * t;
+  double e = 29.53 * k;
+  double c = 166.56 + (132.87 - 0.009173 * t) * t;
+  c = degrees_to_radians(c);
+  double b = 0.00058868 * k + (0.0001178 - 0.000000155 * t) * t2;
+  b = b + 0.00033 * sin(c) + 0.75933;
+  double a = k / 12.36886;
+  double a1 =
+      359.2242 + 360.0 * ma_f_part(a) - (0.0000333 + 0.00000347 * t) * t2;
+  double a2 = 306.0253 + 360.0 * ma_f_part(k / 0.9330851);
+  a2 += (0.0107306 + 0.00001236 * t) * t2;
+  a = k / 0.9214926;
+  double f = 21.2964 + 360.0 * ma_f_part(a) - (0.0016528 + 0.00000239 * t) * t2;
+  a1 = ma_unwind_deg(a1);
+  a2 = ma_unwind_deg(a2);
+  f = ma_unwind_deg(f);
+  a1 = degrees_to_radians(a1);
+  a2 = degrees_to_radians(a2);
+  f = degrees_to_radians(f);
+
+  double dd1 = (0.1734 - 0.000393 * t) * sin(a1) + 0.0021 * sin(2.0 * a1);
+  dd1 =
+      dd1 - 0.4068 * sin(a2) + 0.0161 * sin(2.0 * a2) - 0.0004 * sin(3.0 * a2);
+  dd1 = dd1 + 0.0104 * sin(2.0 * f) - 0.0051 * sin(a1 + a2);
+  dd1 = dd1 - 0.0074 * sin(a1 - a2) + 0.0004 * sin(2.0 * f + a1);
+  dd1 = dd1 - 0.0004 * sin(2.0 * f - a1) - 0.0006 * sin(2.0 * f + a2) +
+        0.001 * sin(2.0 * f - a2);
+  dd1 += 0.0005 * sin(a1 + 2.0 * a2);
+  double e1 = floor(e);
+  b = b + dd1 + (e - e1);
+  double b1 = floor(b);
+  a = e1 + b1;
+  b -= b1;
+
+  return (TLunarEclipseOccurrence_L6855){f, dd1, e1, b1, a, b};
+}
+
+/**
+ * Calculate time of maximum shadow for lunar eclipse (UT)
+ *
+ * Original macro name: UTMaxLunarEclipse
+ */
+double ma_ut_max_lunar_eclipse(double dy, int mn, int yr, int ds, int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double rp = (hd + rn + ps) * 1.02;
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  return z1;
+}
+
+/**
+ * Calculate time of first shadow contact for lunar eclipse (UT)
+ *
+ * Original macro name: UTFirstContactLunarEclipse
+ */
+double ma_ut_first_contact_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                         int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double rp = (hd + rn + ps) * 1.02;
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  if (z6 < 0.0)
+    z6 += 24.0;
+
+  return z6;
+}
+
+/**
+ * Calculate time of last shadow contact for lunar eclipse (UT)
+ *
+ * Original macro name: UTLastContactLunarEclipse
+ */
+double ma_ut_last_contact_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                        int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double rp = (hd + rn + ps) * 1.02;
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z7 = z1 + zd - ma_lint((z1 + zd) / 24.0) * 24.0;
+
+  return z7;
+}
+
+/**
+ * Calculate start time of umbra phase of lunar eclipse (UT)
+ *
+ * Original macro name: UTStartUmbraLunarEclipse
+ */
+double ma_ut_start_umbra_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                       int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double ru = (hd - rn + ps) * 1.02;
+  double rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  r = rm + ru;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double z8 = z1 - zd;
+
+  if (z8 < 0.0)
+    z8 += 24.0;
+
+  return z8;
+}
+
+/**
+ * Calculate end time of umbra phase of lunar eclipse (UT)
+ *
+ * Original macro name: UTEndUmbraLunarEclipse
+ */
+double ma_ut_end_umbra_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                     int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double ru = (hd - rn + ps) * 1.02;
+  double rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  r = rm + ru;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double z9 = z1 + zd - ma_lint((z1 + zd) / 24.0) * 24.0;
+
+  return z9;
+}
+
+/**
+ * Calculate start time of total phase of lunar eclipse (UT)
+ *
+ * Original macro name: UTStartTotalLunarEclipse
+ */
+double ma_ut_start_total_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                       int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double ru = (hd - rn + ps) * 1.02;
+  double rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  r = rm + ru;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double z8 = z1 - zd;
+
+  r = ru - rm;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double zcc = z1 - zd;
+
+  if (zcc < 0.0)
+    zcc = zc + 24.0;
+
+  return zcc;
+}
+
+/**
+ * Calculate end time of total phase of lunar eclipse (UT)
+ *
+ * Original macro name: UTEndTotalLunarEclipse
+ */
+double ma_ut_end_total_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                     int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double ru = (hd - rn + ps) * 1.02;
+  double rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  r = rm + ru;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double z8 = z1 - zd;
+
+  r = ru - rm;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  zd = sqrt(dd);
+  double zb = z1 + zd - ma_lint((z1 + zd) / 24.0) * 24.0;
+
+  return zb;
+}
+
+/**
+ * Calculate magnitude of lunar eclipse.
+ *
+ * Original macro name: MagLunarEclipse
+ */
+double ma_mag_lunar_eclipse(double dy, int mn, int yr, int ds, int zc) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_lunar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      LunarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_fullmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utfm = xi * 24.0;
+  double ut = utfm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utfm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utfm;
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double q = 0.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  sr = sr + PA_PI - ma_lint((sr + PA_PI) / tp) * tp;
+  by -= q;
+  bz -= q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double ru = (hd - rn + ps) * 1.02;
+  double rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rp;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  r = rm + ru;
+  dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+  double mg = (rm + rp - pj) / (2.0 * rm);
+
+  if (dd < 0.0)
+    return mg;
+
+  zd = sqrt(dd);
+  double z8 = z1 - zd;
+
+  r = ru - rm;
+  dd = z1 - x0;
+  mg = (rm + ru - pj) / (2.0 * rm);
+
+  return mg;
 }

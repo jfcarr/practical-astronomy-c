@@ -49,6 +49,12 @@ enum CoordinateType {
 
 enum AccuracyLevel { AccuracyLevel_APPROXIMATE, AccuracyLevel_PRECISE };
 
+enum LunarEclipseStatus {
+  LunarEclipseStatus_CERTAIN,
+  LunarEclipseStatus_POSSIBLE,
+  LunarEclipseStatus_NONE
+};
+
 /**
  * Structure to hold a Date value:
  *
@@ -538,4 +544,41 @@ typedef struct pa_moon_rise_az_l6700 {
   double lct;
   double au;
 } TMoonRiseAzL6700, TMoonSetAzL6700;
+
+typedef struct pa_lunar_eclipse_occurrence {
+  enum LunarEclipseStatus status;
+  double event_date_day;
+  int event_date_month;
+  int event_date_year;
+} TLunarEclipseOccurrence;
+
+typedef struct pa_lunar_eclipse_occurrence_l6855 {
+  double f;
+  double dd;
+  double e1;
+  double b1;
+  double a;
+  double b;
+} TLunarEclipseOccurrence_L6855;
+
+typedef struct pa_lunar_eclipse_circumstances {
+  double lunar_eclipse_certain_dateday;
+  double lunar_eclipse_certain_datemonth;
+  double lunar_eclipse_certain_dateyear;
+  double ut_start_pen_phase_hour;
+  double ut_start_pen_phase_minutes;
+  double ut_start_umbral_phase_hour;
+  double ut_start_umbral_phase_minutes;
+  double ut_start_total_phase_hour;
+  double ut_start_total_phase_minutes;
+  double ut_mid_eclipse_hour;
+  double ut_mid_eclipse_minutes;
+  double ut_end_total_phase_hour;
+  double ut_end_total_phase_minutes;
+  double ut_end_umbral_phase_hour;
+  double ut_end_umbral_phase_minutes;
+  double ut_end_pen_phase_hour;
+  double ut_end_pen_phase_minutes;
+  double eclipse_magnitude;
+} TLunarEclipseCircumstances;
 #endif

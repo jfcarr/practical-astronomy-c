@@ -2,6 +2,7 @@
 #include "test/pa_comet.h"
 #include "test/pa_coordinates.h"
 #include "test/pa_datetime.h"
+#include "test/pa_eclipses.h"
 #include "test/pa_moon.h"
 #include "test/pa_planets.h"
 #include "test/pa_sun.h"
@@ -200,6 +201,17 @@ void test_moon() {
       (TMoonRiseSet){4, 21, 6, 3, 1986, 127.34, 13, 8, 6, 3, 1986, 234.05});
 }
 
+void test_eclipses() {
+  test_lunar_eclipse_occurrence(
+      1, 4, 2015, false, 10,
+      (TLunarEclipseOccurrence){LunarEclipseStatus_CERTAIN, 4, 4, 2015});
+
+  test_lunar_eclipse_circumstances(
+      1, 4, 2015, false, 10,
+      (TLunarEclipseCircumstances){4, 4, 2015, 9, 0, 10, 16, 11, 55, 12, 1, 12,
+                                   7, 13, 46, 15, 1, 1.01});
+}
+
 int main() {
   test_datetime();
   test_coordinates();
@@ -208,6 +220,7 @@ int main() {
   test_comet();
   test_binary_star();
   test_moon();
+  test_eclipses();
 
   return (0);
 }
