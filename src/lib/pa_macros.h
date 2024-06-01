@@ -340,6 +340,8 @@ double ma_sign(double number_to_check);
 
 double ma_ut_day_adjust(double ut, double g1);
 
+double ma_f_part(double w);
+
 double ma_moon_rise_lct(double dy, int mn, int yr, int ds, int zc,
                         double g_long, double g_lat);
 
@@ -404,4 +406,30 @@ TMoonSetAzL6680 ma_moon_set_az_l6680(double x, int ds, int zc, double gdy,
 TMoonSetAzL6700 ma_moon_set_az_l6700(double lct, int ds, int zc, double dy1,
                                      int mn1, int yr1, double gdy, int gmn,
                                      int gyr, double g_lat);
+
+enum LunarEclipseStatus ma_lunar_eclipse_occurrence(int ds, int zc, double dy,
+                                                    int mn, int yr);
+
+TLunarEclipseOccurrence_L6855 ma_lunar_eclipse_occurrence_l6855(double t,
+                                                                double k);
+
+double ma_ut_max_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
+
+double ma_ut_first_contact_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                         int zc);
+
+double ma_ut_last_contact_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                        int zc);
+
+double ma_ut_start_umbra_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                       int zc);
+
+double ma_ut_end_umbra_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
+
+double ma_ut_start_total_lunar_eclipse(double dy, int mn, int yr, int ds,
+                                       int zc);
+
+double ma_ut_end_total_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
+
+double ma_mag_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
 #endif
