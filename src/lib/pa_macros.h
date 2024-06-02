@@ -342,6 +342,12 @@ double ma_ut_day_adjust(double ut, double g1);
 
 double ma_f_part(double w);
 
+double ma_eqe_lat(double rah, double ram, double ras, double dd, double dm,
+                  double ds, double gd, int gm, int gy);
+
+double ma_eqe_long(double rah, double ram, double ras, double dd, double dm,
+                   double ds, double gd, int gm, int gy);
+
 double ma_moon_rise_lct(double dy, int mn, int yr, int ds, int zc,
                         double g_long, double g_lat);
 
@@ -432,4 +438,44 @@ double ma_ut_start_total_lunar_eclipse(double dy, int mn, int yr, int ds,
 double ma_ut_end_total_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
 
 double ma_mag_lunar_eclipse(double dy, int mn, int yr, int ds, int zc);
+
+enum SolarEclipseStatus ma_solar_eclipse_occurrence(int ds, int zc, double dy,
+                                                    int mn, int yr);
+
+TSolarEclipseOccurrence_L6855 ma_solar_eclipse_occurrence_l6855(double t,
+                                                                double k);
+
+double ma_ut_max_solar_eclipse(double dy, int mn, int yr, int ds, int zc,
+                               double glong, double glat);
+
+TUTMaxSolarEclipseL7390 ma_ut_max_solar_eclipse_l7390(double x, double y,
+                                                      double igday, int gmonth,
+                                                      int gyear, double tm,
+                                                      double glong, double glat,
+                                                      double hp);
+
+double ma_ut_first_contact_solar_eclipse(double dy, int mn, int yr, int ds,
+                                         int zc, double glong, double glat);
+
+TUTFirstContactSolarEclipseL7390
+ma_ut_first_contact_solar_eclipse_l7390(double x, double y, double igday,
+                                        int gmonth, int gyear, double tm,
+                                        double glong, double glat, double hp);
+
+double ma_ut_last_contact_solar_eclipse(double dy, int mn, int yr, int ds,
+                                        int zc, double glong, double glat);
+
+TUTLastContactSolarEclipseL7390
+ma_ut_last_contact_solar_eclipse_l7390(double x, double y, double igday,
+                                       int gmonth, int gyear, double tm,
+                                       double glong, double glat, double hp);
+
+double ma_mag_solar_eclipse(double dy, int mn, int yr, int ds, int zc,
+                            double glong, double glat);
+
+TMagSolarEclipseL7390 ma_mag_solar_eclipse_l7390(double x, double y,
+                                                 double igday, int gmonth,
+                                                 int gyear, double tm,
+                                                 double glong, double glat,
+                                                 double hp);
 #endif

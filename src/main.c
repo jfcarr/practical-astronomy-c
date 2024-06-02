@@ -210,6 +210,14 @@ void test_eclipses() {
       1, 4, 2015, false, 10,
       (TLunarEclipseCircumstances){4, 4, 2015, 9, 0, 10, 16, 11, 55, 12, 1, 12,
                                    7, 13, 46, 15, 1, 1.01});
+
+  test_solar_eclipse_occurrence(
+      1, 4, 2015, false, 0,
+      (TSolarEclipseOccurrence){SolarEclipseStatus_CERTAIN, 20, 3, 2015});
+
+  test_solar_eclipse_circumstances(
+      20, 3, 2015, false, 0, 0, 68.65,
+      (TSolarEclipseCircumstances){20, 3, 2015, 8, 55, 9, 57, 10, 58, 1.016});
 }
 
 int main() {

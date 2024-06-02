@@ -3696,6 +3696,38 @@ double ma_ut_day_adjust(double ut, double g1) {
 double ma_f_part(double w) { return w - ma_lint(w); }
 
 /**
+ * Original macro name: EQElat
+ */
+double ma_eqe_lat(double rah, double ram, double ras, double dd, double dm,
+                  double ds, double gd, int gm, int gy) {
+  double a = degrees_to_radians(
+      ma_degree_hours_to_decimal_degrees(ma_hms_dh(rah, ram, ras)));
+  double b = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double c = degrees_to_radians(ma_obliq(gd, gm, gy));
+  double d = sin(b) * cos(c) - cos(b) * sin(c) * sin(a);
+
+  return ma_degrees(asin(d));
+}
+
+/**
+ * Original macro name: EQElong
+ */
+double ma_eqe_long(double rah, double ram, double ras, double dd, double dm,
+                   double ds, double gd, int gm, int gy) {
+  double a = degrees_to_radians(
+      ma_degree_hours_to_decimal_degrees(ma_hms_dh(rah, ram, ras)));
+  double b = degrees_to_radians(
+      ma_degrees_minutes_seconds_to_decimal_degrees(dd, dm, ds));
+  double c = degrees_to_radians(ma_obliq(gd, gm, gy));
+  double d = sin(a) * cos(c) + tan(b) * sin(c);
+  double e = cos(a);
+  double f = ma_degrees(atan2(d, e));
+
+  return f - 360.0 * floor(f / 360.0);
+}
+
+/**
  * Local time of moonrise.
  *
  * Original macro name: MoonRiseLCT
@@ -5341,4 +5373,660 @@ double ma_mag_lunar_eclipse(double dy, int mn, int yr, int ds, int zc) {
   mg = (rm + ru - pj) / (2.0 * rm);
 
   return mg;
+}
+
+/**
+ * Determine if a solar eclipse is likely to occur.
+ *
+ * Original macro name: SEOccurrence
+ */
+enum SolarEclipseStatus ma_solar_eclipse_occurrence(int ds, int zc, double dy,
+                                                    int mn, int yr) {
+  double d0 =
+      ma_local_civil_time_greenwich_day(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int m0 =
+      ma_local_civil_time_greenwich_month(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+  int y0 =
+      ma_local_civil_time_greenwich_year(12.0, 0.0, 0.0, ds, zc, dy, mn, yr);
+
+  double j0 = ma_civil_date_to_julian_date(0.0, 1, y0);
+  double dj = ma_civil_date_to_julian_date(d0, m0, y0);
+  double k = (y0 - 1900.0 + ((dj - j0) * 1.0 / 365.0)) * 12.3685;
+  k = ma_lint(k + 0.5);
+  double tn = k / 1236.85;
+  double tf = (k + 0.5) / 1236.85;
+  double t = tn;
+  TSolarEclipseOccurrence_L6855 l6855result1 =
+      ma_solar_eclipse_occurrence_l6855(t, k);
+  double nb = l6855result1.f;
+  t = tf;
+  k += 0.5;
+  TSolarEclipseOccurrence_L6855 l6855result2 =
+      ma_solar_eclipse_occurrence_l6855(t, k);
+
+  double df = fabs(nb - 3.141592654 * ma_lint(nb / 3.141592654));
+
+  if (df > 0.37)
+    df = 3.141592654 - df;
+
+  enum SolarEclipseStatus s = SolarEclipseStatus_CERTAIN;
+  if (df >= 0.242600766) {
+    s = SolarEclipseStatus_POSSIBLE;
+    if (df > 0.37)
+      s = SolarEclipseStatus_NONE;
+  }
+
+  return s;
+}
+
+/**
+ * Helper function for SolarEclipseOccurrence
+ */
+TSolarEclipseOccurrence_L6855 ma_solar_eclipse_occurrence_l6855(double t,
+                                                                double k) {
+  double t2 = t * t;
+  double e = 29.53 * k;
+  double c = 166.56 + (132.87 - 0.009173 * t) * t;
+  c = degrees_to_radians(c);
+  double b = 0.00058868 * k + (0.0001178 - 0.000000155 * t) * t2;
+  b = b + 0.00033 * sin(c) + 0.75933;
+  double a = k / 12.36886;
+  double a1 =
+      359.2242 + 360.0 * ma_f_part(a) - (0.0000333 + 0.00000347 * t) * t2;
+  double a2 = 306.0253 + 360.0 * ma_f_part(k / 0.9330851);
+  a2 += (0.0107306 + 0.00001236 * t) * t2;
+  a = k / 0.9214926;
+  double f = 21.2964 + 360.0 * ma_f_part(a) - (0.0016528 + 0.00000239 * t) * t2;
+  a1 = ma_unwind_deg(a1);
+  a2 = ma_unwind_deg(a2);
+  f = ma_unwind_deg(f);
+  a1 = degrees_to_radians(a1);
+  a2 = degrees_to_radians(a2);
+  f = degrees_to_radians(f);
+
+  double dd = (0.1734 - 0.000393 * t) * sin(a1) + 0.0021 * sin(2.0 * a1);
+  dd = dd - 0.4068 * sin(a2) + 0.0161 * sin(2.0 * a2) - 0.0004 * sin(3.0 * a2);
+  dd = dd + 0.0104 * sin(2.0 * f) - 0.0051 * sin(a1 + a2);
+  dd = dd - 0.0074 * sin(a1 - a2) + 0.0004 * sin(2.0 * f + a1);
+  dd = dd - 0.0004 * sin(2.0 * f - a1) - 0.0006 * sin(2.0 * f + a2) +
+       0.001 * sin(2.0 * f - a2);
+  dd += 0.0005 * sin(a1 + 2.0 * a2);
+  double e1 = floor(e);
+  b = b + dd + (e - e1);
+  double b1 = floor(b);
+  a = e1 + b1;
+  b -= b1;
+
+  return (TSolarEclipseOccurrence_L6855){f, dd, e1, b1, a, b};
+}
+
+/**
+ * Calculate time of maximum shadow for solar eclipse (UT)
+ *
+ * Original macro name: UTMaxSolarEclipse
+ */
+double ma_ut_max_solar_eclipse(double dy, int mn, int yr, int ds, int zc,
+                               double glong, double glat) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_solar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      SolarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_newmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utnm = xi * 24.0;
+  double ut = utnm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utnm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utnm;
+  double x = my;
+  double y = by;
+  double tm = xh - 1.0;
+  double hp = hy;
+  TUTMaxSolarEclipseL7390 l7390result1 = ma_ut_max_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  my = l7390result1.p;
+  by = l7390result1.q;
+  x = mz;
+  y = bz;
+  tm = xh + 1.0;
+  hp = hz;
+  TUTMaxSolarEclipseL7390 l7390result2 = ma_ut_max_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  mz = l7390result2.p;
+  bz = l7390result2.q;
+
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  x = sr;
+  y = 0.0;
+  tm = ut;
+  hp = 0.00004263452 / rr;
+  TUTMaxSolarEclipseL7390 l7390result3 = ma_ut_max_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  sr = l7390result3.p;
+  by -= l7390result3.q;
+  bz -= l7390result3.q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double _ru = (hd - rn + ps) * 1.02;
+  double _rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rn;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+
+  return z1;
+}
+
+/**
+ * Helper function for ut_max_solar_eclipse
+ */
+TUTMaxSolarEclipseL7390 ma_ut_max_solar_eclipse_l7390(double x, double y,
+                                                      double igday, int gmonth,
+                                                      int gyear, double tm,
+                                                      double glong, double glat,
+                                                      double hp) {
+  double paa = ma_ec_ra(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0, igday,
+                        gmonth, gyear);
+  double qaa = ma_ec_dec(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0,
+                         igday, gmonth, gyear);
+  double xaa = ma_right_ascension_to_hour_angle(
+      ma_decimal_degrees_to_degree_hours(paa), 0.0, 0.0, tm, 0.0, 0.0, 0, 0,
+      igday, gmonth, gyear, glong);
+  double pbb = ma_parallax_ha(xaa, 0.0, 0.0, qaa, 0.0, 0.0,
+                              CoordinateType_ACTUAL, glat, 0.0, ma_degrees(hp));
+  double qbb =
+      ma_parallax_dec(xaa, 0.0, 0.0, qaa, 0.0, 0.0, CoordinateType_ACTUAL, glat,
+                      0.0, ma_degrees(hp));
+  double xbb = ma_hour_angle_to_right_ascension(pbb, 0.0, 0.0, tm, 0.0, 0.0, 0,
+                                                0, igday, gmonth, gyear, glong);
+  double p = degrees_to_radians(
+      ma_eqe_long(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+  double q = degrees_to_radians(
+      ma_eqe_lat(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+
+  return (TUTMaxSolarEclipseL7390){paa, qaa, xaa, pbb, qbb, xbb, p, q};
+}
+
+/**
+ * Calculate time of first contact for solar eclipse (UT)
+ *
+ * Original macro name: UTFirstContactSolarEclipse
+ */
+double ma_ut_first_contact_solar_eclipse(double dy, int mn, int yr, int ds,
+                                         int zc, double glong, double glat) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_solar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      SolarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_newmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utnm = xi * 24.0;
+  double ut = utnm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utnm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utnm;
+  double x = my;
+  double y = by;
+  double tm = xh - 1.0;
+  double hp = hy;
+  TUTFirstContactSolarEclipseL7390 l7390result1 =
+      ma_ut_first_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                              glong, glat, hp);
+  my = l7390result1.p;
+  by = l7390result1.q;
+  x = mz;
+  y = bz;
+  tm = xh + 1.0;
+  hp = hz;
+  TUTFirstContactSolarEclipseL7390 l7390result2 =
+      ma_ut_first_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                              glong, glat, hp);
+  mz = l7390result2.p;
+  bz = l7390result2.q;
+
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  x = sr;
+  y = 0.0;
+  tm = ut;
+  hp = 0.00004263452 / rr;
+  TUTFirstContactSolarEclipseL7390 l7390result3 =
+      ma_ut_first_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                              glong, glat, hp);
+  sr = l7390result3.p;
+  by -= l7390result3.q;
+  bz -= l7390result3.q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double _ru = (hd - rn + ps) * 1.02;
+  double _rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rn;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z6 = z1 - zd;
+
+  if (z6 < 0.0)
+    z6 += 24.0;
+
+  return z6;
+}
+
+/**
+ * Helper function for UTFirstContactSolarEclipse
+ */
+TUTFirstContactSolarEclipseL7390
+ma_ut_first_contact_solar_eclipse_l7390(double x, double y, double igday,
+                                        int gmonth, int gyear, double tm,
+                                        double glong, double glat, double hp) {
+  double paa = ma_ec_ra(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0, igday,
+                        gmonth, gyear);
+  double qaa = ma_ec_dec(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0,
+                         igday, gmonth, gyear);
+  double xaa = ma_right_ascension_to_hour_angle(
+      ma_decimal_degrees_to_degree_hours(paa), 0.0, 0.0, tm, 0.0, 0.0, 0, 0,
+      igday, gmonth, gyear, glong);
+  double pbb = ma_parallax_ha(xaa, 0.0, 0.0, qaa, 0.0, 0.0,
+                              CoordinateType_ACTUAL, glat, 0.0, ma_degrees(hp));
+  double qbb =
+      ma_parallax_dec(xaa, 0.0, 0.0, qaa, 0.0, 0.0, CoordinateType_ACTUAL, glat,
+                      0.0, ma_degrees(hp));
+  double xbb = ma_hour_angle_to_right_ascension(pbb, 0.0, 0.0, tm, 0.0, 0.0, 0,
+                                                0, igday, gmonth, gyear, glong);
+  double p = degrees_to_radians(
+      ma_eqe_long(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+  double q = degrees_to_radians(
+      ma_eqe_lat(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+
+  return (TUTFirstContactSolarEclipseL7390){paa, qaa, xaa, pbb, qbb, xbb, p, q};
+}
+
+/**
+ * Calculate time of last contact for solar eclipse (UT)
+ *
+ * Original macro name: UTLastContactSolarEclipse
+ */
+double ma_ut_last_contact_solar_eclipse(double dy, int mn, int yr, int ds,
+                                        int zc, double glong, double glat) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_solar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      SolarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_newmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utnm = xi * 24.0;
+  double ut = utnm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utnm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utnm;
+  double x = my;
+  double y = by;
+  double tm = xh - 1.0;
+  double hp = hy;
+  TUTLastContactSolarEclipseL7390 l7390result1 =
+      ma_ut_last_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                             glong, glat, hp);
+  my = l7390result1.p;
+  by = l7390result1.q;
+  x = mz;
+  y = bz;
+  tm = xh + 1.0;
+  hp = hz;
+  TUTLastContactSolarEclipseL7390 l7390result2 =
+      ma_ut_last_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                             glong, glat, hp);
+  mz = l7390result2.p;
+  bz = l7390result2.q;
+
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  x = sr;
+  y = 0.0;
+  tm = ut;
+  hp = 0.00004263452 / rr;
+  TUTLastContactSolarEclipseL7390 l7390result3 =
+      ma_ut_last_contact_solar_eclipse_l7390(x, y, igday, gmonth, gyear, tm,
+                                             glong, glat, hp);
+  sr = l7390result3.p;
+  by -= l7390result3.q;
+  bz -= l7390result3.q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double _ru = (hd - rn + ps) * 1.02;
+  double _rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rn;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+  double z7 = z1 + zd - ma_lint((z1 + zd) / 24.0) * 24.0;
+
+  return z7;
+}
+
+/**
+ * Helper function for ut_last_contact_solar_eclipse
+ */
+TUTLastContactSolarEclipseL7390
+ma_ut_last_contact_solar_eclipse_l7390(double x, double y, double igday,
+                                       int gmonth, int gyear, double tm,
+                                       double glong, double glat, double hp) {
+  double paa = ma_ec_ra(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0, igday,
+                        gmonth, gyear);
+  double qaa = ma_ec_dec(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0,
+                         igday, gmonth, gyear);
+  double xaa = ma_right_ascension_to_hour_angle(
+      ma_decimal_degrees_to_degree_hours(paa), 0.0, 0.0, tm, 0.0, 0.0, 0, 0,
+      igday, gmonth, gyear, glong);
+  double pbb = ma_parallax_ha(xaa, 0.0, 0.0, qaa, 0.0, 0.0,
+                              CoordinateType_ACTUAL, glat, 0.0, ma_degrees(hp));
+  double qbb =
+      ma_parallax_dec(xaa, 0.0, 0.0, qaa, 0.0, 0.0, CoordinateType_ACTUAL, glat,
+                      0.0, ma_degrees(hp));
+  double xbb = ma_hour_angle_to_right_ascension(pbb, 0.0, 0.0, tm, 0.0, 0.0, 0,
+                                                0, igday, gmonth, gyear, glong);
+  double p = degrees_to_radians(
+      ma_eqe_long(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+  double q = degrees_to_radians(
+      ma_eqe_lat(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+
+  return (TUTLastContactSolarEclipseL7390){paa, qaa, xaa, pbb, qbb, xbb, p, q};
+}
+
+/**
+ * Calculate magnitude of solar eclipse.
+ *
+ * Original macro name: MagSolarEclipse
+ */
+double ma_mag_solar_eclipse(double dy, int mn, int yr, int ds, int zc,
+                            double glong, double glat) {
+  double tp = 2.0 * PA_PI;
+
+  if (ma_solar_eclipse_occurrence(ds, zc, dy, mn, yr) ==
+      SolarEclipseStatus_NONE)
+    return -99.0;
+
+  double dj = ma_newmoon(ds, zc, dy, mn, yr);
+  double gday = ma_julian_date_day(dj);
+  int gmonth = ma_julian_date_month(dj);
+  int gyear = ma_julian_date_year(dj);
+  double igday = floor(gday);
+  double xi = gday - igday;
+  double utnm = xi * 24.0;
+  double ut = utnm - 1.0;
+  double ly =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double my = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double by = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hy = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  ut = utnm + 1.0;
+  double sb = degrees_to_radians(
+                  ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear)) -
+              ly;
+  double mz = degrees_to_radians(
+      ma_moon_longitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double bz = degrees_to_radians(
+      ma_moon_latitude(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  double hz = degrees_to_radians(
+      ma_moon_horizontal_parallax(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+
+  if (sb < 0.0)
+    sb += tp;
+
+  double xh = utnm;
+  double x = my;
+  double y = by;
+  double tm = xh - 1.0;
+  double hp = hy;
+  TMagSolarEclipseL7390 l7390result1 = ma_mag_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  my = l7390result1.p;
+  by = l7390result1.q;
+  x = mz;
+  y = bz;
+  tm = xh + 1.0;
+  hp = hz;
+  TMagSolarEclipseL7390 l7390result2 = ma_mag_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  mz = l7390result2.p;
+  bz = l7390result2.q;
+
+  double x0 = xh + 1.0 - (2.0 * bz / (bz - by));
+  double dm = mz - my;
+
+  if (dm < 0.0)
+    dm += tp;
+
+  double lj = (dm - sb) / 2.0;
+  double mr = my + (dm * (x0 - xh + 1.0) / 2.0);
+  ut = x0 - 0.13851852;
+  double rr = ma_sun_dist(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear);
+  double sr =
+      degrees_to_radians(ma_sun_long(ut, 0.0, 0.0, 0, 0, igday, gmonth, gyear));
+  sr += degrees_to_radians(ma_nutat_long(igday, gmonth, gyear) - 0.00569);
+  x = sr;
+  y = 0.0;
+  tm = ut;
+  hp = 0.00004263452 / rr;
+  TMagSolarEclipseL7390 l7390result3 = ma_mag_solar_eclipse_l7390(
+      x, y, igday, gmonth, gyear, tm, glong, glat, hp);
+  sr = l7390result3.p;
+  by -= l7390result3.q;
+  bz -= l7390result3.q;
+  double p3 = 0.00004263;
+  double zh = (sr - mr) / lj;
+  double tc = x0 + zh;
+  double sh = (((bz - by) * (tc - xh - 1.0) / 2.0) + bz) / lj;
+  double s2 = sh * sh;
+  double z2 = zh * zh;
+  double ps = p3 / (rr * lj);
+  double z1 = (zh * z2 / (z2 + s2)) + x0;
+  double h0 = (hy + hz) / (2.0 * lj);
+  double rm = 0.272446 * h0;
+  double rn = 0.00465242 / (lj * rr);
+  double hd = h0 * 0.99834;
+  double _ru = (hd - rn + ps) * 1.02;
+  double _rp = (hd + rn + ps) * 1.02;
+  double pj = fabs(sh * zh / sqrt(s2 + z2));
+  double r = rm + rn;
+  double dd = z1 - x0;
+  dd = dd * dd - ((z2 - (r * r)) * dd / zh);
+
+  if (dd < 0.0)
+    return -99.0;
+
+  double zd = sqrt(dd);
+
+  double mg = (rm + rn - pj) / (2.0 * rn);
+
+  return mg;
+}
+
+/**
+ * Helper function for mag_solar_eclipse
+ */
+TMagSolarEclipseL7390 ma_mag_solar_eclipse_l7390(double x, double y,
+                                                 double igday, int gmonth,
+                                                 int gyear, double tm,
+                                                 double glong, double glat,
+                                                 double hp) {
+  double paa = ma_ec_ra(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0, igday,
+                        gmonth, gyear);
+  double qaa = ma_ec_dec(ma_degrees(x), 0.0, 0.0, ma_degrees(y), 0.0, 0.0,
+                         igday, gmonth, gyear);
+  double xaa = ma_right_ascension_to_hour_angle(
+      ma_decimal_degrees_to_degree_hours(paa), 0.0, 0.0, tm, 0.0, 0.0, 0, 0,
+      igday, gmonth, gyear, glong);
+  double pbb = ma_parallax_ha(xaa, 0.0, 0.0, qaa, 0.0, 0.0,
+                              CoordinateType_ACTUAL, glat, 0.0, ma_degrees(hp));
+  double qbb =
+      ma_parallax_dec(xaa, 0.0, 0.0, qaa, 0.0, 0.0, CoordinateType_ACTUAL, glat,
+                      0.0, ma_degrees(hp));
+  double xbb = ma_hour_angle_to_right_ascension(pbb, 0.0, 0.0, tm, 0.0, 0.0, 0,
+                                                0, igday, gmonth, gyear, glong);
+  double p = degrees_to_radians(
+      ma_eqe_long(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+  double q = degrees_to_radians(
+      ma_eqe_lat(xbb, 0.0, 0.0, qbb, 0.0, 0.0, igday, gmonth, gyear));
+
+  return (TMagSolarEclipseL7390){paa, qaa, xaa, pbb, qbb, xbb, p, q};
 }

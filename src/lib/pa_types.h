@@ -55,6 +55,12 @@ enum LunarEclipseStatus {
   LunarEclipseStatus_NONE
 };
 
+enum SolarEclipseStatus {
+  SolarEclipseStatus_CERTAIN,
+  SolarEclipseStatus_POSSIBLE,
+  SolarEclipseStatus_NONE
+};
+
 /**
  * Structure to hold a Date value:
  *
@@ -552,15 +558,6 @@ typedef struct pa_lunar_eclipse_occurrence {
   int event_date_year;
 } TLunarEclipseOccurrence;
 
-typedef struct pa_lunar_eclipse_occurrence_l6855 {
-  double f;
-  double dd;
-  double e1;
-  double b1;
-  double a;
-  double b;
-} TLunarEclipseOccurrence_L6855;
-
 typedef struct pa_lunar_eclipse_circumstances {
   double lunar_eclipse_certain_dateday;
   double lunar_eclipse_certain_datemonth;
@@ -581,4 +578,45 @@ typedef struct pa_lunar_eclipse_circumstances {
   double ut_end_pen_phase_minutes;
   double eclipse_magnitude;
 } TLunarEclipseCircumstances;
+
+typedef struct pa_solar_eclipse_occurrence {
+  enum SolarEclipseStatus status;
+  double event_date_day;
+  int event_date_month;
+  int event_date_year;
+} TSolarEclipseOccurrence;
+
+typedef struct pa_eclipse_occurrence_l6855 {
+  double f;
+  double dd;
+  double e1;
+  double b1;
+  double a;
+  double b;
+} TLunarEclipseOccurrence_L6855, TSolarEclipseOccurrence_L6855;
+
+typedef struct pa_solar_eclipse_circumstances {
+  double solar_eclipse_certain_date_day;
+  int solar_eclipse_certain_date_month;
+  int solar_eclipse_certain_date_year;
+  double ut_first_contact_hour;
+  double ut_first_contact_minutes;
+  double ut_mid_eclipse_hour;
+  double ut_mid_eclipse_minutes;
+  double ut_last_contact_hour;
+  double ut_last_contact_minutes;
+  double eclipse_magnitude;
+} TSolarEclipseCircumstances;
+
+typedef struct pa_ut_max_solar_eclipse_l7390 {
+  double paa;
+  double qaa;
+  double xaa;
+  double pbb;
+  double qbb;
+  double xbb;
+  double p;
+  double q;
+} TUTMaxSolarEclipseL7390, TUTFirstContactSolarEclipseL7390,
+    TUTLastContactSolarEclipseL7390, TMagSolarEclipseL7390;
 #endif
